@@ -64,9 +64,17 @@ by_species_r <- penguins2 |>
   summarise(r = cor(bill_length_mm, bill_depth_mm), n = n())
 ```
 
-::: {.content-visible when-format="html"}
-![American University](../../images/au-logo-hires.png){.poster-logo}
-:::
+```{=html}
+<!-- A raw <img>, not a markdown image inside a .content-visible div: Quarto
+     wraps markdown images in a <div class="quarto-figure"> that itself sets
+     `position: relative`, which becomes the *nearest* positioned ancestor
+     for a `position: absolute` .poster-logo -- capturing it inside that
+     div's own (in-flow) box instead of pinning it to the page/banner as
+     poster-common.scss intends. A bare <img> has no such wrapper. Raw HTML
+     blocks are already skipped by the Typst writer (see the section-divider
+     <hr> below), so no when-format="html" guard is needed here either. -->
+<img src="../../images/au-logo-hires.png" alt="American University" class="poster-logo">
+```
 
 ## The Question
 

@@ -82,15 +82,21 @@ p_species <- ggplot(penguins2, aes(bill_length_mm, bill_depth_mm, color = specie
 evidence_plot <- p_pooled | p_species
 ```
 
-::: {.content-visible when-format="html"}
-![American University](../../images/au-logo-hires.png){.poster-logo}
-:::
+```{=html}
+<!-- A raw <img>, not a markdown image inside a .content-visible div: Quarto
+     wraps markdown images in a <div class="quarto-figure"> that itself sets
+     `position: relative`, which becomes the *nearest* positioned ancestor
+     for a `position: absolute` .poster-logo -- capturing it inside that
+     div's own (in-flow) box instead of pinning it to the page/banner as
+     poster-common.scss intends. A bare <img> has no such wrapper. Raw HTML
+     blocks are already skipped by the Typst writer (see the section-divider
+     <hr> below), so no when-format="html" guard is needed here either. -->
+<img src="../../images/au-logo-hires.png" alt="American University" class="poster-logo">
+```
 
 ## The Headline Finding
 
-Slope of bill depth on bill length (mm per mm): pooling every species together gives **`r overall_slope`**, but adding species to the model as a covariate reverses it to **`r species_slope`**.
-
-Pooling all penguin species together, bill depth *falls* as bill length rises. Once species is taken into account, the relationship *reverses* completely -- a textbook **Simpson's paradox**.
+Slope of bill depth on bill length (mm per mm): pooling every species together gives **`r overall_slope`**, but adding species to the model as a covariate reverses it to **`r species_slope`**. In other words, bill depth *falls* as bill length rises when every species is lumped together, but *rises* with bill length once each species is considered on its own -- a textbook **Simpson's paradox**.
 
 ## Why It Matters
 

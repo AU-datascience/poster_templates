@@ -99,14 +99,28 @@ body {
 
 // Logo shown only in the web version (the print/typst version places the
 // logo itself via the poster-typst extension's `institution-logo` option).
-// Sized up from the original 64px now that AU_logo.png (1361x1327px) has
-// enough resolution to hold a larger size crisply -- the old au-logo.png
-// (52x50px) would have gone soft well before this.
+//
+// The <img>/<figure> markup for this lives inside #quarto-content, right
+// after Quarto's auto-generated <header id="title-block-header"> (the
+// gradient title banner) closes -- there's no qmd-level way to inject
+// content *inside* that header, since Quarto builds it from title/author/
+// date metadata. Pulling the logo out of normal flow with
+// `position: absolute` and pinning it to the page's top-right corner
+// visually places it over the banner instead of pushing the body content
+// (Introduction/Headline/etc.) down to make room for it. `body` supplies
+// the positioning context since it's the nearest ancestor of both the
+// header and the logo figure.
+body {
+  position: relative;
+}
+
 .poster-logo {
-  max-height: 96px;
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  max-height: 70px;
   width: auto;
-  float: right;
-  margin: 0 0 1rem 1rem;
+  z-index: 10;
 }
 
 // Pandoc/Quarto wraps every level-2 heading and its content in

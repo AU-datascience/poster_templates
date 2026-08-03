@@ -30,8 +30,7 @@ body {
   line-height: 1.6;
 }
 
-.poster-logo {
-  float: none;
-  display: block;
-  margin: 0 auto 1rem auto;
-}
+// poster-common.scss's default top-right pin (inherited, no override needed)
+// keeps the logo clear of this template's centered title text -- centering
+// the logo too (an earlier attempt) put it directly on top of the title
+// whenever it wrapped to a second line.
