@@ -190,7 +190,7 @@ css_font_size_px <- function(selector, file = NULL, root_px = 16) {
   if (unit == "rem") num * root_px else num
 }
 
-banner_stops <- css_colors(".quarto-title-banner", "background", n = 2)
+banner_stops <- css_colors("header.quarto-title-block", "background", n = 2)
 page_bg <- css_colors("body", "background")
 card_bg <- css_colors("section.level2", "background", file = COMMON_SCSS)
 ethics_bg <- css_colors(".ethics-panel", "background")

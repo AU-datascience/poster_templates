@@ -64,11 +64,36 @@ body {
   padding-top: 1.5rem;
 }
 
-.quarto-title-banner {
+// The gradient/white-text "banner" look has to live on the outer <header>,
+// not just on .quarto-title-banner: Quarto only wraps the <h1> itself in
+// that inner div -- the Author/Affiliation/Published meta blocks
+// (.quarto-title-meta-author, .quarto-title-meta) are its *siblings*,
+// still inside <header> but outside .quarto-title-banner's box. Coloring
+// only .quarto-title-banner left the meta text (styled white below, on
+// purpose, to sit on this gradient) rendering white-on-page-background
+// instead -- nearly invisible, and it read as a blank gap between the
+// banner and the first card. Painting the header itself makes the
+// gradient actually extend under the meta blocks that are meant to sit on
+// it, matching what scripts/check-contrast.R already assumes when it
+// audits "banner meta label/value, dark/light stop" pairs.
+header.quarto-title-block {
   background: linear-gradient(135deg, $au-navy 0%, $au-blue-banner 100%);
   color: white;
   padding: 2.5rem 2rem;
   border-radius: 0 0 12px 12px;
+}
+
+// The cosmo/Bootstrap base theme styles .quarto-title-banner itself with a
+// light grey background (and its own padding/margin) -- normally the *only*
+// banner background, back when the meta blocks lived outside it and didn't
+// need to match. Now that the gradient lives on the outer header (above),
+// neutralize this div's own background/spacing so it doesn't paint a pale
+// box over the gradient behind the title.
+.quarto-title-banner {
+  background: transparent;
+  color: white;
+  padding: 0;
+  margin-bottom: 0;
 }
 
 .quarto-title-banner h1.title {
