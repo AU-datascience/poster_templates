@@ -1,0 +1,201 @@
+---
+title: "Aggregation Can Hide the True Relationship in Penguin Bill Shape"
+author:
+  - name: A. Sample Researcher
+    affiliations:
+      - name: Department of Mathematics and Statistics, American University
+date: last-modified
+bibliography: ../../references.bib
+link-citations: true
+format:
+  # ---- Large-format print version (Typst -> PDF, portrait banner) ----
+  poster-typst:
+    fig-format: png
+    size: "24x52"
+    poster-authors: "A. Sample Researcher"
+    departments: "Department of Mathematics and Statistics, American University"
+    institution-logo: "../../images/au-logo.png"
+    footer-text: "Poster Template Validation · 2026"
+    footer-url: "https://www.american.edu"
+    footer-emails: "researcher@american.edu"
+    footer-color: "25406A"
+    num-columns: 1
+    body-font-size: 24
+    univ-logo-scale: 70
+    univ-logo-column-size: 3
+    title-column-size: 16
+    # Must stay above the level-1 heading size, which the poster package
+    # hardcodes at body-font-size + 16 (= 40pt here); authors are set below
+    # the heading size in turn, so the hierarchy reads title > section >
+    # authors > body.
+    title-font-size: 44
+    authors-font-size: 28
+    keywords: ["Simpson's paradox", "aggregation bias", "linear regression"]
+  # ---- Online / web version (single-column, article-style reading) ----
+  html:
+    theme: [cosmo, ../../scss/poster-common.scss, minimal-web.scss]
+    page-layout: full
+    toc: false
+    embed-resources: true
+    title-block-banner: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(palmerpenguins)
+library(patchwork)
+
+penguins2 <- penguins |>
+  select(species, bill_length_mm, bill_depth_mm) |>
+  drop_na()
+
+overall_mod <- lm(bill_depth_mm ~ bill_length_mm, data = penguins2)
+species_mod <- lm(bill_depth_mm ~ bill_length_mm + species, data = penguins2)
+overall_r <- cor(penguins2$bill_length_mm, penguins2$bill_depth_mm)
+overall_slope <- round(coef(overall_mod)[["bill_length_mm"]], 2)
+species_slope <- round(coef(species_mod)[["bill_length_mm"]], 2)
+by_species_r <- penguins2 |>
+  group_by(species) |>
+  summarise(r = cor(bill_length_mm, bill_depth_mm), n = n())
+```
+
+::: {.content-visible when-format="html"}
+![American University](../../images/au-logo.png){.poster-logo}
+:::
+
+## The Question
+
+Bill length and bill depth are two of the simplest measurements a field biologist can take on a penguin, and both are used to distinguish species and track body condition in the Palmer Archipelago penguins studied by @gorman2014ecological. If you plotted every penguin's bill length against its bill depth without separating species, what would you conclude about how the two are related -- and would that conclusion still hold once you looked at each species on its own?
+
+## What We Did
+
+Using the `r nrow(penguins2)` penguins in the `palmerpenguins` dataset [@horst2020palmerpenguins] with complete bill measurements, we fit a simple linear regression of bill depth on bill length, first pooling all three species (Adelie, Chinstrap, and Gentoo) together, and then again after adding species as a covariate. Comparing the two slopes -- and looking at the within-species correlations directly -- shows whether species is quietly driving the pooled result. All work was done in R [@rcore2026] with the tidyverse [@tidyverse2019] and ggplot2 [@ggplot22016].
+
+::: {.content-visible when-format="html"}
+## Ethics & Broader Impact
+
+::: {.ethics-panel}
+**Generative AI use.** Portions of this poster's R code and prose were drafted with the assistance of an AI coding assistant (Claude, via Posit's Positron/Assistant integration) for code scaffolding, prose editing, and citation formatting. The human author(s) reviewed and verified every analysis, figure, and conclusion and remain fully accountable for the content. No generative AI was used to fabricate, alter, or synthesize the underlying penguin measurement data, which are used unmodified from the published `palmerpenguins` dataset.
+
+**Privacy & data governance.** This analysis uses only publicly available, non-human biometric measurements of penguins; it contains no personally identifiable information, so no de-identification, IRB review, or GDPR/EU AI Act data-protection provisions apply. The original field data were collected under the data providers' own institutional and permitting approvals.
+
+**Bias, fairness & broader impact.** This is a descriptive/inferential statistics example, not a deployed predictive or classification system, so no demographic-fairness audit or dual-use/weaponization risk assessment applies. Computational cost is negligible: fitting two linear regressions on 342 rows completes in milliseconds on a laptop, with no large-model training and no meaningful carbon footprint.
+:::
+:::
+
+```{=typst}
+// Pinned to the physical bottom-right corner of the page via Typst's
+// place(scope: "parent"), escaping the (single-column) content flow.
+#place(
+  bottom + right,
+  scope: "parent",
+  float: true,
+  dy: -0.3in,
+  block(
+    fill: rgb("#fff8e6"),
+    stroke: 2.5pt + rgb("#25406A"),
+    radius: 8pt,
+    inset: 14pt,
+    width: 34%,
+    breakable: false,
+  )[
+    #set align(left)
+    #text(size: 20pt, weight: "bold", fill: rgb("#25406A"))[Ethics & Broader Impact]
+    #v(5pt)
+    #text(size: 16pt)[
+      *GenAI use:* an AI coding assistant (Claude) drafted portions of the code/prose; humans verified all results and remain accountable; no data were fabricated or altered.
+
+      *Privacy:* public, non-human biometric data only -- no PII, no IRB/GDPR/EU AI Act applicability.
+
+      *Bias & impact:* descriptive statistics, not a deployed model -- no fairness audit or dual-use risk applies; negligible compute cost.
+    ]
+  ]
+)
+```
+
+## What We Found
+
+```{r}
+#| label: fig-simpson-before-after
+#| fig-cap: "Pooling across species (left) suggests bill depth decreases with bill length. Looking within each species (right) shows the opposite: bill depth increases with bill length in every species."
+#| echo: false
+#| out-width: "100%"
+#| fig-width: 10
+#| fig-height: 4.5
+p_pooled <- ggplot(penguins2, aes(bill_length_mm, bill_depth_mm)) +
+  geom_point(size = 1.6, color = "#666666", alpha = 0.7) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
+              color = "#25406A", linewidth = 1) +
+  labs(x = "Bill length (mm)", y = "Bill depth (mm)",
+       title = "All species pooled") +
+  theme_minimal(base_size = 11)
+
+p_species <- ggplot(penguins2, aes(bill_length_mm, bill_depth_mm, color = species)) +
+  geom_point(size = 1.6, alpha = 0.75) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 1) +
+  scale_color_manual(values = c("#0047B3", "#CC0033", "#00205B")) +
+  labs(x = "Bill length (mm)", y = "Bill depth (mm)",
+       title = "Same data, by species", color = "Species") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "top")
+
+p_pooled | p_species
+```
+
+Pooling every penguin together (left) gives a negative correlation (Pearson's *r* = `r round(overall_r, 2)`, slope = `r overall_slope` mm of bill depth per mm of bill length): longer bills appear to go with shallower ones. But that pattern only exists because the three species differ both in typical bill length and in typical bill depth. Once species is added to the model (right), the slope flips sign entirely, to `r species_slope` -- and every species shows its own positive within-species correlation (@tbl-by-species-story). This reversal is a textbook example of **Simpson's paradox**: a grouping variable that is correlated with both the predictor and the outcome can invert the apparent relationship between them.
+
+```{r}
+#| label: tbl-by-species-story
+#| tbl-cap: "Within-species correlation between bill length and bill depth is positive for all three species."
+#| echo: false
+by_species_r |>
+  mutate(r = round(r, 2)) |>
+  knitr::kable(col.names = c("Species", "Correlation (r)", "n"))
+```
+
+## Why It Matters
+
+Whenever a natural grouping variable is available -- species, site, cohort, or any other category that differs systematically in both predictor and outcome -- a pooled analysis should be treated as a starting point, not a conclusion. Checking whether a relationship holds up within each group is a cheap way to avoid reporting an effect that is really just an artifact of aggregation.
+
+## What's Next
+
+- Test whether the within-species slope itself differs by species (a length &times; species interaction).
+- Add sex and island as further covariates.
+
+```{=html}
+<!-- A raw HTML block, not a .content-visible div: a raw `<hr>` inside a
+     content-visible div silently swallows every element after it in the
+     Typst output (dropping the acknowledgments and References heading). -->
+<hr class="section-divider">
+```
+
+```{=typst}
+#v(14pt)
+#line(length: 100%, stroke: 0.75pt + rgb("#999999"))
+#v(10pt)
+
+// `#### Acknowledgments` / `#### References` arrive as Typst *level-3*
+// headings, because Quarto maps markdown `##` to `=` and shifts everything up
+// one. The poster package styles level 3 as a numbered, italic,
+// colon-terminated run-in -- literally "1) Acknowledgments:" -- which reads as
+// a numbered list item rather than as closing matter. Restyle everything from
+// here down as a plain bold label. This rule is defined after the package's
+// own `show heading` rule, so it takes precedence for the rest of the page.
+#show heading.where(level: 3): it => block(above: 16pt, below: 12pt)[
+  #set text(size: 1.15em, weight: "bold", style: "normal")
+  #it.body
+]
+```
+
+#### Acknowledgments
+
+This work was performed under the guidance of Dr. Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No. BJME-2026-014. A content-validation example, not an original finding.
+
+**Code & data:** [github.com/american-university/au-quarto-poster-templates](https://github.com/american-university/au-quarto-poster-templates) (placeholder -- replace with your own repository).
+
+#### References
+
+::: {#refs}
+:::

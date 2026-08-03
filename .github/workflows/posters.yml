@@ -1,0 +1,106 @@
+# Continuous integration for the Quarto poster templates.
+#
+# IMPORTANT: this workflow is inert until the project is actually a git
+# repository hosted on GitHub. At the time it was added, `git rev-parse` found
+# no repository in this tree, so nothing has ever executed it.
+#
+# Placement assumes quarto_posters/ is the repository root, which is what the
+# README's "Code & data" link implies. If you instead commit the parent folder,
+# move this file to <repo-root>/.github/workflows/ and add:
+#
+#   defaults:
+#     run:
+#       working-directory: quarto_posters
+#
+# The two jobs are deliberately separate. The contrast audit is pure source
+# parsing -- no Quarto, no fonts, no rendering -- so it is fast and gives an
+# unambiguous answer. The render job depends on the Typst toolchain and on font
+# availability, which are the fragile parts; isolating them means an
+# accessibility regression is never confused with a rendering environment
+# problem.
+
+name: posters
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contrast:
+    name: WCAG AAA contrast audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::tidyverse
+
+      # Every audited pair currently reaches AAA, so the strict gate is the
+      # meaningful one: any color edit that drops a pair to AA fails the build.
+      # Drop the flag to enforce only AA.
+      - name: Audit color contrast
+        run: Rscript scripts/check-contrast.R --require-aaa
+
+  render:
+    name: Render posters and check output
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # pak resolves system dependencies from this list, which matters for
+          # pdftools (poppler) and magick (ImageMagick).
+          packages: |
+            any::tidyverse
+            any::pdftools
+            any::magick
+            any::palmerpenguins
+            any::patchwork
+            any::broom
+            any::knitr
+
+      # poster.typ sets `font: "STIX Two Text"`. macOS ships that face; an
+      # Ubuntu runner does not, and Typst falls back silently rather than
+      # failing. A fallback face changes line breaking, which moves the
+      # pixel-measured column-fill numbers and can fail the balance check for
+      # reasons unrelated to content. If the balance check fails in CI but
+      # passes locally, suspect the font before the content -- and note that
+      # the `fonts-stix` package may not include the "STIX Two Text" face
+      # specifically, in which case install it from its upstream release.
+      - name: Install the poster body font
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-stix
+
+      - name: Render all templates and run output checks
+        run: Rscript scripts/render-all.R
+
+      # Useful for eyeballing a regression: the checks report numbers, but the
+      # PDFs show what actually changed.
+      - name: Upload rendered posters
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-posters
+          path: |
+            templates/*/poster.pdf
+            templates/*/poster.html
+          if-no-files-found: warn

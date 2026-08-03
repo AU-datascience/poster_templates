@@ -1,0 +1,53 @@
+/*-- scss:rules --*/
+
+// "Modern Cards": an asymmetric, dashboard-like grid of cards with a
+// bold accent color, meant to emphasize a couple of key figures/stats
+// at a glance rather than a dense wall of text.
+
+#quarto-document-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+#references,
+#acknowledgments {
+  grid-column: 1 / -1;
+}
+
+section.level2 {
+  border-top: 6px solid $au-red;
+  border-radius: 4px 4px 10px 10px;
+}
+
+section.level2 > h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  // 1.5rem = 24px at the default root size, which is exactly WCAG's threshold
+  // for "large text". That drops the contrast bar for this heading color from
+  // 7:1 to 4.5:1, which $au-red on a white card clears at 6.28:1 -- the last
+  // AA-only pair in the audit. At the previous 1.1rem (17.6px) it counted as
+  // normal text and reaching AAA would have needed a darker red instead.
+  // scripts/check-contrast.R reads this declaration, so shrinking it below
+  // 24px re-classifies the pair automatically rather than silently.
+  font-size: 1.5rem;
+  color: $au-red;
+  border-bottom: none;
+}
+
+// Optional callout class for a big headline number/finding, e.g.
+// `[42%]{.stat}` -- use as a span/div around a key result.
+.stat {
+  display: block;
+  font-size: 3rem;
+  font-weight: 700;
+  color: $au-navy;
+  line-height: 1.1;
+}
+
+@media (max-width: 700px) {
+  #quarto-document-content {
+    grid-template-columns: 1fr;
+  }
+}

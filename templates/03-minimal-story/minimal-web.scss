@@ -1,0 +1,37 @@
+/*-- scss:rules --*/
+
+// "Minimal Story": a single flowing narrative column, meant to be read
+// top-to-bottom like an article -- more whitespace, larger type, flat
+// (unboxed) sections separated by thin rules instead of card shadows.
+
+#quarto-document-content {
+  display: block;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+section.level2 {
+  box-shadow: none;
+  border-radius: 0;
+  border-bottom: 1px solid #ddd;
+  padding: 2rem 0;
+  background: transparent;
+}
+
+section.level2 > h2 {
+  border-bottom: none;
+  font-weight: 300;
+  font-size: 2rem;
+  color: $au-navy;
+}
+
+body {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.poster-logo {
+  float: none;
+  display: block;
+  margin: 0 auto 1rem auto;
+}

@@ -1,0 +1,178 @@
+/*-- scss:defaults --*/
+
+// Shared variables for all three "web" poster templates.
+// Individual templates (classic / modern / minimal) @use or @forward this
+// file and then layer their own look on top. Keep this file limited to
+// brand-level tokens so that a single edit (e.g. a color refresh) cascades
+// everywhere.
+
+// Muted accent tones (see _brand.yml for the rationale and the
+// full-saturation "vivid" brand hex codes these are derived from).
+$au-navy:       #25406A;
+$au-blue:       #3E6DA3;
+$au-light-blue: #B3D7FF;
+$au-red:        #A8384F;
+// Darkened from the brand's #666666, which reached only 5.35:1 on $body-bg --
+// AA, but short of the 7:1 AAA bar for normal-size text. This token is used
+// only for text (the acknowledgments/references block, and Bootstrap's inline
+// code color), so darkening it in place costs nothing visually.
+$au-grey:       #505050;   // 7.5:1 on $body-bg
+
+// Text-safe variant of $au-blue. The accent blue is chosen for the banner
+// gradient and callout borders, where the 3:1 graphics bar applies; as link
+// text it managed only 4.99:1 on $body-bg. Kept as a separate token so that
+// darkening links does not also darken the banner. Verified by
+// scripts/check-contrast.R.
+$au-blue-text:  #2F527A;   // 7.5:1 on $body-bg
+
+// Light end of the title banner's gradient. The banner carries normal-size
+// white text (the author/date line), which needs 7:1 for AAA -- and that puts
+// a hard ceiling on how light this stop can be. $au-blue (5.36:1 under white)
+// was AA but not AAA. This value clears AAA with headroom while keeping about
+// half of the original gradient's luminance range; anything lighter trades
+// away the AAA rating, anything darker flattens the banner toward navy.
+$au-blue-banner: #335986;  // 7.2:1 under white text
+
+$body-bg:    #f5f7fa;
+$body-color: #2b2b2b;
+
+$font-family-sans-serif: "Source Sans Pro", Helvetica, Arial, sans-serif;
+$font-family-serif: "Source Serif Pro", Georgia, serif;
+
+$link-color: $au-blue-text;
+
+/*-- scss:rules --*/
+
+// ---------------------------------------------------------------------
+// Base "poster" page shell shared by every template. This turns a normal
+// Quarto HTML document into a single, print-free scrolling "web poster":
+// no sidebar/TOC chrome, wide content area, generous section spacing.
+// ---------------------------------------------------------------------
+
+body {
+  background: $body-bg;
+}
+
+#quarto-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Each template overrides this to lay out its ## sections (classic:
+// 3-column grid, modern: auto-fit card grid, minimal: single column).
+#quarto-document-content {
+  padding-top: 1.5rem;
+}
+
+.quarto-title-banner {
+  background: linear-gradient(135deg, $au-navy 0%, $au-blue-banner 100%);
+  color: white;
+  padding: 2.5rem 2rem;
+  border-radius: 0 0 12px 12px;
+}
+
+.quarto-title-banner h1.title {
+  color: white;
+}
+
+// Both the "Author"/"Published" labels and their values are pure white, and
+// the label reads as secondary through case, tracking, and weight rather than
+// through a dimmer color. Dimming the label was the original approach, but a
+// tinted label is still normal-size text, so AAA would have demanded 7:1 of
+// the tint and forced the gradient's light stop almost all the way to navy.
+// Distinguishing typographically instead keeps the gradient and clears AAA.
+.quarto-title-meta-heading {
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  // Guard against a theme applying opacity here: a translucent white would
+  // blend toward the background and quietly undo the measured contrast.
+  opacity: 1;
+}
+
+.quarto-title-meta-contents {
+  color: white;
+  opacity: 1;
+}
+
+// Logo shown only in the web version (the print/typst version places the
+// logo itself via the poster-typst extension's `institution-logo` option).
+.poster-logo {
+  max-height: 64px;
+  width: auto;
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+
+// Pandoc/Quarto wraps every level-2 heading and its content in
+// <section class="level2" id="...">, automatically -- no extra markup
+// needed in the .qmd. We use that to lay sections out as poster "panels".
+section.level2 {
+  background: white;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+section.level2 > h2 {
+  color: $au-navy;
+  border-bottom: 3px solid $au-light-blue;
+  padding-bottom: 0.4rem;
+  margin-top: 0;
+}
+
+#acknowledgments,
+#references {
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.9rem;
+  color: $au-grey;
+}
+
+// A visible break between the last content section and the closing
+// Acknowledgments/References block, so the two don't read as a
+// continuation of the section above them.
+.section-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 1.75rem 0 1.25rem;
+}
+
+.callout,
+.callout-note {
+  border-left-color: $au-blue;
+}
+
+// ---------------------------------------------------------------------
+// Ethics & Broader Impact panel: a visually distinct, shaded/bordered
+// block for the disclosures conferences increasingly require (GenAI use,
+// privacy/data governance, bias & broader impact). Deliberately sized
+// above normal body text so it reads at poster distance.
+// ---------------------------------------------------------------------
+.ethics-panel {
+  background: #fff8e6;
+  border: 3px solid $au-red;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-size: 1.35rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.ethics-panel h2,
+.ethics-panel h3 {
+  border-bottom: none;
+  color: $au-red;
+  margin-top: 0;
+}
+
+.ethics-panel p {
+  margin: 0.6rem 0;
+}
+
+.ethics-panel strong {
+  color: $au-navy;
+}

@@ -1,0 +1,53 @@
+# Shared brand definition for American University conference posters.
+# Referenced (directly or indirectly, via scss) by all three templates so
+# that colors, fonts, and the organization logo stay consistent and only
+# need to be updated in one place.
+#
+# See https://quarto.org/docs/authoring/brand.html
+meta:
+  name: "American University"
+
+# Note: logo is intentionally *not* declared here. Quarto's brand.yml
+# `logo:` key auto-inserts a small logo into every format (including
+# typst), which would double up with the logo each template already
+# places explicitly (via `institution-logo` for print, or the
+# `.poster-logo` image for the web version). Keep the actual logo file
+# at images/au-logo.png and reference it directly from each template.
+
+color:
+  # Muted versions of AU's official navy/red/blue for accents (borders,
+  # footer bars, headings) so they read as calm brand cues rather than
+  # competing with the poster's actual content. The full-saturation
+  # brand hex codes (au-navy-vivid/au-red-vivid) are kept below for any
+  # spot that still needs the "official" swatch (e.g. logos).
+  palette:
+    au-navy: "#25406A"
+    au-blue: "#3E6DA3"
+    au-light-blue: "#B3D7FF"
+    au-red: "#A8384F"
+    # Text colors, dark enough to clear WCAG AAA (7:1) at normal size on the
+    # web version's page background. au-grey was #666666 (5.35:1) and links
+    # used au-blue directly (4.99:1); both were AA but not AAA. au-blue-text
+    # exists separately so links can darken without darkening the banner
+    # gradient or callout borders that also use au-blue. Re-check with
+    # scripts/check-contrast.R if you change any of these.
+    au-grey: "#505050"
+    au-blue-text: "#2F527A"
+    # Light end of the web title banner's gradient, dark enough that the
+    # normal-size white author/date text over it clears AAA (7:1).
+    au-blue-banner: "#335986"
+    au-navy-vivid: "#00205B"
+    au-blue-vivid: "#0047B3"
+    au-red-vivid: "#CC0033"
+  background: white
+  foreground: au-grey
+  primary: au-blue-text
+  secondary: au-navy
+  info: au-red
+
+typography:
+  base:
+    family: "Source Sans Pro"
+  headings:
+    family: "Source Sans Pro"
+    weight: bold

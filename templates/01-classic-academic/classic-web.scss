@@ -1,0 +1,34 @@
+/*-- scss:rules --*/
+
+// "Classic Academic": mirrors the traditional 3-column academic poster
+// (Intro / Methods / Results-style layout), just rendered responsively
+// for on-screen reading. Serif headings for a more traditional feel.
+
+#quarto-document-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+// Let the References/Acknowledgments sections span the full width at
+// the bottom rather than being squeezed into one column.
+#references,
+#acknowledgments {
+  grid-column: 1 / -1;
+}
+
+h1.title {
+  font-family: $font-family-serif;
+}
+
+section.level2 > h2 {
+  font-family: $font-family-serif;
+  font-size: 1.4rem;
+}
+
+@media (max-width: 900px) {
+  #quarto-document-content {
+    grid-template-columns: 1fr;
+  }
+}
