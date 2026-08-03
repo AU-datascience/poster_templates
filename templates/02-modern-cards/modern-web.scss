@@ -46,6 +46,20 @@ section.level2 > h2 {
   line-height: 1.1;
 }
 
+// The arrow glyph (U+2192) is a thin stroke shape in Source Sans Pro even
+// at font-weight: 700 -- bold only thickens the digits, so the "->" reads
+// visibly lighter than the numbers flanking it. A text-stroke fattens just
+// the arrow to match, without affecting the numerals or falling back to a
+// different (unstyled) font for the glyph.
+.stat-arrow {
+  -webkit-text-stroke: 1px currentColor;
+}
+
+// The label/caption around `.stat` (see poster.qmd) are deliberately plain
+// <p> tags with no dedicated class -- they should read in the same voice
+// as the surrounding card prose, not as a smaller/muted caption, so they
+// pick up the card's normal paragraph styling with no override here.
+
 @media (max-width: 700px) {
   #quarto-document-content {
     grid-template-columns: 1fr;

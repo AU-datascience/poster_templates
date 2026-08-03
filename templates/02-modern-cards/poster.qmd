@@ -14,7 +14,7 @@ format:
     size: "48x36"
     poster-authors: "A. Sample Researcher"
     departments: "Department of Mathematics and Statistics, American University"
-    institution-logo: "../../images/au-logo.png"
+    institution-logo: "../../images/au-logo-hires.png"
     footer-text: "Poster Template Validation · 2026"
     footer-url: "https://www.american.edu"
     footer-emails: "researcher@american.edu"
@@ -22,6 +22,12 @@ format:
     num-columns: 2
     body-font-size: 26
     univ-logo-scale: 90
+    # au-logo-hires.png is a high-res square mark (unlike the old 52x50px
+    # au-logo.png), so this renders crisply instead of a tiny/blurry icon.
+    # 3.5in column x 90% scale ≈ 3.15in logo on a 48in-wide poster --
+    # noticeably larger than the old broken render, but a 6in column (~5.4in
+    # logo) dominated the header and dwarfed the title text.
+    univ-logo-column-size: 3.5
     keywords: ["Simpson's paradox", "aggregation bias", "linear regression"]
   # ---- Online / web version (responsive HTML) ----
   html:
@@ -77,23 +83,33 @@ evidence_plot <- p_pooled | p_species
 ```
 
 ::: {.content-visible when-format="html"}
-![American University](../../images/au-logo.png){.poster-logo}
+![American University](../../images/au-logo-hires.png){.poster-logo}
 :::
 
 ## The Headline Finding
 
 ```{=html}
-<div class="stat">`r overall_slope` &rarr; `r species_slope`</div>
+<p>Slope of bill depth on bill length (mm per mm):</p>
+<div class="stat">`r overall_slope` <span class="stat-arrow">&rarr;</span> `r species_slope`</div>
+<p>(pooled estimate &rarr; estimate once species is added as a covariate)</p>
 ```
 
 ```{=typst}
 // The `.stat` class only exists in the web stylesheet, so the print version
 // needs its own oversized treatment -- otherwise the poster's single most
-// important number sets at body size and carries no visual weight.
+// important number sets at body size and carries no visual weight. The
+// label/caption lines are set in plain body-matching text (26pt, this
+// template's body-font-size -- not a smaller/muted caption style) so they
+// read as part of the same paragraph voice as the rest of the poster,
+// with only the number itself pulled out to oversized red/bold.
 #align(center)[
+  #text(size: 26pt)[Slope of bill depth on bill length (mm per mm):]
+  #v(2pt)
   #text(size: 72pt, weight: "bold", fill: rgb("#A8384F"))[
     `r overall_slope` #h(0.25em) → #h(0.25em) `r species_slope`
   ]
+  #v(2pt)
+  #text(size: 26pt)[(pooled estimate → estimate once species is added as a covariate)]
 ]
 #v(4pt)
 ```
@@ -128,6 +144,16 @@ Pooling all penguin species together, bill depth *falls* as bill length rises. O
 ```{=typst}
 // Pinned to the physical bottom-right corner of the page via Typst's
 // place(scope: "parent"), escaping the surrounding column layout.
+//
+// `width` is a fraction of the *parent* container -- i.e. the page's
+// printable area *after* margins (scope: "parent" escapes the column, but
+// not the page margins), not the full page including margins. So it has
+// to be hand-tuned per template rather than reused as-is.
+// This is a 2-column, 48in-wide poster with 2in side margins (44in
+// printable) and a 64pt gutter, so one column is ~21.56in net ->
+// 21.56/44 ≈ 49%. (45% and 38% previously were computed against the full
+// 48in page instead of the 44in printable width, leaving the box visibly
+// narrower than the column and shifted toward the right margin.)
 #place(
   bottom + right,
   scope: "parent",
@@ -138,13 +164,17 @@ Pooling all penguin species together, bill depth *falls* as bill length rises. O
     stroke: 2.5pt + rgb("#A8384F"),
     radius: 8pt,
     inset: 14pt,
-    width: 38%,
+    width: 49%,
     breakable: false,
   )[
     #set align(left)
-    #text(size: 20pt, weight: "bold", fill: rgb("#A8384F"))[Ethics & Broader Impact]
+    // Matches this template's body-font-size: 26 (+4pt, echoing the
+    // poster package's own heading_base_size = body_font_size + 4pt
+    // convention) so the panel doesn't read smaller than the surrounding
+    // bullet text.
+    #text(size: 30pt, weight: "bold", fill: rgb("#A8384F"))[Ethics & Broader Impact]
     #v(5pt)
-    #text(size: 16pt)[
+    #text(size: 26pt)[
       *GenAI use:* an AI coding assistant (Claude) drafted portions of the code/prose; humans verified all results and remain accountable; no data were fabricated or altered.
 
       *Privacy:* public, non-human biometric data only -- no PII, no IRB/GDPR/EU AI Act applicability.

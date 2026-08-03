@@ -16,6 +16,10 @@ poster_templates <- list(
     label = "01-classic-academic",
     size = "42x28in, 3 columns",
     num_columns = 3,
+    # Re-measured 2026-08-03 after enlarging the header logo (institution-logo
+    # swapped to images/au-logo-hires.png). Kept deliberately small here
+    # (univ-logo-column-size: 2) because this template runs with ~0 slack --
+    # anything larger overflowed to a second page.
     baseline_fill = c(100, 100, 82)
   ),
   list(
@@ -24,14 +28,26 @@ poster_templates <- list(
     size = "48x36in, 2 columns",
     num_columns = 2,
     # Column 1 is intentionally short; see the #colbreak() note in its .qmd.
-    baseline_fill = c(44, 82)
+    # Re-measured 2026-08-03 after enlarging the header logo (institution-logo
+    # swapped to the higher-res images/au-logo-hires.png, univ-logo-column-size
+    # 3.5in), adding a label/caption around the headline .stat block (now in
+    # plain body-matching text, not a separate caption style), and widening
+    # the ethics-panel box to 49% (computed against the page's *printable*
+    # width -- see the comment above the #place() call -- to actually match
+    # column 2's net width, and its text bumped to body-font-size) -- all of
+    # this shifts column fill without changing the #colbreak().
+    baseline_fill = c(50, 86)
   ),
   list(
     dir = "03-minimal-story",
     label = "03-minimal-story",
     size = "24x52in, 1 column",
     num_columns = 1,
-    baseline_fill = 79
+    # Re-measured 2026-08-03 after enlarging the header logo (institution-logo
+    # swapped to images/au-logo-hires.png) and widening the ethics-panel box
+    # from 34% to 83% (to match the single column's net width); this template
+    # has plenty of vertical slack so the drift is small either way.
+    baseline_fill = 77
   )
 )
 

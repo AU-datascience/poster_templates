@@ -99,8 +99,11 @@ body {
 
 // Logo shown only in the web version (the print/typst version places the
 // logo itself via the poster-typst extension's `institution-logo` option).
+// Sized up from the original 64px now that AU_logo.png (1361x1327px) has
+// enough resolution to hold a larger size crisply -- the old au-logo.png
+// (52x50px) would have gone soft well before this.
 .poster-logo {
-  max-height: 64px;
+  max-height: 96px;
   width: auto;
   float: right;
   margin: 0 0 1rem 1rem;

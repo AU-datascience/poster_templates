@@ -14,7 +14,7 @@ format:
     size: "24x52"
     poster-authors: "A. Sample Researcher"
     departments: "Department of Mathematics and Statistics, American University"
-    institution-logo: "../../images/au-logo.png"
+    institution-logo: "../../images/au-logo-hires.png"
     footer-text: "Poster Template Validation · 2026"
     footer-url: "https://www.american.edu"
     footer-emails: "researcher@american.edu"
@@ -23,7 +23,10 @@ format:
     body-font-size: 24
     univ-logo-scale: 70
     univ-logo-column-size: 3
-    title-column-size: 16
+    # title-column-size is no longer a settable option -- poster.typ now
+    # computes it automatically as whatever's left of the printable width
+    # after this column, so the title centers correctly next to any logo
+    # size.
     # Must stay above the level-1 heading size, which the poster package
     # hardcodes at body-font-size + 16 (= 40pt here); authors are set below
     # the heading size in turn, so the hierarchy reads title > section >
@@ -62,7 +65,7 @@ by_species_r <- penguins2 |>
 ```
 
 ::: {.content-visible when-format="html"}
-![American University](../../images/au-logo.png){.poster-logo}
+![American University](../../images/au-logo-hires.png){.poster-logo}
 :::
 
 ## The Question
@@ -88,6 +91,15 @@ Using the `r nrow(penguins2)` penguins in the `palmerpenguins` dataset [@horst20
 ```{=typst}
 // Pinned to the physical bottom-right corner of the page via Typst's
 // place(scope: "parent"), escaping the (single-column) content flow.
+//
+// `width` is a fraction of the *parent* container -- i.e. the page's
+// printable area *after* margins (scope: "parent" escapes the column, but
+// not the page margins), not the full page including margins. This is a
+// single-column, 24in-wide poster with 2in side margins, so the one
+// column spans the *entire* 20in printable width -> 100%. (83% and 34%
+// previously were computed against the full 24in page instead of the
+// 20in printable width, leaving the box visibly narrower than the column
+// and shifted toward the right margin.)
 #place(
   bottom + right,
   scope: "parent",
@@ -98,13 +110,17 @@ Using the `r nrow(penguins2)` penguins in the `palmerpenguins` dataset [@horst20
     stroke: 2.5pt + rgb("#25406A"),
     radius: 8pt,
     inset: 14pt,
-    width: 34%,
+    width: 100%,
     breakable: false,
   )[
     #set align(left)
-    #text(size: 20pt, weight: "bold", fill: rgb("#25406A"))[Ethics & Broader Impact]
+    // Matches this template's body-font-size: 24 (+4pt, echoing the
+    // poster package's own heading_base_size = body_font_size + 4pt
+    // convention) so the panel doesn't read smaller than the surrounding
+    // body text.
+    #text(size: 28pt, weight: "bold", fill: rgb("#25406A"))[Ethics & Broader Impact]
     #v(5pt)
-    #text(size: 16pt)[
+    #text(size: 24pt)[
       *GenAI use:* an AI coding assistant (Claude) drafted portions of the code/prose; humans verified all results and remain accountable; no data were fabricated or altered.
 
       *Privacy:* public, non-human biometric data only -- no PII, no IRB/GDPR/EU AI Act applicability.

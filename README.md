@@ -114,7 +114,7 @@ Each template also has a placeholder **Code & data** line near Acknowledgments w
 - **`scss/poster-common.scss`**: base tokens and shared "poster shell" rules for the web/HTML version.
 - This includes: title banner, section card styling, the automatic `section.level2` → poster-panel behavior. 
 - Each template's own `*-web.scss` file is loaded *after* this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.
-- **`images/au-logo.png`** — organization logo. Used two ways:
+- **`images/au-logo-hires.png`** — organization logo. Used two ways:
   - Print (`poster-typst`): passed via `institution-logo:` in the format options; the extension places and sizes it automatically (tune with `univ-logo-scale` / `univ-logo-column-size`).
   - Web (`html`): included directly in the `.qmd` inside a `::: {.content-visible when-format="html"}` block, styled by the `.poster-logo` class in `poster-common.scss`.
 

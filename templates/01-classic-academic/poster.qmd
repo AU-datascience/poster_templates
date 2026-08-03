@@ -14,7 +14,7 @@ format:
     size: "42x28"
     poster-authors: "A. Sample Researcher"
     departments: "Department of Mathematics and Statistics, American University"
-    institution-logo: "../../images/au-logo.png"
+    institution-logo: "../../images/au-logo-hires.png"
     footer-text: "Poster Template Validation · 2026"
     footer-url: "https://www.american.edu"
     footer-emails: "researcher@american.edu"
@@ -23,6 +23,15 @@ format:
     num-columns: 3
     body-font-size: 24
     univ-logo-scale: 90
+    # This template runs with zero vertical slack (column-balance baseline
+    # 100/100/82) -- any taller logo header pushes every column down and
+    # overflows to a second page. Keep this modest (~1.8in) rather than
+    # matching 02's 6in column; re-check `pages` after any further change.
+    # (title-column-size is no longer a settable option -- poster.typ now
+    # computes it automatically as whatever's left of the printable width
+    # after this column, so the title centers correctly next to any logo
+    # size.)
+    univ-logo-column-size: 2
     keywords: ["Simpson's paradox", "aggregation bias", "linear regression"]
   # ---- Online / web version (responsive HTML) ----
   html:
@@ -55,7 +64,7 @@ by_species_r <- penguins2 |>
 ```
 
 ::: {.content-visible when-format="html"}
-![American University](../../images/au-logo.png){.poster-logo}
+![American University](../../images/au-logo-hires.png){.poster-logo}
 :::
 
 ## Introduction
@@ -107,9 +116,13 @@ by_species_r <- penguins2 |>
     breakable: false,
   )[
     #set align(left)
-    #text(size: 20pt, weight: "bold", fill: rgb("#A8384F"))[Ethics & Broader Impact]
+    // Matches this template's body-font-size: 24 (+4pt, echoing the
+    // poster package's own heading_base_size = body_font_size + 4pt
+    // convention) so the panel doesn't read smaller than the surrounding
+    // bullet text.
+    #text(size: 28pt, weight: "bold", fill: rgb("#A8384F"))[Ethics & Broader Impact]
     #v(4pt)
-    #text(size: 16pt)[
+    #text(size: 24pt)[
       *GenAI use:* an AI coding assistant (Claude) drafted portions of the code/prose; humans verified all results and remain accountable; no data were fabricated or altered.
 
       *Privacy:* public, non-human biometric data only -- no PII, no IRB/GDPR/EU AI Act applicability.
