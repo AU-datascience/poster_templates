@@ -202,12 +202,10 @@ acks_fg <- css_colors("#acknowledgments", "color")
 h2_common <- css_colors("section.level2 > h2", "color", file = COMMON_SCSS)
 h2_modern <- css_colors("section.level2 > h2", "color", file = TEMPLATE_SCSS[["02"]])
 h2_minimal <- css_colors("section.level2 > h2", "color", file = TEMPLATE_SCSS[["03"]])
-stat_fg <- css_colors(".stat", "color", file = TEMPLATE_SCSS[["02"]])
 ethics_strong <- css_colors(".ethics-panel strong", "color")
 
 h2_modern_large <- css_font_size_px("section.level2 > h2",
                                     file = TEMPLATE_SCSS[["02"]]) >= LARGE_TEXT_PX
-stat_large <- css_font_size_px(".stat", file = TEMPLATE_SCSS[["02"]]) >= LARGE_TEXT_PX
 h2_minimal_large <- css_font_size_px("section.level2 > h2",
                                      file = TEMPLATE_SCSS[["03"]]) >= LARGE_TEXT_PX
 h2_classic_large <- css_font_size_px("section.level2 > h2",
@@ -225,7 +223,6 @@ pairs <- tribble(
   "h2 on white card (01)",                   h2_common,       card_bg,   h2_classic_large,  "rule",
   "h2 on page background (03, flat)",        h2_minimal,      page_bg,   h2_minimal_large,  "rule",
   "h2 accent on white card (02)",            h2_modern,       card_bg,   h2_modern_large,   "rule",
-  ".stat on white card (02)",                stat_fg,         card_bg,   stat_large,        "rule",
   "link on white card",                      palette[["$link-color"]], card_bg, FALSE, "Bootstrap var / rule",
   "link on page background",                 palette[["$link-color"]], page_bg, FALSE, "Bootstrap var / rule",
   "acks/refs text on page background",       acks_fg,         page_bg,          FALSE, "rule",

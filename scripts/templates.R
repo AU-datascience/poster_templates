@@ -30,13 +30,14 @@ poster_templates <- list(
     # Column 1 is intentionally short; see the #colbreak() note in its .qmd.
     # Re-measured 2026-08-03 after enlarging the header logo (institution-logo
     # swapped to the higher-res images/au-logo-hires.png, univ-logo-column-size
-    # 3.5in), adding a label/caption around the headline .stat block (now in
-    # plain body-matching text, not a separate caption style), and widening
-    # the ethics-panel box to 49% (computed against the page's *printable*
-    # width -- see the comment above the #place() call -- to actually match
-    # column 2's net width, and its text bumped to body-font-size) -- all of
-    # this shifts column fill without changing the #colbreak().
-    baseline_fill = c(50, 86)
+    # 3.5in), widening the ethics-panel box to 49% (computed against the
+    # page's *printable* width -- see the comment above the #place() call --
+    # to actually match column 2's net width, and its text bumped to
+    # body-font-size), and replacing the 72pt headline `.stat` block with one
+    # plain-markdown sentence at body size -- column 1 lost the extra height
+    # that oversized block used to hold, so its fill dropped 50 -> 44; column
+    # 2 (the #colbreak() side) is unaffected.
+    baseline_fill = c(44, 86)
   ),
   list(
     dir = "03-minimal-story",

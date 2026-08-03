@@ -23,13 +23,12 @@ The three templates offer different design approaches that may be tailored for a
 
    ![01-classic-academic poster preview](images/previews/preview-01-classic-academic.png)
 
-2. **`templates/02-modern-cards/`**: dashboard-style card grid with a bold accent color and a `.stat` class for headlining one big number.
+2. **`templates/02-modern-cards/`**: dashboard-style card grid with a bold accent color, headlining its key finding as one sentence rather than an isolated number.
     - Print size 48x36 in, 2 Typst columns (fewer, larger panels). 
     - This size doubles as a standard conference board size -- see "Choosing a print size" below.
     - This template's content was originally short enough that Typst never started the second column at all (everything landed in column 1, leaving column 2 blank except the floated Ethics panel). Fixed by adding a manual `#colbreak()` (raw Typst, right before `## Evidence`) so the figure/table/"What's Next" content explicitly starts column 2, plus enough added text/a correlation table to make the two columns' content roughly comparable to `01-classic-academic`'s. 
     - The figure itself was always full *column* width -- if you add your own full-page figures, note that `out-width: "100%"` measured against the *page* width rather than the current column's width immediately after a `#colbreak()` in local testing, overflowing past the margin; setting an explicit absolute `out-width` (e.g. `"20in"`) sidesteps it.
-    - The `.stat` class only exists in the web stylesheet, so the headline number is written **twice** -- a `` ```{=html} `` block carrying `<div class="stat">` and a `` ```{=typst} `` block setting the same number at 72pt. Without the second half it silently prints at body size. Inline `` `r ... ` `` code is evaluated inside both raw blocks, so the number itself still comes from the fitted model, not a hardcoded string.
-    - Only this template has a headline stat. `01-classic-academic` and `03-minimal-story` are deliberately left without one -- a classic multi-section poster and a running narrative have no single number to feature -- so there is nothing to style there. If you add a stat to either, copy *both* blocks and add a `.stat` rule to that template's `*-web.scss`.
+    - **The Headline Finding is plain markdown, not a per-format `.stat` block.** An earlier draft set the two slope numbers on their own line at 72pt (with duplicated `` ```{=html} ``/`` ```{=typst} `` blocks, since a web-only `.stat` CSS class doesn't reach the print output) -- bare digits and an arrow glyph with no verb tying them into a sentence, and the arrow's stroke weight didn't reliably match the surrounding bold text in either format. It now reads as one sentence ("pooling every species together gives **X**, but adding species ... reverses it to **Y**") at body size, so pandoc's normal `**bold**` emphasis handles both outputs identically -- no raw blocks, no per-format duplication, no font-fallback weight mismatch to chase.
 
    ![02-modern-cards poster preview](images/previews/preview-02-modern-cards.png)
 

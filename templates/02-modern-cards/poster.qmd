@@ -88,31 +88,7 @@ evidence_plot <- p_pooled | p_species
 
 ## The Headline Finding
 
-```{=html}
-<p>Slope of bill depth on bill length (mm per mm):</p>
-<div class="stat">`r overall_slope` <span class="stat-arrow">&rarr;</span> `r species_slope`</div>
-<p>(pooled estimate &rarr; estimate once species is added as a covariate)</p>
-```
-
-```{=typst}
-// The `.stat` class only exists in the web stylesheet, so the print version
-// needs its own oversized treatment -- otherwise the poster's single most
-// important number sets at body size and carries no visual weight. The
-// label/caption lines are set in plain body-matching text (26pt, this
-// template's body-font-size -- not a smaller/muted caption style) so they
-// read as part of the same paragraph voice as the rest of the poster,
-// with only the number itself pulled out to oversized red/bold.
-#align(center)[
-  #text(size: 26pt)[Slope of bill depth on bill length (mm per mm):]
-  #v(2pt)
-  #text(size: 72pt, weight: "bold", fill: rgb("#A8384F"))[
-    `r overall_slope` #h(0.25em) → #h(0.25em) `r species_slope`
-  ]
-  #v(2pt)
-  #text(size: 26pt)[(pooled estimate → estimate once species is added as a covariate)]
-]
-#v(4pt)
-```
+Slope of bill depth on bill length (mm per mm): pooling every species together gives **`r overall_slope`**, but adding species to the model as a covariate reverses it to **`r species_slope`**.
 
 Pooling all penguin species together, bill depth *falls* as bill length rises. Once species is taken into account, the relationship *reverses* completely -- a textbook **Simpson's paradox**.
 

@@ -36,29 +36,14 @@ section.level2 > h2 {
   border-bottom: none;
 }
 
-// Optional callout class for a big headline number/finding, e.g.
-// `[42%]{.stat}` -- use as a span/div around a key result.
-.stat {
-  display: block;
-  font-size: 3rem;
-  font-weight: 700;
-  color: $au-navy;
-  line-height: 1.1;
-}
-
-// The arrow glyph (U+2192) is a thin stroke shape in Source Sans Pro even
-// at font-weight: 700 -- bold only thickens the digits, so the "->" reads
-// visibly lighter than the numbers flanking it. A text-stroke fattens just
-// the arrow to match, without affecting the numerals or falling back to a
-// different (unstyled) font for the glyph.
-.stat-arrow {
-  -webkit-text-stroke: 1px currentColor;
-}
-
-// The label/caption around `.stat` (see poster.qmd) are deliberately plain
-// <p> tags with no dedicated class -- they should read in the same voice
-// as the surrounding card prose, not as a smaller/muted caption, so they
-// pick up the card's normal paragraph styling with no override here.
+// The Headline Finding's two slope numbers previously stood alone on their
+// own line at 72pt/oversized, with no verb tying them into a sentence --
+// that read as bare digits with no context, and an isolated arrow glyph
+// between them didn't reliably match the surrounding bold weight across
+// fonts/formats. Now the whole finding is one plain-markdown sentence at
+// body size, so no `.stat` class or per-format duplication is needed --
+// pandoc's normal `**bold**` -> emphasis mapping handles both html and
+// typst output identically.
 
 @media (max-width: 700px) {
   #quarto-document-content {
