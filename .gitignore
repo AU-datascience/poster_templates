@@ -1,8 +1,17 @@
 .quarto/
 *_files/
 *.pdf
-*.typ
 poster.html
+
+# Rendered Typst intermediates only -- Quarto writes these under .quarto/
+# (already ignored above), never directly in a template or extension dir.
+# Do NOT broaden this to a bare `*.typ`: that previously matched (and
+# silently untracked) the vendored extension source below.
+templates/**/poster.typ
+
+# ...but never ignore the vendored Typst extension source itself, including
+# the local patches documented in README.md ("Notes / gotchas").
+!_extensions/**/*.typ
 
 /.quarto/
 **/*.quarto_ipynb
