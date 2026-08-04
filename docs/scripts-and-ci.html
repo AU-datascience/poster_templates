@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -154,6 +173,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./why-typst.html"> 
 <span class="menu-text">Why Typst</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -246,7 +269,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p><code>scripts/templates.R</code> is the shared registry of templates (column counts, print sizes, expected column-fill baselines) that the other three read, so adding a template to the multi-template layout is a one-line edit there; a template discovered outside that registry (e.g.&nbsp;a renamed single-poster fork) just runs without a column-balance baseline to compare against.</p>
-<p>A <code>Makefile</code> wraps the common commands:</p>
+<p>A <code>Makefile</code> <span class="citation" data-cites="MakefileOSDevWiki">(<a href="#ref-MakefileOSDevWiki" role="doc-biblioref">OSDev, n.d.</a>)</span> wraps the common commands:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> render       <span class="co"># clear the stale Typst package cache, then render + check everything</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> check        <span class="co"># run the checks against whatever output already exists (no render)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean-cache  <span class="co"># just clear .quarto/typst/packages (see the caching note below)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -262,7 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="continuous-integration" class="level3" data-number="1.1">
 <h3 data-number="1.1" class="anchored" data-anchor-id="continuous-integration"><span class="header-section-number">1.1</span> Continuous integration</h3>
-<p><code>.github/workflows/posters.yml</code> runs these same scripts on push and pull request, in three jobs:</p>
+<p><code>.github/workflows/posters.yml</code> runs these same scripts on push and pull request via GitHub Actions <span class="citation" data-cites="githubUnderstandingGitHubActions2024">(<a href="#ref-githubUnderstandingGitHubActions2024" role="doc-biblioref">GitHub 2024</a>)</span>, in three jobs (a workflow-authoring reference like <span class="citation" data-cites="usethis-GitHubActionsSetup">(<a href="#ref-usethis-GitHubActionsSetup" role="doc-biblioref"><em><span>GitHub Actions</span> Setup — Github_actions</em> 2026</a>)</span>, written for R packages specifically, is a useful pattern library even though this repo hand-writes its own YAML rather than generating it):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -295,7 +318,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p>Both gates exist because a push touching none of those paths — a docs-only or README-only commit, say — previously still paid for the full job’s R/Quarto toolchain install regardless of relevance: 30-40 minutes observed for <code>contrast</code> alone, almost all of it a from-source <code>tidyverse</code> install with no cache, for an audit whose own logic runs in seconds. A job skipped this way reports as <code>skipped</code> rather than failing, which GitHub’s required-status-check logic treats as passing, so this is safe to use even where these jobs are required checks on <code>main</code>.</p>
-<p>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a> for project orientation, the vendored extension’s local patches, and the open fonts issue.</p>
+<p>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a> — an orientation file following the open <code>AGENTS.md</code> convention <span class="citation" data-cites="AgentsmdAgentsmd2026">(<a href="#ref-AgentsmdAgentsmd2026" role="doc-biblioref"><em>Agentsmd/Agents.md</em> 2026</a>)</span> for AI coding agents (and humans) working in a repo — for project orientation, the vendored extension’s local patches, and the open fonts issue.</p>
 <p>Two caveats worth knowing before you rely on it:</p>
 <ul>
 <li><strong>Quarto’s release version matters.</strong> Both workflows pin <code>quarto-dev/quarto-actions/setup@v2</code> to a specific Quarto version rather than tracking <code>release</code>; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution.
@@ -443,9 +466,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-AgentsmdAgentsmd2026" class="csl-entry" role="listitem">
+<em>Agentsmd/Agents.md</em>. 2026. AGENTS.md. <a href="https://github.com/agentsmd/agents.md">https://github.com/agentsmd/agents.md</a>.
+</div>
+<div id="ref-githubUnderstandingGitHubActions2024" class="csl-entry" role="listitem">
+GitHub. 2024. <span>“Understanding <span>GitHub Actions</span>.”</span> In <em>Understanding GitHub Actions</em>. <a href="https://docs.github.com/en/actions/about-github-actions/understanding-github-actions">https://docs.github.com/en/actions/about-github-actions/understanding-github-actions</a>.
+</div>
+<div id="ref-usethis-GitHubActionsSetup" class="csl-entry" role="listitem">
+<em><span>GitHub Actions</span> Setup — Github_actions</em>. 2026. <a href="https://usethis.r-lib.org/reference/github_actions.html">https://usethis.r-lib.org/reference/github_actions.html</a>.
+</div>
+<div id="ref-MakefileOSDevWiki" class="csl-entry" role="listitem">
+OSDev. n.d. <em>Makefile - <span>OSDev Wiki</span></em>. Accessed August 4, 2026. <a href="https://wiki.osdev.org/Makefile">https://wiki.osdev.org/Makefile</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

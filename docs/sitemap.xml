@@ -2,26 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://au-datascience.github.io/poster_templates/theming.html</loc>
-    <lastmod>2026-08-04T21:31:18.479Z</lastmod>
+    <lastmod>2026-08-04T22:18:54.276Z</lastmod>
   </url>
   <url>
-    <loc>https://au-datascience.github.io/poster_templates/why-typst.html</loc>
-    <lastmod>2026-08-04T15:10:19.401Z</lastmod>
-  </url>
-  <url>
-    <loc>https://au-datascience.github.io/poster_templates/index.html</loc>
-    <lastmod>2026-08-04T21:39:14.796Z</lastmod>
-  </url>
-  <url>
-    <loc>https://au-datascience.github.io/poster_templates/content-guide.html</loc>
-    <lastmod>2026-08-04T21:43:31.321Z</lastmod>
+    <loc>https://au-datascience.github.io/poster_templates/references.html</loc>
+    <lastmod>2026-08-04T22:17:37.877Z</lastmod>
   </url>
   <url>
     <loc>https://au-datascience.github.io/poster_templates/templates.html</loc>
-    <lastmod>2026-08-04T15:10:47.542Z</lastmod>
+    <lastmod>2026-08-04T22:17:53.317Z</lastmod>
+  </url>
+  <url>
+    <loc>https://au-datascience.github.io/poster_templates/content-guide.html</loc>
+    <lastmod>2026-08-04T22:18:08.632Z</lastmod>
+  </url>
+  <url>
+    <loc>https://au-datascience.github.io/poster_templates/index.html</loc>
+    <lastmod>2026-08-04T22:18:21.133Z</lastmod>
+  </url>
+  <url>
+    <loc>https://au-datascience.github.io/poster_templates/why-typst.html</loc>
+    <lastmod>2026-08-04T22:18:54.251Z</lastmod>
   </url>
   <url>
     <loc>https://au-datascience.github.io/poster_templates/scripts-and-ci.html</loc>
-    <lastmod>2026-08-04T21:17:59.950Z</lastmod>
+    <lastmod>2026-08-04T22:18:25.259Z</lastmod>
   </url>
 </urlset>

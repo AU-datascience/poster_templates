@@ -16,6 +16,11 @@ project:
   # it documents, rather than a generic Bootswatch theme.
   brand: ../_brand.yml
 
+# Shared bibliography for the whole docs site: any .qmd here can cite a
+# source with [@key], and references.qmd lists every entry (via nocite)
+# as a standing "look this up" page, whether or not it's cited elsewhere.
+bibliography: quarto_posters.bib
+
 website:
   title: "Quarto Conference Posters"
   description: "Print + web conference poster templates built with Quarto and Typst."
@@ -35,6 +40,8 @@ website:
         text: Scripts & CI
       - href: why-typst.qmd
         text: Why Typst
+      - href: references.qmd
+        text: References
     right:
       - icon: github
         href: https://github.com/AU-datascience/poster_templates

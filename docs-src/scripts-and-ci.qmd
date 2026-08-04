@@ -17,7 +17,7 @@ title: "Scripts & CI"
 
 `scripts/templates.R` is the shared registry of templates (column counts, print sizes, expected column-fill baselines) that the other three read, so adding a template to the multi-template layout is a one-line edit there; a template discovered outside that registry (e.g. a renamed single-poster fork) just runs without a column-balance baseline to compare against.
 
-A `Makefile` wraps the common commands:
+A `Makefile` [@MakefileOSDevWiki] wraps the common commands:
 
 ```bash
 make render       # clear the stale Typst package cache, then render + check everything
@@ -37,7 +37,7 @@ Every check in `render-all.R` exists because that failure actually happened once
 
 ### Continuous integration
 
-`.github/workflows/posters.yml` runs these same scripts on push and pull request, in three jobs:
+`.github/workflows/posters.yml` runs these same scripts on push and pull request via GitHub Actions [@githubUnderstandingGitHubActions2024], in three jobs (a workflow-authoring reference like [@usethis-GitHubActionsSetup], written for R packages specifically, is a useful pattern library even though this repo hand-writes its own YAML rather than generating it):
 
 | Job | Runs | Why |
 |---|----------|-----------------------|
@@ -47,7 +47,7 @@ Every check in `render-all.R` exists because that failure actually happened once
 
 Both gates exist because a push touching none of those paths — a docs-only or README-only commit, say — previously still paid for the full job's R/Quarto toolchain install regardless of relevance: 30-40 minutes observed for `contrast` alone, almost all of it a from-source `tidyverse` install with no cache, for an audit whose own logic runs in seconds. A job skipped this way reports as `skipped` rather than failing, which GitHub's required-status-check logic treats as passing, so this is safe to use even where these jobs are required checks on `main`.
 
-See [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md) for project orientation, the vendored extension's local patches, and the open fonts issue.
+See [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md) — an orientation file following the open `AGENTS.md` convention [@AgentsmdAgentsmd2026] for AI coding agents (and humans) working in a repo — for project orientation, the vendored extension's local patches, and the open fonts issue.
 
 Two caveats worth knowing before you rely on it:
 

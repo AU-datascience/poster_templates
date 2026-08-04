@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -119,6 +138,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link active" href="./why-typst.html" aria-current="page"> 
 <span class="menu-text">Why Typst</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -170,9 +193,9 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="why-typst-instead-of-latex" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="why-typst-instead-of-latex"><span class="header-section-number">1</span> Why Typst instead of LaTeX?</h2>
-<p>The print format here is <a href="https://quarto.org/docs/output-formats/typst.html"><code>poster-typst</code></a>, which typesets through <a href="https://typst.app">Typst</a> rather than through LaTeX (<code>format: pdf</code>).</p>
+<p>The print format here is <a href="https://quarto.org/docs/output-formats/typst.html"><code>poster-typst</code></a> <span class="citation" data-cites="quartoTypstOutputFormat">(<a href="#ref-quartoTypstOutputFormat" role="doc-biblioref">Posit Software, PBC, n.d.</a>)</span>, which typesets through Typst <span class="citation" data-cites="OverviewTypstDocumentation">(<a href="#ref-OverviewTypstDocumentation" role="doc-biblioref"><span>“Overview - <span>Typst Documentation</span>,”</span> n.d.</a>)</span> rather than through LaTeX (<code>format: pdf</code>).</p>
 <ul>
-<li>Quarto’s <a href="https://quarto.org/docs/output-formats/typst.html">Typst Basics</a> guide is the reference for everything in this section.</li>
+<li>Quarto’s <a href="https://quarto.org/docs/output-formats/typst.html">Typst Basics</a> guide <span class="citation" data-cites="allaire2024quarto QuartoGuide">(<a href="#ref-allaire2024quarto" role="doc-biblioref">Allaire et al. 2024</a>; <a href="#ref-QuartoGuide" role="doc-biblioref">J.J. Allaire et al. 2023</a>)</span> is the reference for everything in this section.</li>
 </ul>
 <p><strong>Why it fits posters well:</strong></p>
 <ul>
@@ -193,7 +216,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><strong>A younger ecosystem.</strong> The vendored extension needed three local patches (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) for things a mature LaTeX poster class would already handle.
 <ul>
-<li>Quarto’s own <a href="https://quarto.org/docs/output-formats/typst.html#known-limitations">Known Limitations</a> note that default image sizing may not match other formats, which is exactly the <code>out-width</code> surprise documented in <a href="./templates.html">Templates</a>.</li>
+<li>Quarto’s own <a href="https://quarto.org/docs/output-formats/typst.html#known-limitations">Known Limitations</a> <span class="citation" data-cites="quartoTypstOutputFormat">(<a href="#ref-quartoTypstOutputFormat" role="doc-biblioref">Posit Software, PBC, n.d.</a>)</span> note that default image sizing may not match other formats, which is exactly the <code>out-width</code> surprise documented in <a href="./templates.html">Templates</a>.</li>
 </ul></li>
 <li><strong>Raw blocks are format-locked.</strong> A <code>```{=typst}</code> block is invisible to HTML and vice versa, so genuinely dual-format content (the Ethics panel, the headline stat) has to be written twice and kept in sync by hand.</li>
 <li><strong>Different figure and citation defaults.</strong> Typst output defaults to <code>fig-format: svg</code> (these templates override it to <code>png</code>, see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) and uses Typst’s own bibliography engine rather than Pandoc’s citeproc, which is why suppressing its automatic “Bibliography” heading needed a template partial.</li>
@@ -201,9 +224,23 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-allaire2024quarto" class="csl-entry" role="listitem">
+Allaire, J. J., Charles Teague, Carlos Scheidegger, Yihui Xie, and Christophe Dervieux. 2024. <em>Quarto: <span>An</span> Open-Source Scientific and Technical Publishing System</em>. <a href="https://quarto.org">https://quarto.org</a>.
+</div>
+<div id="ref-QuartoGuide" class="csl-entry" role="listitem">
+J.J. Allaire, Christophe Dervieux, Carlos Scheidegger, Charles Teague, and Yihui Xie. 2023. <span>“Quarto - <span>Guide</span>.”</span> In <em>Quarto</em>. <a href="https://quarto.org/docs/guide/">https://quarto.org/docs/guide/</a>.
+</div>
+<div id="ref-OverviewTypstDocumentation" class="csl-entry" role="listitem">
+<span>“Overview - <span>Typst Documentation</span>.”</span> n.d. In <em>Typst</em>. Accessed August 4, 2026. <a href="https://typst.app/docs/">https://typst.app/docs/</a>.
+</div>
+<div id="ref-quartoTypstOutputFormat" class="csl-entry" role="listitem">
+Posit Software, PBC. n.d. <span>“Typst <span>Format</span> - <span>Quarto</span>.”</span> In <em>Quarto</em>. Accessed August 4, 2026. <a href="https://quarto.org/docs/output-formats/typst.html">https://quarto.org/docs/output-formats/typst.html</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

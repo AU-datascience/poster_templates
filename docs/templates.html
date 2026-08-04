@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -119,6 +138,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./why-typst.html"> 
 <span class="menu-text">Why Typst</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -212,7 +235,7 @@ ul.task-list li input[type="checkbox"] {
 </div></li>
 </ol>
 <p>Each preview above (<code>images/previews/preview-*.png</code>) is a 1200px-wide PNG rendered from that template’s own <code>poster-typst</code> PDF. Neither these nor <code>comparison.png</code> below are produced by <code>quarto render</code>; regenerate both with <code>Rscript scripts/make-previews.R</code> after a content change (render the PDFs first).</p>
-<p>All three are currently filled in with the <em>same</em> worked example (a Simpson’s-paradox analysis of bill shape across penguin species, using <code>palmerpenguins</code>) so the three visual styles are directly comparable:</p>
+<p>All three are currently filled in with the <em>same</em> worked example (a Simpson’s-paradox <span class="citation" data-cites="SimpsonsParadox2026">(<a href="#ref-SimpsonsParadox2026" role="doc-biblioref"><span>“Simpson’s Paradox”</span> 2026</a>)</span> analysis of bill shape across penguin species, using <code>palmerpenguins</code> <span class="citation" data-cites="palmerpenguins">(<a href="#ref-palmerpenguins" role="doc-biblioref">Horst et al. 2020</a>)</span>) so the three visual styles are directly comparable:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/comparison.png" class="img-fluid figure-img"></p>
@@ -235,7 +258,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="choosing-a-print-size" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="choosing-a-print-size"><span class="header-section-number">2</span> Choosing a print size</h2>
-<p><code>size:</code> (under <code>poster-typst:</code> in each template’s YAML) takes any Typst-compatible <code>"WIDTHxHEIGHT"</code> in inches; it isn’t tied to a specific venue.</p>
+<p><code>size:</code> (under <code>poster-typst:</code> in each template’s YAML) takes any Typst-compatible <code>"WIDTHxHEIGHT"</code> in inches; it isn’t tied to a specific venue. General poster-session guidance like <span class="citation" data-cites="PosterSessionGuidelines">(<a href="#ref-PosterSessionGuidelines" role="doc-biblioref"><em>Poster <span>Session Guidelines</span></em>, n.d.</a>)</span> is a useful sanity check on physical constraints (board size, viewing distance) beyond just the numbers below, and a venue’s own call for posters, e.g. <span class="citation" data-cites="CallPostersDemos">(<a href="#ref-CallPostersDemos" role="doc-biblioref"><em>Call for <span>Posters</span> and <span>Demos</span> <span>ACM SIGCOMM</span> 2026</em>, n.d.</a>)</span>, is the authoritative source for its board dimensions if it isn’t one of the four below.</p>
 <ul>
 <li>A few sizes recur often enough at ML/data-science conferences that it’s worth calling out how the templates map onto them (all landscape, given as the venue’s own H x W convention next to the equivalent <code>size:</code> string):</li>
 </ul>
@@ -285,9 +308,23 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-CallPostersDemos" class="csl-entry" role="listitem">
+<em>Call for <span>Posters</span> and <span>Demos</span> <span>ACM SIGCOMM</span> 2026</em>. n.d. Accessed August 4, 2026. <a href="https://conferences.sigcomm.org/sigcomm/2026/posters/">https://conferences.sigcomm.org/sigcomm/2026/posters/</a>.
+</div>
+<div id="ref-palmerpenguins" class="csl-entry" role="listitem">
+Horst, Allison Marie, Alison Presmanes Hill, and Kristen B Gorman. 2020. <em>Palmerpenguins: <span>Palmer Archipelago</span> (<span>Antarctica</span>) Penguin Data</em>. <a href="https://doi.org/10.5281/zenodo.3960218">https://doi.org/10.5281/zenodo.3960218</a>.
+</div>
+<div id="ref-PosterSessionGuidelines" class="csl-entry" role="listitem">
+<em>Poster <span>Session Guidelines</span></em>. n.d. Accessed August 4, 2026. <a href="https://www.apha.org/events-and-meetings/annual/presenters/poster-session-guidelines">https://www.apha.org/events-and-meetings/annual/presenters/poster-session-guidelines</a>.
+</div>
+<div id="ref-SimpsonsParadox2026" class="csl-entry" role="listitem">
+<span>“Simpson’s Paradox.”</span> 2026. <em>Wikipedia</em>, July. <a href="https://en.wikipedia.org/w/index.php?title=Simpson%27s_paradox&amp;oldid=1362705629">https://en.wikipedia.org/w/index.php?title=Simpson%27s_paradox&amp;oldid=1362705629</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

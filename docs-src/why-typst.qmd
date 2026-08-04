@@ -4,9 +4,9 @@ title: "Why Typst?"
 
 ## Why Typst instead of LaTeX?
 
-The print format here is [`poster-typst`](https://quarto.org/docs/output-formats/typst.html), which typesets through [Typst](https://typst.app) rather than through LaTeX (`format: pdf`). 
+The print format here is [`poster-typst`](https://quarto.org/docs/output-formats/typst.html) [@quartoTypstOutputFormat], which typesets through Typst [@OverviewTypstDocumentation] rather than through LaTeX (`format: pdf`). 
 
-- Quarto's [Typst Basics](https://quarto.org/docs/output-formats/typst.html) guide is the reference for everything in this section.
+- Quarto's [Typst Basics](https://quarto.org/docs/output-formats/typst.html) guide [@allaire2024quarto; @QuartoGuide] is the reference for everything in this section.
 
 **Why it fits posters well:**
 
@@ -22,7 +22,7 @@ The print format here is [`poster-typst`](https://quarto.org/docs/output-formats
 **What it costs, honestly:**
 
 - **A younger ecosystem.** The vendored extension needed three local patches (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas)) for things a mature LaTeX poster class would already handle. 
-    - Quarto's own [Known Limitations](https://quarto.org/docs/output-formats/typst.html#known-limitations) note that default image sizing may not match other formats, which is exactly the `out-width` surprise documented in [Templates](templates.qmd).
+    - Quarto's own [Known Limitations](https://quarto.org/docs/output-formats/typst.html#known-limitations) [@quartoTypstOutputFormat] note that default image sizing may not match other formats, which is exactly the `out-width` surprise documented in [Templates](templates.qmd).
 - **Raw blocks are format-locked.** A `` ```{=typst} `` block is invisible to HTML and vice versa, so genuinely dual-format content (the Ethics panel, the headline stat) has to be written twice and kept in sync by hand.
 - **Different figure and citation defaults.** Typst output defaults to `fig-format: svg` (these templates override it to `png`, see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas)) and uses Typst's own bibliography engine rather than Pandoc's citeproc, which is why suppressing its automatic "Bibliography" heading needed a template partial.
 - **LaTeX is still the right call if** you need a specific journal/venue LaTeX class, heavy LaTeX-only math or TikZ, or a collaborator's existing `.tex` workflow.

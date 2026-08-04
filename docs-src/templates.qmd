@@ -29,7 +29,7 @@ The three templates offer different design approaches that may be tailored for a
 
 Each preview above (`images/previews/preview-*.png`) is a 1200px-wide PNG rendered from that template's own `poster-typst` PDF. Neither these nor `comparison.png` below are produced by `quarto render`; regenerate both with `Rscript scripts/make-previews.R` after a content change (render the PDFs first).
 
-All three are currently filled in with the *same* worked example (a Simpson's-paradox analysis of bill shape across penguin species, using `palmerpenguins`) so the three visual styles are directly comparable:
+All three are currently filled in with the *same* worked example (a Simpson's-paradox [@SimpsonsParadox2026] analysis of bill shape across penguin species, using `palmerpenguins` [@palmerpenguins]) so the three visual styles are directly comparable:
 
 ![Comparison of the three print posters, one per row](images/comparison.png)
 
@@ -45,7 +45,7 @@ A lesson from filling in the templates: **the single-column minimal-story layout
 
 ## Choosing a print size
 
-`size:` (under `poster-typst:` in each template's YAML) takes any Typst-compatible `"WIDTHxHEIGHT"` in inches; it isn't tied to a specific venue.
+`size:` (under `poster-typst:` in each template's YAML) takes any Typst-compatible `"WIDTHxHEIGHT"` in inches; it isn't tied to a specific venue. General poster-session guidance like [@PosterSessionGuidelines] is a useful sanity check on physical constraints (board size, viewing distance) beyond just the numbers below, and a venue's own call for posters, e.g. [@CallPostersDemos], is the authoritative source for its board dimensions if it isn't one of the four below.
 
 - A few sizes recur often enough at ML/data-science conferences that it's worth calling out how the templates map onto them (all landscape, given as the venue's own H x W convention next to the equivalent `size:` string):
 

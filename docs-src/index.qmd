@@ -7,7 +7,7 @@ affiliation: American University, Washington, DC
 
 If you want to make a conference-style large-format poster using Quarto, this site has working templates for different style posters.
 
-- The workflow uses Quarto and its `poster-typst` extension as a modern replacement for older `posterdown`/R Markdown poster workflows. 
+- The workflow uses Quarto [@allaire2024quarto; @QuartoGuide] and its `poster-typst` extension as a modern replacement for older `posterdown`/R Markdown poster workflows. 
 - The workflow also uses Quarto's `_brand.yml` file to provide for consistent theming.
 - Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.
 
@@ -76,7 +76,7 @@ Check the environment requirements below. Then, assuming you've forked or cloned
 
 1. **Pick a starting template.** Skim the three options in [Templates](templates.qmd) and pick whichever layout fits your content. Each is a self-contained `templates/<name>/` folder that renders independently.
 2. **Copy the folder**, e.g. `cp -r templates/01-classic-academic templates/my-poster`. Keep it under `templates/` so the shared registry in `scripts/templates.R`, and everything that reads it (`render-all.R`, `check-contrast.R`, `make-previews.R`), picks it up automatically. If your fork will only ever hold one poster, you can instead move that single `.qmd` (and its sibling `.scss`) to the project's top level and delete `templates/` entirely; the scripts auto-detect either layout (see [Scripts & CI](scripts-and-ci.qmd)).
-3. **Edit the YAML front matter**: title, authors/affiliations, `poster-authors`, `departments`, footer contact info, and a print `size` (any Typst `"WIDTHxHEIGHT"` in inches. See [Choosing a print size](templates.qmd#choosing-a-print-size) for sizes that match common conference boards).
+3. **Edit the YAML [@YAMLAintMarkup] front matter**: title, authors/affiliations, `poster-authors`, `departments`, footer contact info, and a print `size` (any Typst `"WIDTHxHEIGHT"` in inches. See [Choosing a print size](templates.qmd#choosing-a-print-size) for sizes that match common conference boards).
 4. **Replace the `##` sections** with your own content. Each level-2 heading becomes a poster panel automatically, in both outputs. Cite sources with `[@bibkey]` and add the matching entry to `references.bib`.
 5. **Re-color it if you're forking for a different organization.** The palette lives in a small, documented set of places. 
     - See [Re-coloring the templates](theming.qmd#re-coloring-the-templates)
@@ -105,14 +105,14 @@ No system libraries beyond a working R + Quarto install are needed for the print
 
 **To run the helper scripts in `scripts/`:** all four use `tidyverse` and `here`.
 
--  `make-previews.R` additionally needs `magick` (which needs the ImageMagick system library), and 
-- `check-column-balance.R` needs `pdftools` (which needs the poppler system library). 
+-  `make-previews.R` additionally needs `magick` [@magick-package] (which needs the ImageMagick system library), and 
+- `check-column-balance.R` needs `pdftools` [@Pdftools-package] (which needs the poppler system library). 
 - `check-contrast.R` needs only `tidyverse`/`here` -- it's pure source/CSS parsing, no rendering. 
 
 None of the scripts are required to render a poster; `quarto render templates/<name>/poster.qmd` alone is enough. 
 - They exist to catch regressions (see [Scripts & CI](scripts-and-ci.qmd)), and CI (`.github/workflows/posters.yml`) installs all of the above automatically via `r-lib/actions/setup-r-dependencies`, so you never need to install anything by hand just to see CI pass on a fork.
 
-**Is this an `renv` repo?** No, deliberately not. 
+**Is this an `renv` [@renv-package] repo?** No, deliberately not. 
 
 - `renv` buys strict, pinned reproducibility of exact package versions, at the cost of a lockfile contributors must keep in sync and an `renv::restore()` step before anything runs. 
 - For a small, stable package list on a repo meant to be forked and heavily edited by students building their own poster content (who will be adding whatever packages *their* analysis needs, not constrained by a lockfile), that friction outweighs the benefit here. 

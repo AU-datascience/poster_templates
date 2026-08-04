@@ -6,11 +6,11 @@ title: "Content Guide"
 
 Each template includes an **"Ethics & Broader Impact"** section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:
 
-- **Generative AI use**: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data.
+- **Generative AI use**: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data — in the spirit of authorship-accountability policies like [@ACMPolicyAuthorship], which hold named authors responsible for a work's content regardless of what tools assisted in producing it.
 - **Privacy & data governance**: whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.
 - **Bias, fairness & broader impact**: whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.
 
-The included text is accurate for *this* demo (public, non-human `palmerpenguins` biometric data; a simple linear regression, not a deployed model).
+The included text is accurate for *this* demo (public, non-human `palmerpenguins` [@palmerpenguins] biometric data; a simple linear regression, not a deployed model).
 
 - Treat it as a worked example of the *kind* of specific, honest statement expected, not boilerplate to copy verbatim. 
 - Rewrite each statement for your own project's actual data, models, and tool use.

@@ -36,6 +36,18 @@ same source. Three templates ship: `01-classic-academic`, `02-modern-cards`,
   will fail the build if you forget.
 - `.quarto-version` — the Quarto version pinned in both CI workflows (see
   "CI" below).
+- `docs-src/quarto_posters.bib` — the docs site's shared bibliography,
+  declared project-wide via `bibliography:` in `docs-src/_quarto.yml` (this
+  key has to live at that file's top level, not nested under `project:`,
+  which Quarto rejects). Any `docs-src/*.qmd` can cite an entry with
+  `[@key]`. `docs-src/references.qmd` (linked from the site navbar as
+  "References") sets `nocite: | @*` so it lists every entry regardless of
+  whether it's cited elsewhere — a standing "look this up" page for tools
+  and topics discussed across the docs, not just the ones with an inline
+  citation. When adding a new tool/topic reference to the docs, add its
+  entry to `quarto_posters.bib` and cite it `[@key]` at its natural
+  in-text mention, rather than only relying on `references.qmd`'s
+  catch-all.
 
 ## Common commands
 

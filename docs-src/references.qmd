@@ -1,0 +1,13 @@
+---
+title: "References"
+number-sections: false
+nocite: |
+  @*
+---
+
+Every tool, package, standard, and worked-example dataset mentioned across this site, gathered in one place. Some are cited in-text on the page that discusses them; the rest are included here anyway (via `nocite: | @*`) so this page works as a standing "what was that thing called again?" index, even for a source that only ever appears as a bare hyperlink elsewhere.
+
+If you're looking for *where* something is discussed rather than *what it is*, the in-text citations on [Home](index.qmd), [Templates](templates.qmd), [Why Typst](why-typst.qmd), [Theming & Brand](theming.qmd), [Content Guide](content-guide.qmd), and [Scripts & CI](scripts-and-ci.qmd) link back to this list from context.
+
+::: {#refs}
+:::

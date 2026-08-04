@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Content Guide – Quarto Conference Posters</title>
+<title>References – Quarto Conference Posters</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -94,35 +94,6 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -152,7 +123,7 @@ window.Quarto = {
 <span class="menu-text">Templates</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./content-guide.html" aria-current="page"> 
+    <a class="nav-link" href="./content-guide.html"> 
 <span class="menu-text">Content Guide</span></a>
   </li>  
   <li class="nav-item">
@@ -168,7 +139,7 @@ window.Quarto = {
 <span class="menu-text">Why Typst</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./references.html"> 
+    <a class="nav-link active" href="./references.html" aria-current="page"> 
 <span class="menu-text">References</span></a>
   </li>  
 </ul>
@@ -189,23 +160,15 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#ethics-broader-impact-panel" id="toc-ethics-broader-impact-panel" class="nav-link active" data-scroll-target="#ethics-broader-impact-panel"><span class="header-section-number">1</span> Ethics &amp; Broader Impact panel</a></li>
-  <li><a href="#sizing-your-own-images-for-print" id="toc-sizing-your-own-images-for-print" class="nav-link" data-scroll-target="#sizing-your-own-images-for-print"><span class="header-section-number">2</span> Sizing your own images for print</a></li>
-  <li><a href="#shared-resources" id="toc-shared-resources" class="nav-link" data-scroll-target="#shared-resources"><span class="header-section-number">3</span> Shared resources</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Content Guide</h1>
+<h1 class="title">References</h1>
 </div>
 
 
@@ -222,131 +185,77 @@ window.Quarto = {
 </header>
 
 
-<section id="ethics-broader-impact-panel" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="ethics-broader-impact-panel"><span class="header-section-number">1</span> Ethics &amp; Broader Impact panel</h2>
-<p>Each template includes an <strong>“Ethics &amp; Broader Impact”</strong> section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:</p>
-<ul>
-<li><strong>Generative AI use</strong>: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data — in the spirit of authorship-accountability policies like <span class="citation" data-cites="ACMPolicyAuthorship">(<a href="#ref-ACMPolicyAuthorship" role="doc-biblioref"><em><span>ACM Policy</span> on <span>Authorship</span></em>, n.d.</a>)</span>, which hold named authors responsible for a work’s content regardless of what tools assisted in producing it.</li>
-<li><strong>Privacy &amp; data governance</strong>: whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.</li>
-<li><strong>Bias, fairness &amp; broader impact</strong>: whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.</li>
-</ul>
-<p>The included text is accurate for <em>this</em> demo (public, non-human <code>palmerpenguins</code> <span class="citation" data-cites="palmerpenguins">(<a href="#ref-palmerpenguins" role="doc-biblioref">Horst et al. 2020</a>)</span> biometric data; a simple linear regression, not a deployed model).</p>
-<ul>
-<li>Treat it as a worked example of the <em>kind</em> of specific, honest statement expected, not boilerplate to copy verbatim.</li>
-<li>Rewrite each statement for your own project’s actual data, models, and tool use.</li>
-</ul>
-<p>The panel is implemented once per format so it renders correctly in both:</p>
-<ul>
-<li><strong>HTML:</strong> a <code>::: {.ethics-panel} :::</code> div (defined in <code>poster-common.scss</code>); a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.</li>
-<li><strong>Print (Typst):</strong> a raw <code>```{=typst}</code> block using <code>#block(..., breakable: false)</code> for the same shaded/bordered look at 20-24pt.</li>
-<li><code>breakable: false</code> is required. Without it, Typst can split the block awkwardly across a column break.</li>
-</ul>
-<p>Both copies are wrapped in <code>::: {.content-visible when-format="..."}</code> so only one appears in each output; if you edit the disclosure text, update both copies.</p>
-<p><strong>Acknowledgments</strong> are now a plain, uncited sentence for funding and mentorship credit,</p>
-<ul>
-<li>This work was performed under the guidance of Dr.&nbsp;Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No.&nbsp;BJME-2026-014.</li>
-</ul>
-<p>Each template also has a placeholder <strong>Code &amp; data</strong> line near Acknowledgments with a GitHub URL to replace with your own repository.</p>
-<p><strong>References</strong>, Data/software citations appear here automatically when they’re cited in-text with <code>[@key]</code> earlier in the poster. A ready-to-edit example is included in each template.</p>
-</section>
-<section id="sizing-your-own-images-for-print" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="sizing-your-own-images-for-print"><span class="header-section-number">2</span> Sizing your own images for print</h2>
-<p>If you add your own raster image (a photo, screenshot, or diagram exported from other software) to a poster, the pixel dimensions that look fine on a laptop screen or in a slide deck are usually <strong>not enough for a multi-foot-wide print</strong>.</p>
-<ul>
-<li>The same file gets stretched over far more physical inches on paper than on a webpage, so its effective resolution (pixels per inch, once placed) drops accordingly.</li>
-</ul>
-<p><strong>The rule of thumb:</strong> decide how wide the image will print (in inches), pick a target resolution, and multiply:</p>
-<p><span class="math display">\[\text{pixel width needed} = \text{printed width (in)} \times \text{target dpi}\]</span></p>
-<ul>
-<li>150 dpi is a reasonable floor for a poster read from a few feet away.</li>
-<li>300 dpi (standard for close-up print/photography) is safer if the image includes fine detail or might be viewed up close.</li>
-</ul>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Template</th>
-<th>Print size, columns</th>
-<th>Typical full-width placement</th>
-<th>Pixels needed at 150 dpi</th>
-<th>Pixels needed at 300 dpi</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>01-classic-academic</code></td>
-<td>42x28in, 3 columns</td>
-<td>~12in (one column)</td>
-<td>1800px</td>
-<td>3600px</td>
-</tr>
-<tr class="even">
-<td><code>02-modern-cards</code></td>
-<td>48x36in, 2 columns</td>
-<td>20in (explicit <code>out-width</code>, see <a href="./templates.html">Templates</a>)</td>
-<td>3000px</td>
-<td>6000px</td>
-</tr>
-<tr class="odd">
-<td><code>03-minimal-story</code></td>
-<td>24x52in, 1 column</td>
-<td>~20in (full column width)</td>
-<td>3000px</td>
-<td>6000px</td>
-</tr>
-</tbody>
-</table>
-<p>For reference, <code>images/au-logo-hires.png</code> (the shipped institution logo) is 1327x1361px, which is why it renders sharp at every template’s header size (measured at 490-740 effective dpi depending on the template). That’s roughly the resolution to aim for if you’re adding a comparably-sized image of your own.</p>
-<p><strong>This applies to R-generated figures too, not just images you place by hand.</strong></p>
-<ul>
-<li>Every template sets <code>fig-format: png</code> (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> for why), and knitr’s default figure resolution is 96 dpi regardless of the physical print size the figure gets stretched to.</li>
-<li>Left at the default, <code>02-modern-cards</code>’s Evidence figure (rendered at <code>fig-width: 14</code>, placed at <code>out-width: "20in"</code>) worked out to only ~67 effective dpi once measured directly from the PDF’s embedded image data, soft enough to notice at normal reading distance.</li>
-<li>All three templates now set <code>fig-dpi: 300</code> under <code>poster-typst:</code> in their YAML, which raised the same figures to 150-210 effective dpi (the ratio to <code>out-width</code> varies by template) with no other layout change — <code>fig-dpi</code> only affects how many pixels knitr renders into, not the inches Typst places the result at, so column balance and page counts are unaffected.</li>
-<li>If you add your own R chunk with a figure, this setting already applies to it. If you override <code>fig-width</code>/<code>fig-height</code>/<code>out-width</code> for a specific figure, it’s worth re-checking the effective dpi with the same math above.</li>
-</ul>
-<p><strong>The web version doesn’t have this problem to the same degree.</strong></p>
-<ul>
-<li>Browsers display images at whatever pixel density the screen provides (and gracefully downscale an oversized image), so an image sized for print looks fine on the web version too. — The risk only runs one direction: an image sized <em>for the web</em> is usually too low-resolution for print.</li>
-</ul>
-</section>
-<section id="shared-resources" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="shared-resources"><span class="header-section-number">3</span> Shared resources</h2>
-<ul>
-<li><strong><code>_brand.yml</code></strong>: shared AU color palette and typography. Referenced implicitly by Quarto’s HTML theming.
-<ul>
-<li>Edit this once to re-color all three templates.</li>
-<li>The <code>logo:</code> key is intentionally omitted (see the comment in the file) because each template places the org logo explicitly instead, to avoid a duplicated automatic brand logo.</li>
-<li>See <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a> for how this file fits into the rest of the theming (SCSS, footer colors) and where it doesn’t reach.</li>
-</ul></li>
-<li><strong><code>references.bib</code></strong>: shared bibliography. Each poster’s YAML sets <code>bibliography: ../../references.bib</code>.
-<ul>
-<li>Entries only appear in the rendered References section if actually cited in the text with <code>[@key]</code> (no blanket <code>nocite: | @*</code> is used in the filled-in templates, so unused entries stay out of the list).</li>
-<li>It includes citations for every R package a template’s code actually calls with <code>library()</code>generated from each package’s own <code>citation()</code> output, plus R itself.</li>
-<li>If you add a package to a poster’s code, add its <code>citation("pkgname")</code> entry here too and cite it.</li>
-</ul></li>
-<li><strong><code>scss/poster-common.scss</code></strong>: base tokens and shared “poster shell” rules for the web/HTML version.
-<ul>
-<li>This includes: title banner, section card styling, the automatic <code>section.level2</code> → poster-panel behavior.</li>
-<li>Each template’s own <code>*-web.scss</code> file is loaded <em>after</em> this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.</li>
-</ul></li>
-<li><strong><code>images/au-logo-hires.png</code></strong> — organization logo. Used two ways:
-<ul>
-<li>Print (<code>poster-typst</code>): passed via <code>institution-logo:</code> in the format options; the extension places and sizes it automatically (tune with <code>univ-logo-scale</code> / <code>univ-logo-column-size</code>).</li>
-<li>Web (<code>html</code>): included directly in the <code>.qmd</code> inside a <code>::: {.content-visible when-format="html"}</code> block, styled by the <code>.poster-logo</code> class in <code>poster-common.scss</code>.</li>
-</ul></li>
-</ul>
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<p>Every tool, package, standard, and worked-example dataset mentioned across this site, gathered in one place. Some are cited in-text on the page that discusses them; the rest are included here anyway (via <code>nocite: | @*</code>) so this page works as a standing “what was that thing called again?” index, even for a source that only ever appears as a bare hyperlink elsewhere.</p>
+<p>If you’re looking for <em>where</em> something is discussed rather than <em>what it is</em>, the in-text citations on <a href="./index.html">Home</a>, <a href="./templates.html">Templates</a>, <a href="./why-typst.html">Why Typst</a>, <a href="./theming.html">Theming &amp; Brand</a>, <a href="./content-guide.html">Content Guide</a>, and <a href="./scripts-and-ci.html">Scripts &amp; CI</a> link back to this list from context.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-YAMLAintMarkup" class="csl-entry" role="listitem">
+<em>About - <span>YAML Ain</span>’t <span>Markup Language</span></em>. n.d. Accessed August 4, 2026. <a href="https://yaml.org/about/">https://yaml.org/about/</a>.
+</div>
 <div id="ref-ACMPolicyAuthorship" class="csl-entry" role="listitem">
 <em><span>ACM Policy</span> on <span>Authorship</span></em>. n.d. Accessed August 4, 2026. <a href="https://www.acm.org/publications/policies/new-acm-policy-on-authorship">https://www.acm.org/publications/policies/new-acm-policy-on-authorship</a>.
+</div>
+<div id="ref-AgentsmdAgentsmd2026" class="csl-entry" role="listitem">
+<em>Agentsmd/Agents.md</em>. 2026. AGENTS.md. <a href="https://github.com/agentsmd/agents.md">https://github.com/agentsmd/agents.md</a>.
+</div>
+<div id="ref-allaire2024quarto" class="csl-entry" role="listitem">
+Allaire, J. J., Charles Teague, Carlos Scheidegger, Yihui Xie, and Christophe Dervieux. 2024. <em>Quarto: <span>An</span> Open-Source Scientific and Technical Publishing System</em>. <a href="https://quarto.org">https://quarto.org</a>.
+</div>
+<div id="ref-bootstrapDocs" class="csl-entry" role="listitem">
+Bootstrap contributors. n.d. <em>Bootstrap <span>Documentation</span></em>. Accessed August 4, 2026. <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">https://getbootstrap.com/docs/5.3/getting-started/introduction/</a>.
+</div>
+<div id="ref-CallPostersDemos" class="csl-entry" role="listitem">
+<em>Call for <span>Posters</span> and <span>Demos</span> <span>ACM SIGCOMM</span> 2026</em>. n.d. Accessed August 4, 2026. <a href="https://conferences.sigcomm.org/sigcomm/2026/posters/">https://conferences.sigcomm.org/sigcomm/2026/posters/</a>.
+</div>
+<div id="ref-githubUnderstandingGitHubActions2024" class="csl-entry" role="listitem">
+GitHub. 2024. <span>“Understanding <span>GitHub Actions</span>.”</span> In <em>Understanding GitHub Actions</em>. <a href="https://docs.github.com/en/actions/about-github-actions/understanding-github-actions">https://docs.github.com/en/actions/about-github-actions/understanding-github-actions</a>.
+</div>
+<div id="ref-usethis-GitHubActionsSetup" class="csl-entry" role="listitem">
+<em><span>GitHub Actions</span> Setup — Github_actions</em>. 2026. <a href="https://usethis.r-lib.org/reference/github_actions.html">https://usethis.r-lib.org/reference/github_actions.html</a>.
 </div>
 <div id="ref-palmerpenguins" class="csl-entry" role="listitem">
 Horst, Allison Marie, Alison Presmanes Hill, and Kristen B Gorman. 2020. <em>Palmerpenguins: <span>Palmer Archipelago</span> (<span>Antarctica</span>) Penguin Data</em>. <a href="https://doi.org/10.5281/zenodo.3960218">https://doi.org/10.5281/zenodo.3960218</a>.
 </div>
-</div></section></div></main> <!-- /main -->
+<div id="ref-initiativewaiWCAG2Overview" class="csl-entry" role="listitem">
+Initiative (WAI), W3C Web Accessibility. n.d. <span>“<span>WCAG</span> 2 <span>Overview</span>.”</span> In <em>Web Accessibility Initiative (WAI)</em>. Accessed August 4, 2026. <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">https://www.w3.org/WAI/standards-guidelines/wcag/</a>.
+</div>
+<div id="ref-magick-package" class="csl-entry" role="listitem">
+<em>Installing Magick</em>. n.d. Accessed August 4, 2026. <a href="https://cran.r-project.org/web/packages/magick/vignettes/intro.html">https://cran.r-project.org/web/packages/magick/vignettes/intro.html</a>.
+</div>
+<div id="ref-Pdftools-package" class="csl-entry" role="listitem">
+Jereon Ooms. n.d. <em>Pdftools: <span>Text Extraction</span>, <span>Rendering</span> and <span>Converting</span> of <span>PDF Documents</span></em>. rOpenSci. Accessed August 4, 2026. <a href="https://ropensci.r-universe.dev/pdftools">https://ropensci.r-universe.dev/pdftools</a>.
+</div>
+<div id="ref-QuartoGuide" class="csl-entry" role="listitem">
+J.J. Allaire, Christophe Dervieux, Carlos Scheidegger, Charles Teague, and Yihui Xie. 2023. <span>“Quarto - <span>Guide</span>.”</span> In <em>Quarto</em>. <a href="https://quarto.org/docs/guide/">https://quarto.org/docs/guide/</a>.
+</div>
+<div id="ref-MakefileOSDevWiki" class="csl-entry" role="listitem">
+OSDev. n.d. <em>Makefile - <span>OSDev Wiki</span></em>. Accessed August 4, 2026. <a href="https://wiki.osdev.org/Makefile">https://wiki.osdev.org/Makefile</a>.
+</div>
+<div id="ref-OverviewTypstDocumentation" class="csl-entry" role="listitem">
+<span>“Overview - <span>Typst Documentation</span>.”</span> n.d. In <em>Typst</em>. Accessed August 4, 2026. <a href="https://typst.app/docs/">https://typst.app/docs/</a>.
+</div>
+<div id="ref-quartoBrandGuide" class="csl-entry" role="listitem">
+Posit Software, PBC. n.d.-a. <span>“Brand - <span>Quarto</span>.”</span> In <em>Quarto</em>. Accessed August 4, 2026. <a href="https://quarto.org/docs/authoring/brand.html">https://quarto.org/docs/authoring/brand.html</a>.
+</div>
+<div id="ref-quartoTypstOutputFormat" class="csl-entry" role="listitem">
+Posit Software, PBC. n.d.-b. <span>“Typst <span>Format</span> - <span>Quarto</span>.”</span> In <em>Quarto</em>. Accessed August 4, 2026. <a href="https://quarto.org/docs/output-formats/typst.html">https://quarto.org/docs/output-formats/typst.html</a>.
+</div>
+<div id="ref-PosterSessionGuidelines" class="csl-entry" role="listitem">
+<em>Poster <span>Session Guidelines</span></em>. n.d. Accessed August 4, 2026. <a href="https://www.apha.org/events-and-meetings/annual/presenters/poster-session-guidelines">https://www.apha.org/events-and-meetings/annual/presenters/poster-session-guidelines</a>.
+</div>
+<div id="ref-SassDocumentation" class="csl-entry" role="listitem">
+<em>Sass: <span>Documentation</span></em>. n.d. Accessed August 4, 2026. <a href="https://sass-lang.com/documentation/">https://sass-lang.com/documentation/</a>.
+</div>
+<div id="ref-SimpsonsParadox2026" class="csl-entry" role="listitem">
+<span>“Simpson’s Paradox.”</span> 2026. <em>Wikipedia</em>, July. <a href="https://en.wikipedia.org/w/index.php?title=Simpson%27s_paradox&amp;oldid=1362705629">https://en.wikipedia.org/w/index.php?title=Simpson%27s_paradox&amp;oldid=1362705629</a>.
+</div>
+<div id="ref-renv-package" class="csl-entry" role="listitem">
+Wickham, Hadley, and Kevin Ushey. 2024. <em>Renv: <span>Project Environments</span></em>. <a href="https://rstudio.github.io/renv/">https://rstudio.github.io/renv/</a>.
+</div>
+</div>
+
+
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

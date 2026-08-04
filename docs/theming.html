@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -154,6 +173,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./why-typst.html"> 
 <span class="menu-text">Why Typst</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -214,12 +237,12 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Skip this page unless you’re re-theming. If you’re just writing poster content on the templates as shipped, you don’t need to know Bootstrap or SCSS at all — the colors and fonts are already set up. Come back here only if you’re forking for a different organization’s palette, or troubleshooting a contrast/color regression.</p>
+<p>Skip this page unless you’re re-theming. If you’re just writing poster content on the templates as shipped, you don’t need to know Bootstrap <span class="citation" data-cites="bootstrapDocs">(<a href="#ref-bootstrapDocs" role="doc-biblioref">Bootstrap contributors, n.d.</a>)</span> or SCSS <span class="citation" data-cites="SassDocumentation">(<a href="#ref-SassDocumentation" role="doc-biblioref"><em>Sass</em>, n.d.</a>)</span> at all — the colors and fonts are already set up. Come back here only if you’re forking for a different organization’s palette, or troubleshooting a contrast/color regression.</p>
 </div>
 </div>
 <section id="re-coloring-the-templates" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="re-coloring-the-templates"><span class="header-section-number">1</span> Re-coloring the templates</h2>
-<p>If you fork this repo for another organization, the palette lives in a small number of places. The <code>check-contrast.R</code> exists so you can <em>prove</em> your new colors are still accessible rather than assume it:</p>
+<p>If you fork this repo for another organization, the palette lives in a small number of places. The <code>check-contrast.R</code> exists so you can <em>prove</em> your new colors are still accessible against WCAG <span class="citation" data-cites="initiativewaiWCAG2Overview">(<a href="#ref-initiativewaiWCAG2Overview" role="doc-biblioref">Initiative (WAI), n.d.</a>)</span> rather than assume it:</p>
 <ol type="1">
 <li><strong><code>scss/poster-common.scss</code></strong>: the <code>$au-*</code> tokens under <code>scss:defaults</code> drive the whole web version.</li>
 <li><strong><code>_brand.yml</code></strong>: the same palette for Quarto’s brand-aware theming. Keep the two in sync; some Bootstrap variables come from here rather than from the stylesheet.</li>
@@ -275,7 +298,7 @@ Note
 </section>
 <section id="brand.yml-and-your-workflow" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="brand.yml-and-your-workflow"><span class="header-section-number">2</span> <code>_brand.yml</code> and your workflow</h2>
-<p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving. This section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> for the full, current spec.</p>
+<p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving. This section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> <span class="citation" data-cites="quartoBrandGuide">(<a href="#ref-quartoBrandGuide" role="doc-biblioref">Posit Software, PBC, n.d.</a>)</span> for the full, current spec.</p>
 <p><strong>What it’s for here:</strong></p>
 <ul>
 <li><code>_brand.yml</code> is the single source of the AU color palette and typography.</li>
@@ -310,7 +333,7 @@ Note
 </ul>
 <p><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong></p>
 <ul>
-<li><code>scss/poster-common.scss</code> defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling).
+<li><code>scss/poster-common.scss</code> (Sass <span class="citation" data-cites="SassDocumentation">(<a href="#ref-SassDocumentation" role="doc-biblioref"><em>Sass</em>, n.d.</a>)</span>) defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling).
 <ul>
 <li>Nothing currently generates one file from the other, so <a href="#re-coloring-the-templates">Re-coloring the templates</a> treats both as required edits, and <code>check-contrast.R</code> reads both.</li>
 </ul></li>
@@ -323,9 +346,23 @@ Note
 </ul>
 
 
+
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-bootstrapDocs" class="csl-entry" role="listitem">
+Bootstrap contributors. n.d. <em>Bootstrap <span>Documentation</span></em>. Accessed August 4, 2026. <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/">https://getbootstrap.com/docs/5.3/getting-started/introduction/</a>.
+</div>
+<div id="ref-initiativewaiWCAG2Overview" class="csl-entry" role="listitem">
+Initiative (WAI), W3C Web Accessibility. n.d. <span>“<span>WCAG</span> 2 <span>Overview</span>.”</span> In <em>Web Accessibility Initiative (WAI)</em>. Accessed August 4, 2026. <a href="https://www.w3.org/WAI/standards-guidelines/wcag/">https://www.w3.org/WAI/standards-guidelines/wcag/</a>.
+</div>
+<div id="ref-quartoBrandGuide" class="csl-entry" role="listitem">
+Posit Software, PBC. n.d. <span>“Brand - <span>Quarto</span>.”</span> In <em>Quarto</em>. Accessed August 4, 2026. <a href="https://quarto.org/docs/authoring/brand.html">https://quarto.org/docs/authoring/brand.html</a>.
+</div>
+<div id="ref-SassDocumentation" class="csl-entry" role="listitem">
+<em>Sass: <span>Documentation</span></em>. n.d. Accessed August 4, 2026. <a href="https://sass-lang.com/documentation/">https://sass-lang.com/documentation/</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
