@@ -232,6 +232,20 @@ GitHub Pages constraint. Worth an occasional manual check of
 `docs/site_libs` for orphaned files after removing or renaming a
 dependency, but no action needed otherwise.
 
+**A concrete instance of this happened**, not just the hypothetical above:
+switching `docs-src/_quarto.yml` from `theme: cosmo` to the project's own
+`brand: ../_brand.yml` (see the brand-vs-cosmo note elsewhere in this file)
+changed the content-hashed filename Quarto gives the compiled Bootstrap
+CSS. The old, no-longer-referenced `bootstrap-<hash>.min.css` was left
+behind in `docs/site_libs/bootstrap/` after `quarto render docs-src` —
+exactly the accumulation this section warns is possible, not cleared
+automatically because of the same `output-dir: ../docs` layout. Found by
+diffing `git status` after the render (an untouched, unreferenced file
+sitting alongside the new one) and removed by hand before committing. No
+tooling currently catches this automatically; a rename/removal of any
+`docs-src` theme, extension, or dependency is worth an `ls docs/site_libs`
+sanity check afterward.
+
 ### Resolved
 
 The rest of what an earlier version of this file (`HANDOFF-fonts-and-ci.md`,

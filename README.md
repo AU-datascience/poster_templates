@@ -23,6 +23,20 @@ There are three templates; each a single `.qmd` file that renders to **two** out
 
 The full walkthrough (including re-coloring for a different organization, choosing a print size for a specific conference, and what each script/CI check does) is on the [documentation site](https://au-datascience.github.io/poster_templates/) -- start on the [Home](https://au-datascience.github.io/poster_templates/) page.
 
+## Requirements
+
+**To render a poster itself:** [Quarto](https://quarto.org) (a version at or near the one pinned in [`.quarto-version`](.quarto-version)) and R -- every template's R code chunks are part of the *shipped example content*, not the poster mechanism itself, so if you replace the demo analysis with your own R or Python code, only your own code's package requirements apply. As shipped, the three example posters use:
+
+- `tidyverse`, `palmerpenguins`, `patchwork` (all three templates)
+- `broom` (`01-classic-academic` only, for `broom::tidy()` model summaries)
+- `knitr` (all three, for `knitr::kable()` tables -- normally auto-loaded by Quarto's R engine, listed here for completeness)
+
+No Python packages are required unless you add your own Python chunks. No system libraries beyond a working R + Quarto install are needed for the print or web render themselves; fonts (`Source Sans 3`, `STIX Two Text`) are fetched from Google and cached by Quarto at render time (see [`AGENTS.md`](AGENTS.md)'s "Fonts" section), not installed as system fonts.
+
+**To run the helper scripts in `scripts/`:** all four use `tidyverse` and `here`; `make-previews.R` additionally needs `magick` (which needs the ImageMagick system library), and `check-column-balance.R` needs `pdftools` (which needs the poppler system library). `check-contrast.R` needs only `tidyverse`/`here` -- it's pure source/CSS parsing, no rendering. None of the scripts are required to render a poster; `quarto render templates/<name>/poster.qmd` alone is enough. They exist to catch regressions (see [Scripts & CI](https://au-datascience.github.io/poster_templates/scripts-and-ci.html)), and CI (`.github/workflows/posters.yml`) installs all of the above automatically via `r-lib/actions/setup-r-dependencies`, so you never need to install anything by hand just to see CI pass on a fork.
+
+**Is this an `renv` repo?** No, deliberately not. `renv` buys strict, pinned reproducibility of exact package versions, at the cost of a lockfile contributors must keep in sync and an `renv::restore()` step before anything runs. For a small, stable package list on a repo meant to be forked and heavily edited by students building their own poster content (who will be adding whatever packages *their* analysis needs, not constrained by a lockfile), that friction outweighs the benefit here. If you want tighter reproducibility for your own fork -- e.g. pinning exact versions for a class where everyone must get identical output -- `renv::init()` after cloning is a reasonable thing to layer on yourself; it just isn't part of this template.
+
 ## Site map
 
 | Page | Covers |
