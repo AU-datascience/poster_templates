@@ -1,4 +1,4 @@
-# Build-check only -- NOT a deploy step.
+# Build-check + drift-check -- NOT a deploy step.
 #
 # GitHub Pages (Settings -> Pages) is configured as "Deploy from a branch:
 # main, /docs": the legacy Pages build serves whatever static files are
@@ -6,12 +6,16 @@
 # "deploy" is just committing a fresh `quarto render docs-src` output to
 # /docs on main -- there is nothing for CI to publish.
 #
-# What this job does instead: renders docs-src/ on every push/PR that
-# touches it, purely to catch a broken doc page before merge. It does not
-# commit or push anything. If you change docs-src/, remember to also
-# re-render and commit /docs before merging:
-#
-#   quarto render docs-src
+# What this job does instead:
+#   1. Renders docs-src/ fresh, to catch a broken doc page before merge.
+#   2. Diffs that fresh render against the /docs already committed in this
+#      branch/PR. If they differ, someone edited docs-src/ (or one of the
+#      images copy-images.sh pulls in) without re-running
+#      `quarto render docs-src` and committing the result -- exactly the
+#      failure mode this check exists to catch, since a stale /docs is
+#      invisible in the PR diff otherwise (docs-src/*.qmd changes review
+#      fine on their own; nothing forces /docs to be re-rendered to match).
+# It does not commit or push anything either way.
 
 name: docs-build-check
 
@@ -20,15 +24,19 @@ on:
     branches: [main]
     paths:
       - "docs-src/**"
+      - "images/**"
+      - "comparison.png"
       - ".github/workflows/docs.yml"
   pull_request:
     paths:
       - "docs-src/**"
+      - "images/**"
+      - "comparison.png"
   workflow_dispatch:
 
 jobs:
   build:
-    name: Render docs-src (sanity check)
+    name: Render docs-src and check /docs is up to date
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,3 +49,16 @@ jobs:
 
       - name: Render docs-src
         run: quarto render docs-src
+
+      - name: Check /docs matches a fresh render
+        run: |
+          # sitemap.xml's <lastmod> is derived from each source .qmd's
+          # filesystem mtime; actions/checkout resets every file to the
+          # same checkout-time mtime, so this file differs from the
+          # committed version on every run regardless of real content
+          # drift. Excluded from the diff for that reason -- it is the
+          # only file where this has been observed to happen.
+          if ! git diff --exit-code -- docs ':!docs/sitemap.xml'; then
+            echo "::error::docs/ is stale relative to docs-src/ (and/or the images copy-images.sh pulls in). Run \`quarto render docs-src\` locally and commit the result."
+            exit 1
+          fi
