@@ -101,6 +101,16 @@
   title_column_size = width - 4in - univ_logo_column_size
   footer_url_font_size = int(footer_url_font_size) * 1pt
   footer_text_font_size = int(footer_text_font_size) * 1pt
+  // The footer packs url + text + emails into one line with `h(1fr)`
+  // spacers; on narrower posters that row can exceed the printable width,
+  // wrapping onto a second line that spills outside the footer's colored
+  // block (the block's fill/rounding is sized for one line). Scale the
+  // footer font sizes down -- never up -- on posters narrower than 36in
+  // (the extension's documented default width) so the row keeps fitting.
+  // Callers who pass explicit footer font sizes still get them at 36in+.
+  let footer_font_scale = calc.min(1, width / 36in)
+  footer_url_font_size = footer_url_font_size * footer_font_scale
+  footer_text_font_size = footer_text_font_size * footer_font_scale
   // Headings scale relative to the base body size rather than being
   // hardcoded, so they stay proportionate at any body_font_size.
   let heading_base_size = body_font_size + 4pt
