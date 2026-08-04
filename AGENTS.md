@@ -101,7 +101,7 @@ the stale cached version.
 
 ## Known issues
 
-### Fonts — print fixed, web still not delivered (and why is now better understood)
+### Fonts — print and web both confirmed working (an earlier false negative on web, corrected)
 
 `_brand.yml` declares `Source Sans 3` and `STIX Two Text` as brand font
 resources (`source: google`):
@@ -137,54 +137,66 @@ removed — see "CI" above). Column-fill baselines in `scripts/templates.R`
 were re-measured and updated in the same commit (small drift: e.g.
 `03-minimal-story` 77 → 78).
 
-**Web (HTML) fonts are still not delivered — but the reason turned out to
-be different from what was originally suspected.** The font-resource
-declaration above does *not* produce any `@font-face` blocks or
-`--bs-body-font-family` change in the rendered HTML. This was re-diagnosed
-from scratch rather than assumed fixed: a minimal reproduction (a bare
-`_quarto.yml` + `_brand.yml`, using the exact `Jura`/`source: google`
-example from Quarto's own brand.yml docs, no custom theme or scss at all)
-still produces zero `@font-face` blocks and zero fetched font files for
-`format: html` in this Quarto build (1.9.38). So this is not a naming
-mistake or a scss-stack conflict in this project — brand.yml typography
-does not appear to propagate into `html` output at all in this Quarto
-version/build. `scss/poster-common.scss`'s sans stack now names the
-correct current family (`"Source Sans 3"` rather than the nonexistent
-`"Source Sans Pro"`), and the serif stack no longer promises an undeclared
-`"Source Serif Pro"`/`"Source Serif 4"` — but neither is actually
-self-hosted, so both fall through to their system-font fallbacks
-(Helvetica/Arial, Georgia) in practice, same as before.
+**Web (HTML) fonts are, in fact, delivered — an earlier version of this
+note claimed otherwise, and that claim was a measurement artifact, not a
+real limitation.** The original check grepped the raw rendered HTML for
+literal strings like `@font-face` and `fonts.googleapis.com`. With
+`embed-resources: true` (what every `poster.qmd` sets), Quarto inlines its
+generated CSS as `<link href="data:text/css,...">` with the content
+percent-encoded, so `@font-face` appears as `%40font%2Dface` in the raw
+file — a plain string search can never find it there, encoded or not, and
+silently reports "not found" instead of erroring. Decoding those
+`data:text/css,` URIs (see `rendered_css_text()` in `scripts/render-all.R`)
+shows the actual delivered CSS contains:
 
-This has been reproduced exactly once, on one machine, so treat it as a
-lead rather than a confirmed Quarto limitation -- no matching
-`quarto-dev/quarto-cli` issue was found when searching for it, which is
-itself a signal worth taking seriously rather than assuming the search was
-just incomplete.
+- Four self-hosted `@font-face` blocks for `Source Sans 3` (regular/bold ×
+  normal/italic), each with its font file inlined as a base64
+  `src: url(data:font/ttf;...)` — confirming it was fetched from Google at
+  render time, not silently left to fall back to a system font.
+- `--bs-body-font-family: Source Sans 3` and a matching
+  `--bs-font-sans-serif` value in the generated Bootstrap `:root` block.
+- `h1..h6{font-family:Source Sans 3;...}` in the compiled Bootstrap
+  heading rules.
 
-If you pick this up next:
+So both the `base` and `headings` roles `_brand.yml` assigns to
+`Source Sans 3` do reach the rendered web output, exactly as documented for
+color. `STIX Two Text` is also fetched and embedded as four `@font-face`
+blocks, but genuinely never applied to any element on the web side —
+correctly so, since `_brand.yml`'s own comment explains it's declared only
+so Typst can find it for the print body; nothing under `base`/`headings`
+names it for `html`.
 
-1. Re-test with a standalone `quarto-cli` install, not the Quarto bundled
-   inside Positron (`/Applications/Positron.app/.../quarto/bin/quarto` on
-   the machine this was diagnosed on) -- the two can diverge, and everything
-   above was only ever run against the bundled copy.
-2. Re-run the minimal reproduction above against a newer Quarto release
-   (bump `.quarto-version` per the procedure in
-   `docs-src/scripts-and-ci.qmd`, re-verify locally first) to check whether
-   this is a version-specific bug that's since been fixed upstream.
-3. Before assuming this is a brand.yml-specific bug at all: the rendered
-   HTML in this project has almost no `--bs-*` Bootstrap CSS variables and
-   no `font-family` rule on `body` from *any* source, including Bootstrap's
-   own theme defaults -- not just the brand-declared one. That's a more
-   basic puzzle than "brand.yml doesn't reach html," found while
-   re-verifying this note, and not yet root-caused. Check whether Bootstrap
-   theming is being applied at all before chasing brand.yml specifically.
-4. If it still reproduces on a current release with a standalone Quarto,
-   *then* search/file a `quarto-dev/quarto-cli` issue — a truly minimal
-   project and confirmation it isn't specific to this project's
-   theme/scss setup are already done above.
-5. `render-all.R` still discards render stdout/stderr; capturing the log
-   and failing on `unknown font family` would catch a regression on the
-   print side faster than a column-fill drift would.
+**This was re-confirmed, not just re-read, before correcting the record:**
+`scripts/render-all.R`'s `check_fonts()` now decodes every template's
+rendered `poster.html` this way and asserts both the `@font-face` block and
+the `--bs-body-font-family` variable are present (all three templates
+currently pass). Separately, the standalone minimal reproduction mentioned
+in an earlier version of this note — a bare `_brand.yml` + one `.qmd`, no
+project file, no custom theme or scss, using the exact `Jura`/
+`source: google` example from Quarto's own [brand
+guide](https://quarto.org/docs/authoring/brand.html) — was rebuilt from
+scratch and re-run against the same standalone `quarto` on `PATH`
+(`1.9.38`, matching `.quarto-version`) that renders this project. It shows
+the identical pattern: a self-hosted `@font-face` for `Jura`,
+`--bs-body-font-family: Jura`, and `font-family:Jura` on the compiled
+heading rule. So this reproduces cleanly outside this project's own
+theme/scss stack too — there is no brand.yml/Bootstrap web-font limitation
+to chase here, at least not on this Quarto version.
+
+What made the original check wrong, concretely, for anyone hitting a
+similar false negative elsewhere: `embed-resources: true` is what triggers
+the percent-encoded `data:text/css,` delivery; the same check against a
+non-embedded render (a plain `<link rel="stylesheet" href="doc_files/...">`
+pointing at a separate, unencoded `.css` file) would have found the literal
+`@font-face` text just fine. The bug was in assuming one delivery
+mechanism while testing against a project that uses the other, compounded
+by there being no compiler warning either way to flag the mismatch.
+
+If a *real* web-font gap turns up in the future, re-run
+`Rscript scripts/render-all.R --no-render` first and read the "web fonts
+(brand)" row's detail column — it reports the two conditions
+(`@font-face embedded`, `--bs-body-font-family set`) separately, so a
+genuine regression is distinguishable from another decoding miss.
 
 ### Resolved
 
@@ -203,3 +215,9 @@ is settled:
 - The print body/heading fonts (`STIX Two Text`/`Source Sans 3`) are now
   pinned by declaration rather than depending on whatever happens to be
   installed locally — see "Fonts" above.
+- The web body/heading font (`Source Sans 3`) was also independently
+  re-confirmed as delivered, once checked by decoding the rendered CSS
+  instead of grepping the raw, percent-encoded HTML file — see "Fonts"
+  above. The earlier "web fonts aren't delivered" note, and the more basic
+  "almost no `--bs-*` variables anywhere" puzzle it raised, were both
+  artifacts of that same measurement mistake, not real gaps.

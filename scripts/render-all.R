@@ -62,6 +62,97 @@ render_template <- function(tpl) {
          detail = if (status == 0) "both formats" else paste("exit", status))
 }
 
+# Fast percent-decoder for the `data:text/css,...` URIs `embed-resources:
+# true` produces. base R's utils::URLdecode() is quadratic on strings this
+# long (it hung indefinitely on a ~3.8MB encoded font payload during testing)
+# -- this splits on literal `%` once and vectorizes the hex-to-byte
+# conversion instead, which is linear and takes well under a second per file.
+fast_url_decode <- function(x) {
+  parts <- strsplit(x, "%", fixed = TRUE)[[1]]
+  if (length(parts) <= 1) return(x)
+  head <- parts[1]
+  tail_parts <- parts[-1]
+  hex <- substr(tail_parts, 1, 2)
+  rest <- substr(tail_parts, 3, nchar(tail_parts))
+  bytes <- strtoi(hex, base = 16L)
+  chars <- rawToChar(as.raw(bytes), multiple = TRUE)
+  paste0(head, paste0(chars, rest, collapse = ""))
+}
+
+# Returns every bit of CSS actually delivered in a rendered HTML file: literal
+# `<style>` blocks *and* the decoded contents of any `<link href="data:text/
+# css,...">` (what `embed-resources: true` uses to inline stylesheets, rather
+# than a `<link rel="stylesheet">` pointing at a separate file).
+#
+# This distinction matters: a plain string search for "@font-face" or
+# "fonts.googleapis.com" against the raw file is a false negative whenever
+# the CSS is delivered percent-encoded like this -- exactly what happened
+# when this project's own web fonts were first (mis)diagnosed as not being
+# delivered at all. See AGENTS.md's "Fonts" section for the full story.
+#
+# Uses fixed-string/useBytes searches throughout rather than backtracking
+# regex or character-aware substring() over the whole (multi-MB, embedded
+# base64 font data) file, both of which are slow enough on files this size to
+# look like a hang rather than an error.
+rendered_css_text <- function(html_path) {
+  raw <- readBin(html_path, "raw", file.info(html_path)$size)
+  html <- rawToChar(raw)
+  Encoding(html) <- "bytes"
+
+  style_starts <- gregexpr("<style", html, fixed = TRUE, useBytes = TRUE)[[1]]
+  style_texts <- character(0)
+  if (style_starts[1] != -1) {
+    for (s in style_starts) {
+      tag_end <- regexpr(">", substring(html, s), fixed = TRUE, useBytes = TRUE)
+      if (tag_end == -1) next
+      body_start <- s + tag_end
+      close <- regexpr("</style>", substring(html, body_start), fixed = TRUE, useBytes = TRUE)
+      if (close == -1) next
+      style_texts <- c(style_texts, substring(html, body_start, body_start + close - 2))
+    }
+  }
+
+  needle <- 'href="data:text/css,'
+  link_starts <- gregexpr(needle, html, fixed = TRUE, useBytes = TRUE)[[1]]
+  css_links <- character(0)
+  if (link_starts[1] != -1) {
+    for (s in link_starts) {
+      body_start <- s + nchar(needle, type = "bytes")
+      close <- regexpr('"', substring(html, body_start), fixed = TRUE, useBytes = TRUE)
+      if (close == -1) next
+      encoded <- substring(html, body_start, body_start + close - 2)
+      css_links <- c(css_links, fast_url_decode(encoded))
+    }
+  }
+
+  paste(c(style_texts, css_links), collapse = "\n")
+}
+
+# Confirms the brand web font is both fetched (a self-hosted `@font-face`,
+# not a bare family name that would silently fall back to a system font) and
+# actually applied (the Bootstrap variable Quarto's brand-aware theming
+# derives it into). Hardcodes "Source Sans 3" rather than reading it out of
+# `_brand.yml` -- consistent with how check-contrast.R reads its palette
+# expectations, and there's currently just the one web-facing brand font
+# (STIX Two Text is declared only for Typst's print body; see AGENTS.md).
+check_fonts <- function(tpl) {
+  html_path <- template_path(tpl, "html")
+  if (!file.exists(html_path)) {
+    return(tibble(check = "web fonts (brand)", ok = FALSE, detail = "html missing"))
+  }
+
+  css <- rendered_css_text(html_path)
+  has_face <- str_detect(css, regex("@font-face\\s*\\{[^}]*font-family:\\s*'Source Sans 3'"))
+  has_var  <- str_detect(css, regex("--bs-body-font-family:\\s*Source Sans 3"))
+
+  tibble(
+    check = "web fonts (brand)",
+    ok = has_face && has_var,
+    detail = paste0("@font-face embedded: ", has_face,
+                     "; --bs-body-font-family set: ", has_var)
+  )
+}
+
 # Source-level check: Typst show rules only affect content that follows them,
 # so a `####` heading above the rule silently keeps the package's numbered
 # italic run-in style.
@@ -133,7 +224,8 @@ check_template <- function(tpl) {
                 str_detect(pdf_txt, "Ethics & Broader Impact"),
            detail = ""),
     balance_check,
-    check_heading_rule(tpl)
+    check_heading_rule(tpl),
+    check_fonts(tpl)
   )
 }
 
