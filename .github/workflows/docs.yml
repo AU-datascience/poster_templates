@@ -52,28 +52,28 @@ jobs:
       - name: Render docs-src
         run: quarto render docs-src
 
-      - name: Check /docs content matches a fresh render
+      - name: Check /docs images match a fresh render
         run: |
-          # Deliberately narrow, not a full `git diff -- docs`: Quarto's
-          # bundled Bootstrap CSS gets a *different* content hash on Linux
-          # (this runner) than on macOS (where these are normally rendered
-          # and committed) from byte-identical source and the same pinned
-          # Quarto version -- e.g. bootstrap-158031...css locally vs.
-          # bootstrap-a547dd1...css here. That's Sass-compiler
-          # cross-platform nondeterminism, not real drift, and it touches
-          # every page's <head>, so diffing the full HTML output fails on
-          # every run regardless of content changes. sitemap.xml's
-          # <lastmod> is separately unstable too (derived from source file
-          # mtimes, which actions/checkout resets on every checkout).
-          #
-          # docs/search.json is a reliable proxy instead: it's the full
-          # extracted text of every page (used for site search), derived
-          # straight from each page's content independent of the CSS/JS
-          # toolchain, and it already catches a real forgotten-render (see
-          # the commit that added this check). docs/images/ is a plain
-          # byte-for-byte copy (see copy-images.sh), so comparing it is
-          # fully deterministic and catches a forgotten preview update too.
-          if ! git diff --exit-code -- docs/search.json docs/images; then
-            echo "::error::docs/ is stale relative to docs-src/ (and/or the images copy-images.sh pulls in). Run \`quarto render docs-src\` locally and commit the result."
+          # docs/images/ is a plain byte-for-byte copy (see copy-images.sh),
+          # so comparing it is fully deterministic and catches a forgotten
+          # preview update, unlike the HTML/search.json checks below.
+          if ! git diff --exit-code -- docs/images; then
+            echo "::error::docs/images/ is stale relative to the images copy-images.sh pulls in. Run \`quarto render docs-src\` locally and commit the result."
             exit 1
           fi
+
+      - name: Check /docs content matches a fresh render
+        # Not a full `git diff -- docs`: Quarto's bundled Bootstrap CSS gets
+        # a *different* content hash on Linux (this runner) than on macOS
+        # (where these are normally rendered and committed) from
+        # byte-identical source and the same pinned Quarto version -- e.g.
+        # bootstrap-158031...css locally vs. bootstrap-a547dd1...css here.
+        # That's Sass-compiler cross-platform nondeterminism, and it touches
+        # every page's <head>, so a full-HTML diff fails on every run
+        # regardless of content changes. docs/search.json -- the full
+        # extracted text of every page, used for site search -- is a much
+        # better proxy (derived from content, not the CSS/JS toolchain), but
+        # even its *entry order* isn't stable across platforms, so
+        # .github/scripts/check-docs-search-json.py compares it sorted by
+        # objectID rather than as raw text.
+        run: python3 .github/scripts/check-docs-search-json.py
