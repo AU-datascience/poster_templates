@@ -58,7 +58,7 @@ species_slope <- sprintf("%+.2f", coef(species_mod)[["bill_length_mm"]])
 overall_r <- cor(penguins2$bill_length_mm, penguins2$bill_depth_mm)
 by_species_r <- penguins2 |>
   group_by(species) |>
-  summarise(r = cor(bill_length_mm, bill_depth_mm), n = n())
+  summarize(r = cor(bill_length_mm, bill_depth_mm), n = n())
 
 p_pooled <- ggplot(penguins2, aes(bill_length_mm, bill_depth_mm)) +
   geom_point(size = 2.2, color = "#666666", alpha = 0.7) +
