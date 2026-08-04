@@ -11,6 +11,10 @@ project:
     - "bash copy-images.sh"
   resources:
     - .nojekyll
+  # Reuse the same AU brand palette/typography the poster templates use
+  # (defined once at the repo root) so the docs site visually matches what
+  # it documents, rather than a generic Bootswatch theme.
+  brand: ../_brand.yml
 
 website:
   title: "Quarto Conference Posters"
@@ -38,7 +42,6 @@ website:
 
 format:
   html:
-    theme: cosmo
     toc: true
     number-sections: true
     link-external-icon: true
