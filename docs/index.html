@@ -97,6 +97,7 @@ div.csl-indent {
 }</script>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -234,7 +235,7 @@ Note
 </div>
 </div>
 <blockquote class="blockquote">
-<p><strong>Caveat:</strong> Quarto’s its <code>poster-typst</code> extension and <code>_brand.yml</code> theming are both still under active development. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
+<p><strong>Caveat:</strong> Quarto’s <code>poster-typst</code> extension and <code>_brand.yml</code> theming are both still under active development. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
 </blockquote>
 <blockquote class="blockquote">
 <p><strong>AI Usage</strong>: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.</p>
@@ -289,13 +290,13 @@ Note
 <li>A conference poster PDF, viewed unzoomed in a browser or on a phone, is usually a wall of text far too small to read without pinching and scrolling panel by panel, the print layout being designed for a person standing a few feet from a physical board, not a screen at arm’s length. Posting it as-is online is easy but often not actually <em>readable</em> there.</li>
 <li>A real HTML version, by contrast, reflows to the screen it’s on, is searchable, is accessible to a screen reader, and can be linked from a CV, conference site, or social post without asking the visitor to download or zoom a PDF.</li>
 </ul>
-<p>That readability is the actual payoff of this repo’s two-format approach, and it does cost something concrete, documented throughout this site:</p>
+<p>That readability is the actual payoff of this repo’s two-format approach, but it does cost something concrete, documented throughout this site:</p>
 <ul>
 <li>Content that can’t be expressed as plain Markdown (the Ethics panel, the headline stat in <code>02-modern-cards</code>) has to be written <strong>twice</strong>, once as a raw <code>```{=html}</code> block and once as <code>```{=typst}</code>, and kept in sync by hand — see <a href="./why-typst.html">Why Typst instead of LaTeX?</a> and <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>.</li>
-<li>Layout bugs are per-format and don’t always transfer: the <code>out-width: "100%"</code> overflow in <code>02-modern-cards</code> and the <code>fig-dpi</code> sharpness issue described in <a href="./content-guide.html#sizing-your-own-images-for-print">Sizing your own images for print</a> only showed up in the print render; the web version looked correct the whole time (and vice versa for some contrast issues).</li>
-<li>Most of <code>scripts/</code> (column-balance, contrast, font, and structural checks) exists <em>because</em> dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML <code>&lt;hr&gt;</code> silently deleting content only from the Typst side (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) is the sharpest example.</li>
+<li>Layout bugs are per-format and don’t always transfer, e.g., the <code>out-width: "100%"</code> overflow in <code>02-modern-cards</code> and the <code>fig-dpi</code> sharpness issue described in <a href="./content-guide.html#sizing-your-own-images-for-print">Sizing your own images for print</a> only showed up in the print render; the web version looked correct (and vice versa for some contrast issues).</li>
+<li>Most of the checks in the <code>scripts/</code> (column-balance, contrast, font, and structure) exist <em>because</em> dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML <code>&lt;hr&gt;</code> silently deleting content only from the Typst side (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) is the sharpest example.</li>
 </ul>
-<p><strong>Our take:</strong> it’s worth it if the poster needs to double as a legible, standalone webpage, something you’d actually want a stranger to read on their phone, not just a proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler and this repo’s dual-format machinery is more than you need; a single <code>poster-typst</code> render is enough.</p>
+<p><strong>Bottom Line:</strong> it’s worth it if the poster needs to double as a legible, standalone webpage, something you’d actually want a stranger to read, not just as proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler; using the single <code>poster-typst</code> render is enough.</p>
 </div>
 </div>
 </section>
@@ -305,13 +306,13 @@ Note
 <thead>
 <tr class="header">
 <th>Path</th>
-<th>What it is</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><code>templates/&lt;name&gt;/poster.qmd</code></td>
-<td>One self-contained poster. Start here.</td>
+<td>The file for your poster content. Start here.</td>
 </tr>
 <tr class="even">
 <td><code>templates/&lt;name&gt;/*.scss</code></td>
@@ -319,11 +320,11 @@ Note
 </tr>
 <tr class="odd">
 <td><code>scss/poster-common.scss</code></td>
-<td>Shared web “poster shell” styling used by all templates.</td>
+<td>The web “poster shell” styling used by all templates.</td>
 </tr>
 <tr class="even">
 <td><code>_brand.yml</code></td>
-<td>Shared color palette + typography, consumed by Quarto’s brand-aware HTML theming. See <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>.</td>
+<td>Shared color palette + typography, read by Quarto’s “brand-aware” HTML theming. See <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>.</td>
 </tr>
 <tr class="odd">
 <td><code>references.bib</code></td>
@@ -331,7 +332,7 @@ Note
 </tr>
 <tr class="even">
 <td><code>images/</code></td>
-<td>Organization logo, plus generated preview images.</td>
+<td>Organization logo, plus preview- generated images of posters.</td>
 </tr>
 <tr class="odd">
 <td><code>scripts/</code></td>
@@ -343,15 +344,15 @@ Note
 </tr>
 <tr class="odd">
 <td><code>.github/workflows/posters.yml</code></td>
-<td>CI: renders every template and re-runs the checks on push/PR.</td>
+<td>CI: renders every template and re-runs the checks on push/PR as needed.</td>
 </tr>
 <tr class="even">
 <td><code>docs-src/</code></td>
-<td>This site’s source (a nested Quarto website project; renders to <code>docs/</code>).</td>
+<td>This site’s source .qmd documents (as a nested Quarto website that renders to <code>docs/</code>).</td>
 </tr>
 <tr class="odd">
 <td><code>docs/</code></td>
-<td>The rendered, committed site GitHub Pages serves directly (Settings -&gt; Pages: branch main, <code>/docs</code>).</td>
+<td>The rendered documents for the web site that feed GitHub Pages (Settings -&gt; Pages: branch main, <code>/docs</code>).</td>
 </tr>
 </tbody>
 </table>

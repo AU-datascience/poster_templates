@@ -49,6 +49,7 @@ website:
 
 format:
   html:
+    css: styles.css
     toc: true
     number-sections: true
     link-external-icon: true

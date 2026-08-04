@@ -18,7 +18,7 @@ This is a student-oriented site, and it contains a lot of technical detail and r
 - The details might help when troubleshooting or customizing the templates, so they're here if you want to explore the choices that were made for these templates.
 :::
 
-> **Caveat:** Quarto's its `poster-typst` extension and `_brand.yml` theming are both still under active development. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.
+> **Caveat:** Quarto's `poster-typst` extension and `_brand.yml` theming are both still under active development. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.
 
 > **AI Usage**: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.
 
@@ -45,30 +45,30 @@ Worth asking honestly before you invest time customizing both: **why not just po
 - A conference poster PDF, viewed unzoomed in a browser or on a phone, is usually a wall of text far too small to read without pinching and scrolling panel by panel, the print layout being designed for a person standing a few feet from a physical board, not a screen at arm's length. Posting it as-is online is easy but often not actually *readable* there.
 - A real HTML version, by contrast, reflows to the screen it's on, is searchable, is accessible to a screen reader, and can be linked from a CV, conference site, or social post without asking the visitor to download or zoom a PDF.
 
-That readability is the actual payoff of this repo's two-format approach, and it does cost something concrete, documented throughout this site:
+That readability is the actual payoff of this repo's two-format approach, but it does cost something concrete, documented throughout this site:
 
 - Content that can't be expressed as plain Markdown (the Ethics panel, the headline stat in `02-modern-cards`) has to be written **twice**, once as a raw `` ```{=html} `` block and once as `` ```{=typst} ``, and kept in sync by hand — see [Why Typst instead of LaTeX?](why-typst.qmd) and [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas).
-- Layout bugs are per-format and don't always transfer: the `out-width: "100%"` overflow in `02-modern-cards` and the `fig-dpi` sharpness issue described in [Sizing your own images for print](content-guide.qmd#sizing-your-own-images-for-print) only showed up in the print render; the web version looked correct the whole time (and vice versa for some contrast issues).
-- Most of `scripts/` (column-balance, contrast, font, and structural checks) exists *because* dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML `<hr>` silently deleting content only from the Typst side (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas)) is the sharpest example.
+- Layout bugs are per-format and don't always transfer, e.g., the `out-width: "100%"` overflow in `02-modern-cards` and the `fig-dpi` sharpness issue described in [Sizing your own images for print](content-guide.qmd#sizing-your-own-images-for-print) only showed up in the print render; the web version looked correct (and vice versa for some contrast issues).
+- Most of the checks in the `scripts/` (column-balance, contrast, font, and structure) exist *because* dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML `<hr>` silently deleting content only from the Typst side (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas)) is the sharpest example.
 
-**Our take:** it's worth it if the poster needs to double as a legible, standalone webpage, something you'd actually want a stranger to read on their phone, not just a proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler and this repo's dual-format machinery is more than you need; a single `poster-typst` render is enough.
+**Bottom Line:** it's worth it if the poster needs to double as a legible, standalone webpage, something you'd actually want a stranger to read, not just as proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler; using the single `poster-typst` render is enough.
 :::
 
 ## Repo structure at a glance
 
-| Path | What it is |
+| Path | Description |
 |---|---|
-| `templates/<name>/poster.qmd` | One self-contained poster. Start here. |
+| `templates/<name>/poster.qmd` | The file for your poster content. Start here. |
 | `templates/<name>/*.scss` | That poster's web-only layout tweaks (loaded after the shared stylesheet below). |
-| `scss/poster-common.scss` | Shared web "poster shell" styling used by all templates. |
-| `_brand.yml` | Shared color palette + typography, consumed by Quarto's brand-aware HTML theming. See [Theming & Brand](theming.qmd#brand.yml-and-your-workflow). |
+| `scss/poster-common.scss` | The web "poster shell" styling used by all templates. |
+| `_brand.yml` | Shared color palette + typography, read by Quarto's "brand-aware" HTML theming. See [Theming & Brand](theming.qmd#brand.yml-and-your-workflow). |
 | `references.bib` | Shared bibliography (BibTeX), cited with `[@key]` from any template. |
-| `images/` | Organization logo, plus generated preview images. |
+| `images/` | Organization logo, plus preview- generated images of posters. |
 | `scripts/` | R helpers: render everything, check output, audit contrast, regenerate previews. See [Scripts & CI](scripts-and-ci.qmd). |
 | `_extensions/quarto-ext/poster/` | Vendored Typst poster extension, with three local patches. See [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas). |
-| `.github/workflows/posters.yml` | CI: renders every template and re-runs the checks on push/PR. |
-| `docs-src/` | This site's source (a nested Quarto website project; renders to `docs/`). |
-| `docs/` | The rendered, committed site GitHub Pages serves directly (Settings -> Pages: branch main, `/docs`). |
+| `.github/workflows/posters.yml` | CI: renders every template and re-runs the checks on push/PR as needed. |
+| `docs-src/` | This site's source .qmd documents (as a nested Quarto website that renders to `docs/`). |
+| `docs/` | The rendered documents for the web site that feed GitHub Pages (Settings -> Pages: branch main, `/docs`). |
 
 ## Fork this repo and build your poster
 

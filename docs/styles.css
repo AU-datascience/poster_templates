@@ -1,0 +1,13 @@
+/* This docs site only (not the poster templates, which have their own
+   scss and are contrast-audited by scripts/check-contrast.R for size as
+   well as color). Bootstrap's own default is `code { font-size: 87.5% }`,
+   but monospace faces read visually larger than Source Sans 3 at the same
+   font-size (taller x-height, wider default advance width), so inline
+   code still looks oversized next to the surrounding prose even at that
+   default. Nudge it down a bit further, in code spans and links, but not
+   inside fenced code blocks (`pre code`), which already read fine at
+   their own size and commonly hold syntax-highlighted content that
+   shouldn't shrink independently of the block around it. */
+code:not(pre code) {
+  font-size: 0.8rem;
+}
