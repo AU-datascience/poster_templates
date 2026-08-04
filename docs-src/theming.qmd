@@ -4,11 +4,11 @@ title: "Theming & Brand"
 
 ## Re-coloring the templates
 
-If you fork this repo for another organization, the palette lives in a small number of places -- and `check-contrast.R` exists so you can *prove* your new colors are still accessible rather than assume it:
+If you fork this repo for another organization, the palette lives in a small number of places. The `check-contrast.R` exists so you can *prove* your new colors are still accessible rather than assume it:
 
-1. **`scss/poster-common.scss`** -- the `$au-*` tokens under `scss:defaults` drive the whole web version.
-2. **`_brand.yml`** -- the same palette for Quarto's brand-aware theming. Keep the two in sync; some Bootstrap variables come from here rather than from the stylesheet.
-3. **Print footers are per template** -- `footer-color` and `footer-text-color` in each `poster.qmd` YAML.
+1. **`scss/poster-common.scss`**: the `$au-*` tokens under `scss:defaults` drive the whole web version.
+2. **`_brand.yml`**: the same palette for Quarto's brand-aware theming. Keep the two in sync; some Bootstrap variables come from here rather than from the stylesheet.
+3. **Print footers are per template**: `footer-color` and `footer-text-color` in each `poster.qmd` YAML.
 
 Then re-run the audit:
 
@@ -19,12 +19,20 @@ Rscript scripts/check-contrast.R --require-aaa   # fails below AAA
 
 It parses your new hex values out of the stylesheet and each template's YAML and re-measures every pair, so the check follows your colors instead of the ones committed here. `render-all.R` runs it as part of the full suite.
 
-Four things that catch people out, all covered by the script:
+Four things to check out, all covered by the script:
 
-- **The banner is a gradient.** Text over it has to clear the threshold against the *lighter* stop, not just the dark one. Auditing only the dark stop is exactly what hid the original author/date failure (6.97:1 on navy, 3.59:1 on the blue stop). The script reads both stops out of the `linear-gradient()` declaration and checks each separately.
-- **The gradient's light stop is capped by its text, not by taste.** White normal-size text needs 7:1 for AAA, which puts a hard ceiling on how light `$au-blue-banner` can be -- hence a dedicated token rather than reusing `$au-blue`. Note the label originally used a dimmed tint, and a *tinted* label is still normal-size text, so AAA would have demanded 7:1 of the tint and forced the light stop nearly to navy, flattening the gradient. The labels are plain white instead and read as secondary through case, tracking, and weight, which keeps about half the gradient's luminance range.
-- **Opacity silently undoes contrast.** Quarto's own stylesheet sets `opacity: .8` on `.quarto-title-meta-heading`. Left in place, white at 80% over the light stop composites to roughly `#d6dee7` and measures 5.31:1 -- AA, not the 7.21:1 the color alone suggests. `poster-common.scss` overrides it back to `opacity: 1`; if you introduce translucency anywhere, remember the audit reads declared colors, not composited ones.
-- **Accent colors and text colors are held to different bars.** WCAG asks 3:1 of large text and graphics, but 4.5:1 (AA) or 7:1 (AAA) of normal-size text. `$au-blue` is perfectly fine as a banner and border color yet was not fine as link text, which is why `$au-blue-text` exists as a separate darker token -- links can darken without darkening the banner. Size is the other lever, and the script reads each rule's declared `font-size` rather than taking anyone's word for it: a heading at 24px or more (1.5rem at the default root size) is audited as large text automatically, which is how `02`'s red headings reach AAA without touching the red. Shrink such a heading back below 24px and the audit silently re-classifies it as normal text and the stricter bar returns.
+- **The banner is a gradient.** Text has to clear the threshold against the *lighter* stop, not just the dark one. 
+    - Auditing only the dark stop can cause issues.
+    - The script reads both stops out of the `linear-gradient()` declaration and checks each separately.
+- **The gradient's light stop is capped by its text, not by taste.** White normal-size text needs 7:1 for AAA, which puts a hard ceiling on how light `$au-blue-banner` can be; hence a dedicated token rather than reusing `$au-blue`. 
+    - Note the label originally used a dimmed tint, and a *tinted* label is still normal-size text, so AAA would have demanded 7:1 of the tint and forced the light stop nearly to navy, flattening the gradient. 
+    - The labels are plain white instead and read as secondary through case, tracking, and weight, which keeps about half the gradient's luminance range.
+- **Opacity silently undoes contrast.** Quarto's own stylesheet sets `opacity: .8` on `.quarto-title-meta-heading`. Left in place, white at 80% over the light stop composites to roughly `#d6dee7` and measures 5.31:1 which is AA, not the 7.21:1 the color alone suggests. 
+    - `poster-common.scss` overrides it back to `opacity: 1`; if you introduce translucency anywhere, remember the audit reads declared colors, not composited ones.
+- **Accent colors and text colors are held to different bars.** WCAG asks 3:1 of large text and graphics, but 4.5:1 (AA) or 7:1 (AAA) of normal-size text. 
+    - `$au-blue` is perfectly fine as a banner and border color yet was not fine as link text, which is why `$au-blue-text` exists as a separate darker token so links can darken without darkening the banner. 
+    - Size is the other lever, and the script reads each rule's declared `font-size` rather than taking anyone's word for it: a heading at 24px or more (1.5rem at the default root size) is audited as large text automatically, which is how `02`'s red headings reach AAA without touching the red. 
+    - Shrink such a heading back below 24px and the audit silently re-classifies it as normal text and the stricter bar returns.
 - **Inline code inherits the brand grey.** Bootstrap derives `--bs-code-color` from it, so `$au-grey` sets both the acknowledgments/references block *and* every `` `inline code` `` span. These templates use a lot of inline code, so that pair is audited explicitly.
 - **Rule colors are parsed, not restated.** The script reads the `color:` and `background:` declarations straight out of the four stylesheets (resolving palette variables and gradient stops), so editing a rule such as the ethics panel's cream background is picked up automatically. Its `source` column shows where each value came from. The exceptions are Bootstrap-derived variables (`--bs-body-color`, `--bs-code-color`, `$link-color`), which no rule states; those resolve from the palette instead.
 - **Renaming a class breaks the audit loudly.** A lookup that finds no matching selector or property is a hard error naming the failed selector, not a silently skipped row -- so the audit cannot quietly stop covering something you renamed.
@@ -41,3 +49,5 @@ As flagged on the [Home](index.qmd) page, Quarto's brand theming is still evolvi
 - **Why it's kept in sync with the stylesheet by hand, not generated from it:** `scss/poster-common.scss` defines the same `$au-*` tokens under `scss:defaults` for rules Bootstrap's brand integration doesn't cover (the banner gradient, the ethics panel, section-card styling). Nothing currently generates one file from the other, so [Re-coloring the templates](#re-coloring-the-templates) treats both as required edits, and `check-contrast.R` reads both.
 - **The `logo:` key is intentionally left unset** (there's a comment to that effect in the file) because each template places the organization logo explicitly instead -- see [Shared resources](content-guide.qmd#shared-resources) -- to avoid Quarto rendering a second, automatic brand logo alongside it.
 - **If you fork this for another organization:** update `_brand.yml`'s palette and typography alongside `scss/poster-common.scss` and each template's footer colors, then re-run `Rscript scripts/check-contrast.R --require-aaa` to confirm the new combination is still accessible before you consider the re-color done.
+
+<!-- throwaway test edit for branch-protection verification; PR will be closed without merging -->
