@@ -109,24 +109,30 @@ This repo ships two GitHub Actions workflows (`posters.yml`, `docs.yml`). What h
 
 ### Forking (clicking GitHub's "Fork" button)
 
-- GitHub copies the workflow files into your fork, but **leaves Actions disabled on the fork by default** — this is a deliberate, blanket security measure for every fork of a public repo, not specific to this one.
-- The first time you open your fork's **Actions** tab, GitHub shows a banner ("Workflows aren't being run on this fork") with a button, "I understand my workflows, go ahead and enable them." Nothing runs — not a push, not a manual trigger — until you click it (or do the CLI equivalent below).
-- Once enabled, pushes to your fork's branches trigger `posters.yml`/`docs.yml` exactly as they do here, using your fork's own Actions minutes.
-- **Opening a pull request from your fork back to this repo is different again.** That `pull_request` event runs under *this* repo's Actions settings (already enabled), not your fork's — but with two restrictions that apply to any fork's PR, regardless of whether you enabled Actions on your fork:
+GitHub copies the workflow files into your fork, but **leaves Actions disabled on the fork by default**. This is a deliberate, blanket security measure for every fork of a public repo, not specific to this one.
+
+- The first time you open your fork's **Actions** tab, GitHub shows a banner ("Workflows aren't being run on this fork") with a button, "I understand my workflows, go ahead and enable them." 
+  - Nothing runs, not a push, not a manual trigger, until you click it (or do the CLI equivalent below).
+  - Once enabled, pushes to your fork's branches trigger `posters.yml`/`docs.yml` exactly as they do here, using your fork's own Actions minutes.
+- **Opening a pull request from your fork back to this repo is different again.** 
+  - That `pull_request` event runs under *this* repo's Actions settings (already enabled), not your fork's, but with two restrictions that apply to any fork's PR, regardless of whether you enabled Actions on your fork:
   - The `GITHUB_TOKEN` the workflow gets is read-only and has no access to this repo's secrets.
-  - By default, a first-time contributor's workflow run requires a maintainer to click **Approve and run** in the Actions tab before it executes at all. Every run after your first merged contribution runs automatically.
+  - By default, a first-time contributor's workflow run requires a maintainer to click **Approve and run** in the Actions tab before it executes at all. 
+  - Every run after your first merged contribution runs automatically.
 
 ### Cloning (`git clone` + push to your own new repository, not a GitHub fork)
 
-- If you `git clone` this repo and push its history to a brand-new repository you created yourself (rather than using GitHub's "Fork" button), none of the fork-specific restrictions above apply — GitHub has no record that your repository descends from this one.
-- Actions are enabled by default on a new repository, the same as any other repo you create, subject only to your own account's or organization's Actions policy (Settings → Actions → General). Your first push already triggers `posters.yml`/`docs.yml`, with no opt-in banner to click.
+- If you `git clone` this repo and push its history to a brand-new repository you created yourself (rather than using GitHub's "Fork" button), none of the fork-specific restrictions above apply.
+  — GitHub has no record that your repository descends from this one.
+- Actions are enabled by default on a new repository, the same as any other repo you create, subject only to your own account's or organization's Actions policy (Settings → Actions → General). 
+- Your first push already triggers `posters.yml`/`docs.yml`, with no opt-in banner to click.
 - A plain local `git clone` with no push anywhere never triggers anything — workflow runs are a server-side GitHub event, not something `git clone` or a local `quarto render` can cause on its own.
 
 ### Enabling/disabling from the command line
 
 All of the following use the [`gh` CLI](https://cli.github.com/) and require admin access to the repository in question (your fork, or your own clone-turned-repo).
 
-**Permanently enable or disable Actions for the whole repository** — the CLI equivalent of the fork's "enable workflows" banner, or of Settings → Actions → General → Actions permissions:
+**Permanently enable or disable Actions for the whole repository** is the CLI equivalent of the fork's "enable workflows" banner, or of Settings → Actions → General → Actions permissions:
 
 ```bash
 gh api -X PUT repos/OWNER/REPO/actions/permissions -f enabled=true   # or false
@@ -139,13 +145,13 @@ gh workflow disable posters.yml   # stops it from running or being manually trig
 gh workflow enable posters.yml    # re-enables it
 ```
 
-**Run a workflow exactly once, without changing either persistent switch above** — both `posters.yml` and `docs.yml` declare `workflow_dispatch` as a trigger already, so a single on-demand run (Actions enabled, this workflow not disabled) is:
+**Run a workflow exactly once, without changing either persistent switch above**. Both `posters.yml` and `docs.yml` declare `workflow_dispatch` as a trigger already, so a single on-demand run (Actions enabled, this workflow not disabled) is:
 
 ```bash
 gh workflow run posters.yml --ref main
 ```
 
-This queues one run of the current `main` (or whatever `--ref` you give it) and leaves the workflow's enabled/disabled state exactly as it was before and after — unlike `gh workflow disable`/`enable`, which persist until you change them again.
+This queues one run of the current `main` (or whatever `--ref` you give it) and leaves the workflow's enabled/disabled state exactly as it was before and after, unlike `gh workflow disable`/`enable`, which persist until you change them again.
 
 ## Notes / gotchas
 
