@@ -250,5 +250,3 @@ original research finding.
 
 ::: {#refs}
 :::
-
-<!-- trivial test edit: verifying CI paths-filter triggers render/contrast for template changes -->

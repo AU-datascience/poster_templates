@@ -101,4 +101,3 @@ None of the scripts are required to render a poster; `quarto render templates/<n
 - For a small, stable package list on a repo meant to be forked and heavily edited by students building their own poster content (who will be adding whatever packages *their* analysis needs, not constrained by a lockfile), that friction outweighs the benefit here. 
 - If you want tighter reproducibility *for your own fork*, e.g., pinning exact versions for a team where everyone must get identical output, `renv::init()` after cloning is a reasonable thing to layer on yourself; it just isn't part of this template.
 
-<!-- trivial test edit: verifying paths-filter skips render/contrast for docs-only changes -->
