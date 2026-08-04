@@ -40,6 +40,6 @@ format:
   html:
     theme: cosmo
     toc: true
-    number-sections: false
+    number-sections: true
     link-external-icon: true
     link-external-newwindow: true

@@ -40,7 +40,7 @@ Every check in `render-all.R` exists because that failure actually happened once
 `.github/workflows/posters.yml` runs these same scripts on push and pull request, in two deliberately separate jobs:
 
 | Job | Runs | Why it is separate |
-|---|---|---|
+|---|----------|-----------------------|
 | `contrast` | `check-contrast.R --require-aaa` | Pure source parsing, no Quarto, no fonts, no rendering, so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one. |
 | `render` | `render-all.R` (both formats for all three templates, plus every output check) | Needs the Typst toolchain and system libraries for `pdftools`/`magick`, which are the fragile parts. Keeping them apart means a toolchain or font problem is never mistaken for an accessibility regression. |
 
@@ -48,8 +48,14 @@ See [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGE
 
 Two caveats worth knowing before you rely on it:
 
-- **Quarto's release version matters.** Both workflows pin `quarto-dev/quarto-actions/setup@v2` to a specific Quarto version rather than tracking `release`; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution. The version lives in one file, `.quarto-version`, which each workflow reads into a step output before calling `setup@v2` -- so `posters.yml` and `docs.yml` cannot drift out of sync with each other the way two hardcoded copies could. See [Updating the pinned Quarto version](#updating-the-pinned-quarto-version) below for the bump procedure, and why the pin stays even though the specific bug it was protecting against is now also patched at the source.
-- **Fonts change layout, and layout is measured.** `poster.typ` asks for `STIX Two Text`, and Quarto injects a `Source Sans 3` show rule for headings; both are now declared as brand font resources in `_brand.yml` (`source: google`), so Quarto fetches and caches them under `.quarto/typst/fonts/` at render time -- the runner needs no system fonts for the *print* render, and CI and local renders resolve the same faces by construction. (This is purely about print/CI reproducibility; see [Theming & Brand](theming.qmd#brand.yml-and-your-workflow) for what the same `_brand.yml` declaration does -- and doesn't -- deliver for the `html` output.)
+- **Quarto's release version matters.** Both workflows pin `quarto-dev/quarto-actions/setup@v2` to a specific Quarto version rather than tracking `release`; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution. 
+  - The version lives in one file, `.quarto-version`, which each workflow reads into a step output before calling `setup@v2`.
+  - This way `posters.yml` and `docs.yml` cannot drift out of sync with each other the way two hardcoded copies could. 
+  - See [Updating the pinned Quarto version](#updating-the-pinned-quarto-version) below for the bump procedure, and why the pin stays even though the specific bug it was protecting against is now also patched at the source.
+- **Fonts change layout, and layout is measured.** `poster.typ` asks for `STIX Two Text`, and Quarto injects a `Source Sans 3` show rule for headings; both are now declared as brand font resources in `_brand.yml` (`source: google`).
+  - Quarto fetches and caches them under `.quarto/typst/fonts/` at render time.
+  - The GitHub runner needs no system fonts for the *print* render, and CI and local renders resolve the same faces by construction. 
+  - This is purely about print/CI reproducibility; see [Theming & Brand](theming.qmd#brand.yml-and-your-workflow) for what the same `_brand.yml` declaration does -- and doesn't -- deliver for the `html` output.
 
 #### Updating the pinned Quarto version
 
@@ -60,7 +66,11 @@ Bump `.quarto-version` deliberately rather than letting either workflow drift to
 3. Run `make render` (renders every template and all output checks) and, if you touched `docs-src/`, `quarto render docs-src` too. Inspect the rendered PDFs/HTML, not just the check output -- the balance/contrast checks catch some regressions, not all of them.
 4. Only once that looks right, edit `.quarto-version` and commit. Both `posters.yml` and `docs.yml` read the same file, so one edit updates both workflows.
 
-**Why the pin stays, even after the path fix.** `_extensions/quarto-ext/poster/typst-show.typ` now strips a stray leading backslash from the substituted institution-logo path defensively (see [Notes / gotchas](#notes-gotchas)), which patches the *specific* bug that originally motivated pinning. That is not a reason to switch either workflow back to tracking `release`: the pin's job is to make a render on a given commit reproducible run to run, and it was already carrying that weight for other reasons before this bug was ever found -- e.g. the font-resolution differences discussed in [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md). A future pandoc/Typst-writer change breaking something else entirely (a different substitution, color handling, heading numbering) would be just as invisible under `release` as this one was, and there is no way to defensively patch a bug that hasn't happened yet. Tracking `release` trades a small, bounded maintenance cost (the four steps above, only needed when you actually want a newer Quarto) for an unbounded and unpredictable one (CI failing on an unrelated commit because GitHub's runner picked up a new Quarto release overnight).
+**Why the pin stays, even after the path fix.** `_extensions/quarto-ext/poster/typst-show.typ` now strips a stray leading backslash from the substituted institution-logo path defensively (see [Notes / gotchas](#notes-gotchas)), which patches the *specific* bug that originally motivated pinning. 
+
+- That is not a reason to switch either workflow back to tracking `release`: the pin's job is to make a render on a given commit reproducible run to run, and it was already carrying that weight for other reasons before this bug was ever found, e.g.. the font-resolution differences discussed in [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md). 
+- A future pandoc/Typst-writer change breaking something else entirely (a different substitution, color handling, heading numbering) would be just as invisible under `release` as this one was, and there is no way to defensively patch a bug that hasn't happened yet.
+-  Tracking `release` trades a small, bounded maintenance cost (the four steps above, only needed when you actually want a newer Quarto) for an unbounded and unpredictable one (CI failing on an unrelated commit because GitHub's runner picked up a new Quarto release overnight).
 
 This documentation site itself is a separate, nested Quarto website project: sources live in `docs-src/` (its own `docs-src/_quarto.yml`), rendering to `docs/`. GitHub Pages (Settings -> Pages: branch main, `/docs`) serves that committed `docs/` folder directly; there's no publish step in CI; 
 
@@ -71,61 +81,48 @@ This documentation site itself is a separate, nested Quarto website project: sou
 ::: {.callout-note}
 ## This is a simplified Pages setup, on purpose
 
-The pattern here — render locally, commit the rendered `docs/` folder,
-point GitHub Pages (Settings → Pages: branch `main`, `/docs`) at it
-directly — is not the only way to publish a Quarto site to GitHub Pages,
-and it is not what most production projects do. It was chosen deliberately
-for this repo because it needs **no GitHub Actions permissions, no deploy
-step, and no separate `gh-pages` branch to reason about**: what's on `main`
-in `docs/` is exactly what's live, and any contributor can `quarto render
-docs-src` locally and see precisely what will publish before pushing.
+The pattern here, render locally, commit the rendered `docs/` folder, point GitHub Pages (Settings → Pages: branch `main`, `/docs`) at it directly, is not the only way to publish a Quarto site to GitHub Pages, and it is not what most production projects do. 
 
-The trade-off is real, and worth knowing before copying this into your own
-repo:
+- It was chosen deliberately for this repo because it needs **no GitHub Actions permissions, no deploy step, and no separate `gh-pages` branch to reason about**: what's on `main` in `docs/` is exactly what's live, and any contributor can `quarto render docs-src` locally and see precisely what will publish before pushing.
 
-- Rendered HTML/CSS/JS lives in git history like any other tracked file,
-  so PR diffs touching `docs-src/` also carry a (usually large,
-  machine-generated) diff of `docs/`.
-- Nothing enforces that `docs/` actually matches `docs-src/` at any given
-  commit except a CI job (`.github/workflows/docs.yml`) that re-renders
-  and diffs the two after the fact — it catches a forgotten re-render, but
-  only after the commit is already up.
-- `output-dir: ../docs` pointing outside `docs-src/`'s own project
-  directory is why `quarto render docs-src` prints the harmless-but-odd
-  `site_libs`/"unexpected path configuration" warnings documented in
-  [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues) — an artifact of this specific layout, not a sign
-  of anything broken.
+The trade-off is real, and worth knowing before copying this into your own repo:
 
-**When this simplified approach is a reasonable fit:** a small site with
-one or a handful of maintainers, low-frequency publishing, and a
-preference for "no CI, no Actions permissions to configure, nothing to
-debug beyond a normal git commit." That describes this repo.
+- Rendered HTML/CSS/JS lives in git history like any other tracked file, so PR diffs touching `docs-src/` also carry a (usually large,   machine-generated) diff of `docs/`.
+- Nothing enforces that `docs/` actually matches `docs-src/` at any given commit except a CI job (`.github/workflows/docs.yml`) that re-renders and diffs the two after the fact — it catches a forgotten re-render, but only after the commit is already up.
+- `output-dir: ../docs` pointing outside `docs-src/`'s own project directory is why `quarto render docs-src` prints the harmless-but-odd  `site_libs`/"unexpected path configuration" warnings documented in [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues) — an artifact of this specific layout, not a sign of anything broken.
 
-**When to reach instead for a proper build-and-deploy workflow** (render
-to an ignored, in-project output directory like `_site`, then publish via
-`actions/deploy-pages` or `quarto publish gh-pages`, with GitHub Pages set
-to source from "GitHub Actions" rather than a branch): a site with many
-contributors, frequent changes, or a desire to keep generated files out of
-git entirely. That is the more standard, more scalable pattern, and the
-one worth learning if you are setting up Pages for a repo of your own from
-scratch.
+**When this simplified approach is a reasonable fit:** a small site with one or a handful of maintainers, low-frequency publishing, and a
+preference for "no CI, no Actions permissions to configure, nothing to debug beyond a normal git commit." That describes this repo.
+
+**When to reach instead for a proper build-and-deploy workflow** (render to an ignored, in-project output directory like `_site`, then publish via `actions/deploy-pages` or `quarto publish gh-pages`, with GitHub Pages set to source from "GitHub Actions" rather than a branch): a site with many
+contributors, frequent changes, or a desire to keep generated files out of git entirely. 
+
+- That is the more standard, more scalable pattern, and the one worth learning if you are setting up Pages for a repo of your own from scratch.
 :::
 
 ## Notes / gotchas
 
-- The vendored `_extensions/quarto-ext/poster` has local patches. If you re-install/update the extension, re-apply all of them:
-  - `poster.typ` accepts the institution logo as already-loaded Typst `content` (loaded once in `typst-show.typ`) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the `_univ_logo_img` handling in `typst-show.typ`).
-  - `poster.typ` / `typst-show.typ` add a `footer-text-color` format option (defaults to white) so the footer text stays legible against
+The vendored `_extensions/quarto-ext/poster` has local patches. If you re-install/update the extension, re-apply all of them:
+  
+- `poster.typ` accepts the institution logo as already-loaded Typst `content` (loaded once in `typst-show.typ`) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the `_univ_logo_img` handling in `typst-show.typ`).
+- `poster.typ` / `typst-show.typ` add a `footer-text-color` format option (defaults to white) so the footer text stays legible against
     dark `footer-color` values. Set it to a dark color if you pick a light footer background (see `01-classic-academic`'s `footer-text-color: "25406A"`).
-  - `biblio.typ` (a new template-partial, registered in `_extension.yml`) sets `title: none` on the generated `#bibliography(...)` call, so Typst's own default "Bibliography" heading doesn't duplicate each template's own `#### References` heading.
-  - `poster.typ` also scales the footer's font sizes down (never up) on posters narrower than the extension's documented 36in default, so the footer row (URL + text + emails, packed with `h(1fr)` spacers) doesn't wrap outside its colored background block on narrower prints like `03-minimal-story`'s 24in width.
-  - `typst-show.typ` strips a stray leading backslash from the substituted institution-logo path before calling `image()` on it, defending against a pandoc/Typst-writer bug that once inserted one and broke the render with "path must not contain a backslash" (see [Updating the pinned Quarto version](scripts-and-ci.qmd#updating-the-pinned-quarto-version)). It is a no-op when the path is already clean, so it is safe regardless of Quarto version.
+- `biblio.typ` (a new template-partial, registered in `_extension.yml`) sets `title: none` on the generated `#bibliography(...)` call, so Typst's own default "Bibliography" heading doesn't duplicate each template's own `#### References` heading.
+- `poster.typ` also scales the footer's font sizes down (never up) on posters narrower than the extension's documented 36in default, so the footer row (URL + text + emails, packed with `h(1fr)` spacers) doesn't wrap outside its colored background block on narrower prints like `03-minimal-story`'s 24in width.
+- `typst-show.typ` strips a stray leading backslash from the substituted institution-logo path before calling `image()` on it, defending against a pandoc/Typst-writer bug that once inserted one and broke the render with "path must not contain a backslash" (see [Updating the pinned Quarto version](scripts-and-ci.qmd#updating-the-pinned-quarto-version)). 
+  - It is a no-op when the path is already clean, so it is safe regardless of Quarto version.
   - Because Quarto caches the vendored local Typst package under each project's `.quarto/typst/packages/local/typst-poster/`, edits to `poster.typ` only take effect after that cached copy is refreshed (delete `.quarto/` or copy the updated file over it, or just run `make render`). A plain `quarto render` will silently keep using the stale cached version.
 - Every template's `poster-typst` format sets **`fig-format: png`**. Without it, Typst's default (`fig-format: svg`) asks R's Cairo graphics device to render each plot, which can fail with a missing X11/Cairo shared-library error on machines without XQuartz (common on Apple Silicon macOS, and on Linux without `libcairo2-dev`).
     - Installing XQuartz/`libcairo` dev packages fixes it at the source; `fig-format: png` sidesteps it by using R's built-in PNG device instead, at a small cost in image sharpness for print.
 - **Never put a raw `<hr>` (or other raw HTML) inside a `::: {.content-visible when-format="html"}` div.** Doing so silently discards *every element after it* in the Typst output -- the templates lost their section divider, the entire Acknowledgments block (advisor, grant number, code/data link), and the `#### References` heading from the printed PDF, while still rendering fine on the web. Use a ```` ```{=html} ```` raw block instead, which HTML picks up and Typst ignores cleanly.
 - **Column balance:** the shipped samples do not fill their columns evenly, and that is accepted slack rather than a bug -- `02-modern-cards` reaches ~44% down column 1 vs ~82% down column 2, and `03-minimal-story` ends ~79% down its single column. The Evidence figure is one ~10in-tall indivisible block, so moving `02`'s `#colbreak()` past it only inverts the gap (measured 91%/29%, a wider spread). Real content is the remedy. Baselines live in `scripts/templates.R`; `render-all.R` fails on a *drop* of more than 10 points from them.
-- **Web banner contrast:** the title banner is a gradient, so banner text must clear its *lighter* stop, not just the dark one. The original `$au-light-blue` author/date color measured 6.97:1 on navy but only 3.59:1 on the `$au-blue` stop, a WCAG AA failure. All banner text is now plain white on a darkened light stop (`$au-blue-banner`, 7.21:1), and link and grey body text were darkened to clear AAA too. See [Re-coloring the templates](theming.qmd#re-coloring-the-templates), and run `Rscript scripts/check-contrast.R` after any color change.
-- **`####` headings arrive as Typst level *3*, not level 4.** Quarto maps markdown `##` to `=`, shifting every heading up one level, so the closing-matter headings land on the poster package's level-3 style: a numbered, italic, colon-terminated run-in that prints as "1) Acknowledgments:" and reads like a numbered list item. Each template overrides this with a `#show heading.where(level: 3)` rule in the raw Typst block just above `#### Acknowledgments`, defined *after* the package's own `show heading` rule so it takes precedence. A `####` heading placed earlier in the poster still gets the package's run-in style, since Typst show rules only apply to content after them.
-- **Font-size hierarchy is not automatic.** The poster package defaults `title-font-size` to 48pt and `authors-font-size` to 36pt, and derives level-1 headings as `body-font-size + 16`. If you shrink `title-font-size` to fit a long title (as `03-minimal-story` needs to at 24in wide), lower `authors-font-size` too and keep the title above `body-font-size + 16`, or the author line and section headings will print *larger* than the title.
+- **Web banner contrast:** the title banner is a gradient, so banner text must clear its *lighter* stop, not just the dark one. 
+  - The original `$au-light-blue` author/date color measured 6.97:1 on navy but only 3.59:1 on the `$au-blue` stop, a WCAG AA failure. 
+  - All banner text is now plain white on a darkened light stop (`$au-blue-banner`, 7.21:1), and link and grey body text were darkened to clear AAA too. 
+  - See [Re-coloring the templates](theming.qmd#re-coloring-the-templates), and run `Rscript scripts/check-contrast.R` after any color change.
+- **`####` headings arrive as Typst level *3*, not level 4.** Quarto maps markdown `##` to `=`, shifting every heading up one level, so the closing-matter headings land on the poster package's level-3 style: a numbered, italic, colon-terminated run-in that prints as "1) Acknowledgments:" and reads like a numbered list item. 
+  - Each template overrides this with a `#show heading.where(level: 3)` rule in the raw Typst block just above `#### Acknowledgments`, defined *after* the package's own `show heading` rule so it takes precedence. 
+  - A `####` heading placed earlier in the poster still gets the package's run-in style, since Typst show rules only apply to content after them.
+- **Font-size hierarchy is not automatic.** The poster package defaults `title-font-size` to 48pt and `authors-font-size` to 36pt, and derives level-1 headings as `body-font-size + 16`. 
+  - If you shrink `title-font-size` to fit a long title (as `03-minimal-story` needs to at 24in wide), lower `authors-font-size` too and keep the title above `body-font-size + 16`, or the author line and section headings will print *larger* than the title.
 - `.quarto/`, rendered `*.pdf`/`*.typ`/`poster.html`, and `*_files/` directories are gitignored as build output.

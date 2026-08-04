@@ -173,8 +173,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#re-coloring-the-templates" id="toc-re-coloring-the-templates" class="nav-link active" data-scroll-target="#re-coloring-the-templates">Re-coloring the templates</a></li>
-  <li><a href="#brand.yml-and-your-workflow" id="toc-brand.yml-and-your-workflow" class="nav-link" data-scroll-target="#brand.yml-and-your-workflow"><code>_brand.yml</code> and your workflow</a></li>
+  <li><a href="#re-coloring-the-templates" id="toc-re-coloring-the-templates" class="nav-link active" data-scroll-target="#re-coloring-the-templates"><span class="header-section-number">1</span> Re-coloring the templates</a></li>
+  <li><a href="#brand.yml-and-your-workflow" id="toc-brand.yml-and-your-workflow" class="nav-link" data-scroll-target="#brand.yml-and-your-workflow"><span class="header-section-number">2</span> <code>_brand.yml</code> and your workflow</a></li>
   </ul>
 </nav>
     </div>
@@ -200,8 +200,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="re-coloring-the-templates" class="level2">
-<h2 class="anchored" data-anchor-id="re-coloring-the-templates">Re-coloring the templates</h2>
+<section id="re-coloring-the-templates" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="re-coloring-the-templates"><span class="header-section-number">1</span> Re-coloring the templates</h2>
 <p>If you fork this repo for another organization, the palette lives in a small number of places. The <code>check-contrast.R</code> exists so you can <em>prove</em> your new colors are still accessible rather than assume it:</p>
 <ol type="1">
 <li><strong><code>scss/poster-common.scss</code></strong>: the <code>$au-*</code> tokens under <code>scss:defaults</code> drive the whole web version.</li>
@@ -224,8 +224,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Note the label originally used a dimmed tint, and a <em>tinted</em> label is still normal-size text, so AAA would have demanded 7:1 of the tint and forced the light stop nearly to navy, flattening the gradient.</li>
 <li>The labels are plain white instead and read as secondary through case, tracking, and weight, which keeps about half the gradient’s luminance range.</li>
 </ul></li>
-<li><strong>Opacity silently undoes contrast.</strong> Quarto’s own stylesheet sets <code>opacity: .8</code> on <code>.quarto-title-meta-heading</code>. Left in place, white at 80% over the light stop composites to roughly <code>#d6dee7</code> and measures 5.31:1 which is AA, not the 7.21:1 the color alone suggests.
+<li><strong>Opacity silently undoes contrast.</strong> Quarto’s own stylesheet sets <code>opacity: .8</code> on <code>.quarto-title-meta-heading</code>.
 <ul>
+<li>Left in place, white at 80% over the light stop composites to roughly <code>#d6dee7</code> and measures 5.31:1 which is AA, not the 7.21:1 the color alone suggests.</li>
 <li><code>poster-common.scss</code> overrides it back to <code>opacity: 1</code>; if you introduce translucency anywhere, remember the audit reads declared colors, not composited ones.</li>
 </ul></li>
 <li><strong>Accent colors and text colors are held to different bars.</strong> WCAG asks 3:1 of large text and graphics, but 4.5:1 (AA) or 7:1 (AAA) of normal-size text.
@@ -234,7 +235,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Size is the other lever, and the script reads each rule’s declared <code>font-size</code> rather than taking anyone’s word for it: a heading at 24px or more (1.5rem at the default root size) is audited as large text automatically, which is how <code>02</code>’s red headings reach AAA without touching the red.</li>
 <li>Shrink such a heading back below 24px and the audit silently re-classifies it as normal text and the stricter bar returns.</li>
 </ul></li>
-<li><strong>Inline code inherits the brand grey.</strong> Bootstrap derives <code>--bs-code-color</code> from it, so <code>$au-grey</code> sets both the acknowledgments/references block <em>and</em> every <code>`inline code`</code> span. These templates use a lot of inline code, so that pair is audited explicitly.</li>
+<li><strong>Inline code inherits the brand grey.</strong> Bootstrap derives <code>--bs-code-color</code> from it, so <code>$au-grey</code> sets both the acknowledgments/references block <em>and</em> every <code>`inline code`</code> span.
+<ul>
+<li>These templates use a lot of inline code, so that pair is audited explicitly.</li>
+</ul></li>
 <li><strong>Rule colors are parsed, not restated.</strong> The script reads the <code>color:</code> and <code>background:</code> declarations straight out of the four stylesheets (resolving palette variables and gradient stops), so editing a rule such as the ethics panel’s cream background is picked up automatically.
 <ul>
 <li>Its <code>source</code> column shows where each value came from. The exceptions are Bootstrap-derived variables (<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>$link-color</code>), which no rule states; those resolve from the palette instead.</li>
@@ -245,29 +249,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Auditing it would have reported a contrast figure for text that never appears. If you do put a heading inside the panel, add the row.</li>
 </ul></li>
 </ul>
-<p>Current status: <strong>all 22 audited pairs reach AAA.</strong> The last AA-only pair was <code>02-modern-cards</code>’s red section headings on white (6.28:1 against a 7:1 bar); raising them from 1.1rem to 1.5rem makes them large text, where the bar is 4.5:1, which was preferable to darkening the brand red. Because every pair now clears AAA, <code>--require-aaa</code> is a usable gate rather than an aspiration – CI runs it that way.</p>
+<p>Current status: <strong>all 22 audited pairs reach AAA.</strong></p>
+<ul>
+<li>The last AA-only pair was <code>02-modern-cards</code>’s red section headings on white (6.28:1 against a 7:1 bar).</li>
+<li>Raising them from 1.1rem to 1.5rem makes them “large text”, where the bar is 4.5:1, which was preferable to darkening the brand red.</li>
+<li>Because every pair now clears AAA, <code>--require-aaa</code> is a usable gate rather than an aspiration so CI runs it that way.</li>
+</ul>
 </section>
-<section id="brand.yml-and-your-workflow" class="level2">
-<h2 class="anchored" data-anchor-id="brand.yml-and-your-workflow"><code>_brand.yml</code> and your workflow</h2>
+<section id="brand.yml-and-your-workflow" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="brand.yml-and-your-workflow"><span class="header-section-number">2</span> <code>_brand.yml</code> and your workflow</h2>
 <p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving. This section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> for the full, current spec.</p>
+<p><strong>What it’s for here:</strong></p>
 <ul>
-<li><strong>What it’s for here:</strong> <code>_brand.yml</code> is the single source of the AU color palette and typography that Quarto’s brand-aware HTML theming reads <em>automatically</em>, you don’t <code>include</code> or reference it from any <code>.qmd</code>, Quarto just picks it up from the project root.</li>
-<li><strong>What it actually reaches:</strong> in practice, only the <strong>web (<code>html</code>) output</strong> consumes it directly for color, via Bootstrap variables Quarto derives from the brand palette (e.g.&nbsp;<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>--bs-link-color</code>. See the “Bootstrap var” rows above).
+<li><code>_brand.yml</code> is the single source of the AU color palette and typography.</li>
+<li>Quarto’s brand-aware HTML theming reads it <em>automatically</em>, you don’t <code>include</code> or reference it from any <code>.qmd</code>, Quarto just picks it up from the project root.</li>
+</ul>
+<p><strong>What it actually reaches:</strong></p>
 <ul>
-<li>The <strong>print (<code>poster-typst</code>) output</strong> does not read <code>_brand.yml</code>’s <em>color</em> palette at all; print colors come from each template’s own YAML (<code>footer-color</code>, <code>footer-text-color</code>) and from raw Typst blocks, so a color change needs to be made in both places. See step 5 of <a href="./index.html#fork-this-repo-and-build-your-poster">Fork this repo and build your poster</a>.</li>
+<li>In practice, only the <strong>web (<code>html</code>) output</strong> consumes it directly for color, via Bootstrap variables Quarto derives from the brand palette, e.g., <code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>--bs-link-color</code>.
+<ul>
+<li>See the “Bootstrap var” rows above.</li>
 </ul></li>
-<li><strong>Typography is the mirror image of color, and worth calling out on its own.</strong> <code>_brand.yml</code> declares <code>Source Sans 3</code> and <code>STIX Two Text</code> as <code>typography.fonts</code> resources (<code>source: google</code>). For <strong>print</strong>, this is confirmed working: <code>poster.typ</code> hardcodes <code>STIX Two Text</code> for the body, Quarto injects a <code>Source Sans 3</code> show rule for headings, and Quarto fetches both from Google into <code>.quarto/typst/fonts/</code> at render time – verified by the absence of Typst’s <code>unknown font family</code> warning, which is a hard compiler signal, not a guess.
+<li>The <strong>print (<code>poster-typst</code>) output</strong> does not read <code>_brand.yml</code>’s <em>color</em> palette at all.
 <ul>
-<li>For <strong>web</strong>, this is <em>also</em> confirmed working, as of a correction to an earlier version of this page that claimed otherwise. That earlier claim came from grepping the raw rendered HTML for literal strings like <code>@font-face</code> – but every <code>poster.qmd</code> sets <code>embed-resources: true</code>, which makes Quarto inline its CSS as percent-encoded <code>data:text/css,...</code> URIs rather than plain <code>&lt;style&gt;</code> text, so <code>@font-face</code> appears in the file as <code>%40font%2Dface</code> and a literal-string search never finds it. Decoding those URIs (rather than grepping around them) shows the rendered HTML for each template does contain a self-hosted <code>@font-face</code> for <code>Source Sans 3</code> (base64-embedded font data, not a hotlink) <em>and</em> <code>--bs-body-font-family: Source Sans 3</code> in the compiled Bootstrap variables <em>and</em> <code>font-family:Source Sans 3</code> on the compiled heading rules – i.e.&nbsp;both the <code>base</code> and <code>headings</code> roles reach the browser correctly.</li>
-<li><code>STIX Two Text</code> is fetched and embedded too, but is never applied to anything on the web side – correctly so, since <code>_brand.yml</code>’s own comment notes it’s declared only so Typst can find it for print; nothing under <code>base</code>/<code>headings</code> names it for <code>html</code>.</li>
-<li><code>scripts/render-all.R</code> now has a <code>check_fonts()</code> step that decodes each rendered <code>poster.html</code> this way and asserts the <code>@font-face</code> block and <code>--bs-body-font-family</code> variable are both present, so a future regression – or another naive grep – fails loudly instead of silently reading as “not delivered.” See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section for the full before/after and for how the standalone minimal-reproduction project (no custom theme or scss) was re-run with the same decode-first approach and shows the identical, working pattern.</li>
+<li>Print colors come from each template’s own YAML (<code>footer-color</code>, <code>footer-text-color</code>) and from raw Typst blocks, so a color change needs to be made in both places.</li>
+<li>See step 5 of <a href="./index.html#fork-this-repo-and-build-your-poster">Fork this repo and build your poster</a>.</li>
 </ul></li>
-<li><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong> <code>scss/poster-common.scss</code> defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling).
+</ul>
+<p><strong>Typography is the mirror image of color, and worth calling out on its own.</strong></p>
+<ul>
+<li><code>_brand.yml</code> declares <code>Source Sans 3</code> and <code>STIX Two Text</code> as <code>typography.fonts</code> resources (<code>source: google</code>).</li>
+<li>For <strong>print</strong>, this is confirmed working: <code>poster.typ</code> hardcodes <code>STIX Two Text</code> for the body, Quarto injects a <code>Source Sans 3</code> show rule for headings, and Quarto fetches both from Google into <code>.quarto/typst/fonts/</code> at render time, verified by the absence of Typst’s <code>unknown font family</code> warning, which is a hard compiler signal, not a guess.</li>
+<li>For <strong>web</strong>, this is <em>also</em> confirmed working.
+<ul>
+<li>An earlier approach grepped the raw rendered HTML for literal strings like <code>@font-face</code>, but every <code>poster.qmd</code> sets <code>embed-resources: true</code>, which makes Quarto inline its CSS as percent-encoded <code>data:text/css,...</code> URIs rather than plain <code>&lt;style&gt;</code> text, so <code>@font-face</code> appears in the file as <code>%40font%2Dface</code> and a literal-string search never finds it.
+<ul>
+<li>Decoding those URIs (rather than grepping around them) now shows the rendered HTML for each template does contain a self-hosted <code>@font-face</code> for <code>Source Sans 3</code> (base64-embedded font data, not a hotlink) <em>and</em> <code>--bs-body-font-family: Source Sans 3</code> in the compiled Bootstrap variables <em>and</em> <code>font-family:Source Sans 3</code> on the compiled heading rules, i.e., both the <code>base</code> and <code>headings</code> roles reach the browser correctly.</li>
+</ul></li>
+<li><code>STIX Two Text</code> is fetched and embedded too, but is never applied to anything on the web side, and correctly so, since <code>_brand.yml</code>’s own comment notes it’s declared only so Typst can find it for print; nothing under <code>base</code>/<code>headings</code> names it for <code>html</code>.</li>
+<li><code>scripts/render-all.R</code> now has a <code>check_fonts()</code> step that decodes each rendered <code>poster.html</code> this way and asserts the <code>@font-face</code> block and <code>--bs-body-font-family</code> variable are both present, so a future regression, or another naive grep, fails loudly instead of silently reading as “not delivered.”</li>
+</ul></li>
+<li>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section for the full before/after and for how the standalone minimal-reproduction project (no custom theme or scss) was re-run with the same decode-first approach and shows the identical, working pattern.</li>
+</ul>
+<p><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong></p>
+<ul>
+<li><code>scss/poster-common.scss</code> defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling).
 <ul>
 <li>Nothing currently generates one file from the other, so <a href="#re-coloring-the-templates">Re-coloring the templates</a> treats both as required edits, and <code>check-contrast.R</code> reads both.</li>
 </ul></li>
-<li><strong>The <code>logo:</code> key is intentionally left unset</strong> because each template places the organization logo explicitly instead. See <a href="./content-guide.html#shared-resources">Shared resources</a> to avoid Quarto rendering a second, automatic brand logo alongside it.</li>
-<li><strong>If you fork this for another organization:</strong> update <code>_brand.yml</code>’s palette and typography alongside <code>scss/poster-common.scss</code> and each template’s footer colors, then re-run <code>Rscript scripts/check-contrast.R --require-aaa</code> to confirm the new combination is still accessible before you consider the re-color done.</li>
+</ul>
+<p><strong>The <code>logo:</code> key is intentionally left unset</strong> because each template places the organization logo explicitly instead. See <a href="./content-guide.html#shared-resources">Shared resources</a> to avoid Quarto rendering a second, automatic brand logo alongside it.</p>
+<p><strong>If you fork this for another organization:</strong></p>
+<ul>
+<li>Update <code>_brand.yml</code>’s palette and typography alongside <code>scss/poster-common.scss</code> and each template’s footer colors.</li>
+<li>Then, re-run <code>Rscript scripts/check-contrast.R --require-aaa</code> to confirm the new combination is still accessible.</li>
 </ul>
 
 
