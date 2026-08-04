@@ -5,7 +5,7 @@
 If you want to make a conference-style large-format poster using Quarto, this site has working templates for different style posters.
 
 - The workflow uses Quarto and its `poster-typst` extension as a modern replacement for older `posterdown`/R Markdown poster workflows. 
-- The workflow also uses Quarto's `_brand.yml` file to provide for consistent themeing.
+- The workflow also uses Quarto's `_brand.yml` file to provide for consistent theming.
 - Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.
 
 > **Caveat:** Quarto's its `poster-typst` extension and `_brand.yml` theming are both still under active development. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed. 

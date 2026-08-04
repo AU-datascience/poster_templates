@@ -198,6 +198,40 @@ If a *real* web-font gap turns up in the future, re-run
 (`@font-face embedded`, `--bs-body-font-family set`) separately, so a
 genuine regression is distinguishable from another decoding miss.
 
+### `docs-src` render warnings (`site_libs` cleanup, "unexpected path configuration") — expected, benign
+
+Running `quarto render docs-src` reliably prints two warnings:
+
+```
+WARN: Refusing to remove directory .../docs/site_libs since it is not a
+subdirectory of the main project directory.
+WARN: Quarto did not expect the path configuration being used in this
+project, and strange behavior may result.
+```
+
+Both are a direct consequence of `docs-src/_quarto.yml`'s `output-dir:
+../docs` — required so GitHub Pages (configured to serve `/docs` on `main`
+directly, no build step) gets the rendered site at the repo's top-level
+`docs/`, not buried under `docs-src/`. Quarto's website renderer normally
+clears `site_libs/` before regenerating it, but only when that directory is
+inside the project root; here it's a sibling of `docs-src/` (the project
+root), so the safety check refuses to remove it and Quarto flags the
+overall path layout as one it didn't expect.
+
+Practical effect: `docs/site_libs/` is not cleared automatically on each
+render, so in principle stale assets from a removed/renamed dependency
+could accumulate there uncaught. Checked after the warning first surfaced
+(2026-08-04, Quarto `1.9.38`, matching `.quarto-version`) — `docs/site_libs`
+contained only the expected `bootstrap`, `clipboard`, `quarto-html`,
+`quarto-nav`, `quarto-search` directories, `git status` showed nothing
+stale or untracked there, and the render otherwise completed and produced
+correct output (`docs/index.html` and `docs/sitemap.xml` updated as
+expected). Not a version-drift issue — it's inherent to routing
+`output-dir` outside the project directory, which is unavoidable given the
+GitHub Pages constraint. Worth an occasional manual check of
+`docs/site_libs` for orphaned files after removing or renaming a
+dependency, but no action needed otherwise.
+
 ### Resolved
 
 The rest of what an earlier version of this file (`HANDOFF-fonts-and-ci.md`,
