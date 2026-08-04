@@ -155,17 +155,34 @@ correct current family (`"Source Sans 3"` rather than the nonexistent
 self-hosted, so both fall through to their system-font fallbacks
 (Helvetica/Arial, Georgia) in practice, same as before.
 
+This has been reproduced exactly once, on one machine, so treat it as a
+lead rather than a confirmed Quarto limitation -- no matching
+`quarto-dev/quarto-cli` issue was found when searching for it, which is
+itself a signal worth taking seriously rather than assuming the search was
+just incomplete.
+
 If you pick this up next:
 
-1. Re-run the minimal reproduction above against a newer Quarto release
+1. Re-test with a standalone `quarto-cli` install, not the Quarto bundled
+   inside Positron (`/Applications/Positron.app/.../quarto/bin/quarto` on
+   the machine this was diagnosed on) -- the two can diverge, and everything
+   above was only ever run against the bundled copy.
+2. Re-run the minimal reproduction above against a newer Quarto release
    (bump `.quarto-version` per the procedure in
    `docs-src/scripts-and-ci.qmd`, re-verify locally first) to check whether
    this is a version-specific bug that's since been fixed upstream.
-2. If it still reproduces on a current release, search/file a
-   `quarto-dev/quarto-cli` issue — the two prerequisites for a good report
-   (a truly minimal project, and confirmation it isn't specific to this
-   project's theme/scss setup) are already done above.
-3. `render-all.R` still discards render stdout/stderr; capturing the log
+3. Before assuming this is a brand.yml-specific bug at all: the rendered
+   HTML in this project has almost no `--bs-*` Bootstrap CSS variables and
+   no `font-family` rule on `body` from *any* source, including Bootstrap's
+   own theme defaults -- not just the brand-declared one. That's a more
+   basic puzzle than "brand.yml doesn't reach html," found while
+   re-verifying this note, and not yet root-caused. Check whether Bootstrap
+   theming is being applied at all before chasing brand.yml specifically.
+4. If it still reproduces on a current release with a standalone Quarto,
+   *then* search/file a `quarto-dev/quarto-cli` issue — a truly minimal
+   project and confirmation it isn't specific to this project's
+   theme/scss setup are already done above.
+5. `render-all.R` still discards render stdout/stderr; capturing the log
    and failing on `unknown font family` would catch a regression on the
    print side faster than a column-fill drift would.
 
