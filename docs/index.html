@@ -190,13 +190,31 @@ ul.task-list li input[type="checkbox"] {
 <li>The workflow also uses Quarto’s <code>_brand.yml</code> file to provide for consistent theming.</li>
 <li>Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As a student-oriented repository, these notes contain a lot of technical detail and rationale for why things are designed the way they are, from the templates to the theming to the testing and CI scripts.</p>
+<ul>
+<li>You do <em>not</em> need to understand all of the details to use the templates effectively.</li>
+<li>However, the details matter and may help you in troubleshooting or customising the templates for your use.</li>
+</ul>
+</div>
+</div>
 <blockquote class="blockquote">
 <p><strong>Caveat:</strong> Quarto’s its <code>poster-typst</code> extension and <code>_brand.yml</code> theming are both still under active development. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
 </blockquote>
 <blockquote class="blockquote">
 <p><strong>AI Usage</strong>: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.</p>
 </blockquote>
-<p>A modern replacement for the <code>posterdown</code>/R Markdown poster workflow. There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
+<p>## The Templates</p>
+<p>There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -219,10 +237,15 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 <ul>
-<li>Because both formats are declared in one <code>format:</code> block, <code>quarto render poster.qmd</code> builds <em>both</em> versions from the same content in one pass.</li>
+<li>Because both formats are declared in one <code>format:</code> block, <code>quarto render poster.qmd</code> builds <em>both</em> versions from the same content in one pass.
+<ul>
 <li>Run <code>quarto render poster.qmd --to poster-typst</code> or <code>--to html</code> to build just one.</li>
-<li>The print PDF is typeset by <strong>Typst</strong>, not LaTeX. That choice drives several things in these templates (raw <code>```{=typst}</code> blocks, arbitrary page sizes, no TeX install). See <a href="./why-typst.html">Why Typst instead of LaTeX?</a> for the reasoning and the trade-offs.</li>
-<li><code>Rscript scripts/render-all.R</code> renders all three templates and then checks the output for known regressions See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
+</ul></li>
+<li>The print PDF is typeset by <strong>Typst</strong>, not LaTeX. That choice drives several things in these templates (raw <code>```{=typst}</code> blocks, arbitrary page sizes, no TeX install).
+<ul>
+<li>See <a href="./why-typst.html">Why Typst instead of LaTeX?</a> for the reasoning and the trade-offs.</li>
+</ul></li>
+<li><code>Rscript scripts/render-all.R</code> renders all three templates and then checks the output for known regressions. See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
 </ul>
 <section id="repo-structure-at-a-glance" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="repo-structure-at-a-glance"><span class="header-section-number">1</span> Repo structure at a glance</h2>
@@ -301,15 +324,34 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="requirements" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="requirements"><span class="header-section-number">3</span> Requirements</h2>
-<p><strong>To render a poster itself:</strong> <a href="https://quarto.org">Quarto</a> (a version at or near the one pinned in <a href="https://github.com/AU-datascience/poster_templates/blob/main/.quarto-version"><code>.quarto-version</code></a>) and R – every template’s R code chunks are part of the <em>shipped example content</em>, not the poster mechanism itself, so if you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply. As shipped, the three example posters use:</p>
+<p><strong>To render a poster itself:</strong> <a href="https://quarto.org">Quarto</a> (a version at or near the one pinned in <a href="https://github.com/AU-datascience/poster_templates/blob/main/.quarto-version"><code>.quarto-version</code></a>) and R since every template’s R code chunks are part of the <em>shipped example content</em>, not the poster mechanism itself.</p>
+<ul>
+<li>When you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply.</li>
+</ul>
+<p>As shipped, the three example posters use:</p>
 <ul>
 <li><code>tidyverse</code>, <code>palmerpenguins</code>, <code>patchwork</code> (all three templates)</li>
 <li><code>broom</code> (<code>01-classic-academic</code> only, for <code>broom::tidy()</code> model summaries)</li>
 <li><code>knitr</code> (all three, for <code>knitr::kable()</code> tables – normally auto-loaded by Quarto’s R engine, listed here for completeness)</li>
 </ul>
-<p>No Python packages are required unless you add your own Python chunks. No system libraries beyond a working R + Quarto install are needed for the print or web render themselves; fonts (<code>Source Sans 3</code>, <code>STIX Two Text</code>) are fetched from Google and cached by Quarto at render time (see <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section), not installed as system fonts.</p>
-<p><strong>To run the helper scripts in <code>scripts/</code>:</strong> all four use <code>tidyverse</code> and <code>here</code>; <code>make-previews.R</code> additionally needs <code>magick</code> (which needs the ImageMagick system library), and <code>check-column-balance.R</code> needs <code>pdftools</code> (which needs the poppler system library). <code>check-contrast.R</code> needs only <code>tidyverse</code>/<code>here</code> – it’s pure source/CSS parsing, no rendering. None of the scripts are required to render a poster; <code>quarto render templates/&lt;name&gt;/poster.qmd</code> alone is enough. They exist to catch regressions (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>), and CI (<code>.github/workflows/posters.yml</code>) installs all of the above automatically via <code>r-lib/actions/setup-r-dependencies</code>, so you never need to install anything by hand just to see CI pass on a fork.</p>
-<p><strong>Is this an <code>renv</code> repo?</strong> No, deliberately not. <code>renv</code> buys strict, pinned reproducibility of exact package versions, at the cost of a lockfile contributors must keep in sync and an <code>renv::restore()</code> step before anything runs. For a small, stable package list on a repo meant to be forked and heavily edited by students building their own poster content (who will be adding whatever packages <em>their</em> analysis needs, not constrained by a lockfile), that friction outweighs the benefit here. If you want tighter reproducibility for your own fork – e.g.&nbsp;pinning exact versions for a class where everyone must get identical output – <code>renv::init()</code> after cloning is a reasonable thing to layer on yourself; it just isn’t part of this template.</p>
+<p>No Python packages are required unless you add your own Python chunks.</p>
+<p>No system libraries beyond a working R + Quarto install are needed for the print or web render themselves.</p>
+<ul>
+<li>fonts (<code>Source Sans 3</code>, <code>STIX Two Text</code>) are fetched from Google and cached by Quarto at render time (see <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section), not installed as system fonts.</li>
+</ul>
+<p><strong>To run the helper scripts in <code>scripts/</code>:</strong> all four use <code>tidyverse</code> and <code>here</code>.</p>
+<ul>
+<li><code>make-previews.R</code> additionally needs <code>magick</code> (which needs the ImageMagick system library), and</li>
+<li><code>check-column-balance.R</code> needs <code>pdftools</code> (which needs the poppler system library).</li>
+<li><code>check-contrast.R</code> needs only <code>tidyverse</code>/<code>here</code> – it’s pure source/CSS parsing, no rendering.</li>
+</ul>
+<p>None of the scripts are required to render a poster; <code>quarto render templates/&lt;name&gt;/poster.qmd</code> alone is enough. - They exist to catch regressions (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>), and CI (<code>.github/workflows/posters.yml</code>) installs all of the above automatically via <code>r-lib/actions/setup-r-dependencies</code>, so you never need to install anything by hand just to see CI pass on a fork.</p>
+<p><strong>Is this an <code>renv</code> repo?</strong> No, deliberately not.</p>
+<ul>
+<li><code>renv</code> buys strict, pinned reproducibility of exact package versions, at the cost of a lockfile contributors must keep in sync and an <code>renv::restore()</code> step before anything runs.</li>
+<li>For a small, stable package list on a repo meant to be forked and heavily edited by students building their own poster content (who will be adding whatever packages <em>their</em> analysis needs, not constrained by a lockfile), that friction outweighs the benefit here.</li>
+<li>If you want tighter reproducibility <em>for your own fork</em>, e.g., pinning exact versions for a team where everyone must get identical output, <code>renv::init()</code> after cloning is a reasonable thing to layer on yourself; it just isn’t part of this template.</li>
+</ul>
 
 
 </section>
