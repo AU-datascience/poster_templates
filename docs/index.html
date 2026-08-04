@@ -166,7 +166,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p><strong>Heads up:</strong> Quarto’s <code>_brand.yml</code> theming and its <code>poster-typst</code> extension are both still under active development upstream. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright – if something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
+<p><strong>Heads up:</strong> Quarto’s <code>_brand.yml</code> theming and its <code>poster-typst</code> extension are both still under active development upstream. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
 </blockquote>
 <p>A modern replacement for the <code>posterdown</code>/R Markdown poster workflow. There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
 <table class="caption-top table">
@@ -193,8 +193,8 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Because both formats are declared in one <code>format:</code> block, <code>quarto render poster.qmd</code> builds <em>both</em> versions from the same content in one pass.</li>
 <li>Run <code>quarto render poster.qmd --to poster-typst</code> or <code>--to html</code> to build just one.</li>
-<li>The print PDF is typeset by <strong>Typst</strong>, not LaTeX. That choice drives several things in these templates (raw <code>```{=typst}</code> blocks, arbitrary page sizes, no TeX install) – see <a href="./why-typst.html">Why Typst instead of LaTeX?</a> for the reasoning and the trade-offs.</li>
-<li><code>Rscript scripts/render-all.R</code> renders all three templates and then checks the output for known regressions – see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
+<li>The print PDF is typeset by <strong>Typst</strong>, not LaTeX. That choice drives several things in these templates (raw <code>```{=typst}</code> blocks, arbitrary page sizes, no TeX install). See <a href="./why-typst.html">Why Typst instead of LaTeX?</a> for the reasoning and the trade-offs.</li>
+<li><code>Rscript scripts/render-all.R</code> renders all three templates and then checks the output for known regressions See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
 </ul>
 <section id="repo-structure-at-a-glance" class="level2">
 <h2 class="anchored" data-anchor-id="repo-structure-at-a-glance">Repo structure at a glance</h2>
@@ -220,7 +220,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>_brand.yml</code></td>
-<td>Shared color palette + typography, consumed by Quarto’s brand-aware HTML theming – see <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>.</td>
+<td>Shared color palette + typography, consumed by Quarto’s brand-aware HTML theming. See <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>.</td>
 </tr>
 <tr class="odd">
 <td><code>references.bib</code></td>
@@ -232,11 +232,11 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>scripts/</code></td>
-<td>R helpers: render everything, check output, audit contrast, regenerate previews – see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</td>
+<td>R helpers: render everything, check output, audit contrast, regenerate previews. See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</td>
 </tr>
 <tr class="even">
 <td><code>_extensions/quarto-ext/poster/</code></td>
-<td>Vendored Typst poster extension, with three local patches – see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>.</td>
+<td>Vendored Typst poster extension, with three local patches. See <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>.</td>
 </tr>
 <tr class="odd">
 <td><code>.github/workflows/posters.yml</code></td>
@@ -257,13 +257,17 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="fork-this-repo-and-build-your-poster">Fork this repo and build your poster</h2>
 <p>Assuming you’ve forked or cloned this repo to build a poster of your own:</p>
 <ol type="1">
-<li><strong>Pick a starting template.</strong> Skim the three options in <a href="./templates.html">Templates</a> and pick whichever layout fits your content – each is a self-contained <code>templates/&lt;name&gt;/</code> folder that renders independently.</li>
-<li><strong>Copy the folder</strong>, e.g.&nbsp;<code>cp -r templates/01-classic-academic templates/my-poster</code>. Keep it under <code>templates/</code> so the shared registry in <code>scripts/templates.R</code> – and everything that reads it (<code>render-all.R</code>, <code>check-contrast.R</code>, <code>make-previews.R</code>) – picks it up automatically. If your fork will only ever hold one poster, you can instead move that single <code>.qmd</code> (and its sibling <code>.scss</code>) to the project’s top level and delete <code>templates/</code> entirely; the scripts auto-detect either layout (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>).</li>
-<li><strong>Edit the YAML front matter</strong>: title, authors/affiliations, <code>poster-authors</code>, <code>departments</code>, footer contact info, and a print <code>size</code> (any Typst <code>"WIDTHxHEIGHT"</code> in inches – see <a href="./templates.html#choosing-a-print-size">Choosing a print size</a> for sizes that match common conference boards).</li>
+<li><strong>Pick a starting template.</strong> Skim the three options in <a href="./templates.html">Templates</a> and pick whichever layout fits your content. Each is a self-contained <code>templates/&lt;name&gt;/</code> folder that renders independently.</li>
+<li><strong>Copy the folder</strong>, e.g.&nbsp;<code>cp -r templates/01-classic-academic templates/my-poster</code>. Keep it under <code>templates/</code> so the shared registry in <code>scripts/templates.R</code>, and everything that reads it (<code>render-all.R</code>, <code>check-contrast.R</code>, <code>make-previews.R</code>), picks it up automatically. If your fork will only ever hold one poster, you can instead move that single <code>.qmd</code> (and its sibling <code>.scss</code>) to the project’s top level and delete <code>templates/</code> entirely; the scripts auto-detect either layout (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>).</li>
+<li><strong>Edit the YAML front matter</strong>: title, authors/affiliations, <code>poster-authors</code>, <code>departments</code>, footer contact info, and a print <code>size</code> (any Typst <code>"WIDTHxHEIGHT"</code> in inches. See <a href="./templates.html#choosing-a-print-size">Choosing a print size</a> for sizes that match common conference boards).</li>
 <li><strong>Replace the <code>##</code> sections</strong> with your own content. Each level-2 heading becomes a poster panel automatically, in both outputs. Cite sources with <code>[@bibkey]</code> and add the matching entry to <code>references.bib</code>.</li>
-<li><strong>Re-color it if you’re forking for a different organization.</strong> The palette lives in a small, documented set of places – see <a href="./theming.html#re-coloring-the-templates">Re-coloring the templates</a> – and <code>_brand.yml</code> drives the web theme specifically (see <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>).</li>
-<li><strong>Render it</strong>: <code>quarto render templates/my-poster/poster.qmd</code> – check <code>poster.pdf</code> for the printable version and <code>poster.html</code> for the web version.</li>
-<li><strong>Run the checks</strong> (optional, but worth it before you consider it done): <code>Rscript scripts/render-all.R</code> renders every template it finds and checks the output for known regressions – see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
+<li><strong>Re-color it if you’re forking for a different organization.</strong> The palette lives in a small, documented set of places.
+<ul>
+<li>See <a href="./theming.html#re-coloring-the-templates">Re-coloring the templates</a></li>
+<li><code>_brand.yml</code> drives the web theme specifically (see <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a>).</li>
+</ul></li>
+<li><strong>Render it</strong>: <code>quarto render templates/my-poster/poster.qmd</code>. Check <code>poster.pdf</code> for the printable version and <code>poster.html</code> for the web version.</li>
+<li><strong>Run the checks</strong> (optional, but worth it before you consider it done): <code>Rscript scripts/render-all.R</code> renders every template it finds and checks the output for known regressions. See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
 <li><strong>Regenerate the previews</strong> if you want updated images for your own README: <code>Rscript scripts/make-previews.R</code> (after re-rendering the PDFs).</li>
 </ol>
 

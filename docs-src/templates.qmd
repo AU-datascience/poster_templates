@@ -45,7 +45,7 @@ A lesson from filling in the templates: **the single-column minimal-story layout
 
 ## Choosing a print size
 
-`size:` (under `poster-typst:` in each template's YAML) takes any Typst-compatible `"WIDTHxHEIGHT"` in inches -- it isn't tied to a specific venue.
+`size:` (under `poster-typst:` in each template's YAML) takes any Typst-compatible `"WIDTHxHEIGHT"` in inches; it isn't tied to a specific venue.
 
 - A few sizes recur often enough at ML/data-science conferences that it's worth calling out how the templates map onto them (all landscape, given as the venue's own H x W convention next to the equivalent `size:` string):
 
@@ -61,7 +61,7 @@ A lesson from filling in the templates: **the single-column minimal-story layout
 - To target a different size (e.g. NeurIPS), on any template:
 
 1. Change `size:` to the `size:` string from the table (or any other `"WxH"` you need).
-2. If the aspect ratio changes a lot (e.g. going from 48x36 to 72x36), reconsider `num-columns` -- wider boards generally read better with one more column than a narrower version of the same layout.
+2. If the aspect ratio changes a lot (e.g. going from 48x36 to 72x36), reconsider `num-columns. Wider boards generally read better with one more column than a narrower version of the same layout.
 3. Re-render (`quarto render poster.qmd --to poster-typst`) and check for overflow onto a second page or, conversely, excess blank space;
   - Adjust `body-font-size`, trim/add content, or nudge `size:` again as needed.
   - `01-classic-academic` and `03-minimal-story` aren't currently tuned to any of the sizes above, so budget an iteration or two if you retarget them.

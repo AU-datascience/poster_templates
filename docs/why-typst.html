@@ -166,18 +166,31 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="why-typst-instead-of-latex" class="level2">
 <h2 class="anchored" data-anchor-id="why-typst-instead-of-latex">Why Typst instead of LaTeX?</h2>
-<p>The print format here is <a href="https://quarto.org/docs/output-formats/typst.html"><code>poster-typst</code></a>, which typesets through <a href="https://typst.app">Typst</a> rather than through LaTeX (<code>format: pdf</code>). Quarto’s <a href="https://quarto.org/docs/output-formats/typst.html">Typst Basics</a> guide is the reference for everything in this section.</p>
+<p>The print format here is <a href="https://quarto.org/docs/output-formats/typst.html"><code>poster-typst</code></a>, which typesets through <a href="https://typst.app">Typst</a> rather than through LaTeX (<code>format: pdf</code>).</p>
+<ul>
+<li>Quarto’s <a href="https://quarto.org/docs/output-formats/typst.html">Typst Basics</a> guide is the reference for everything in this section.</li>
+</ul>
 <p><strong>Why it fits posters well:</strong></p>
 <ul>
-<li><strong>No TeX toolchain.</strong> Quarto ships the Typst CLI, so nothing beyond Quarto itself needs installing – no TinyTeX bootstrap, no per-package downloads on first render, no version drift between machines. For a template repo other people are meant to clone and render, this is the single biggest practical win.</li>
-<li><strong>Fast, legible iteration.</strong> Typst is designed to be as capable as LaTeX while being easier to learn, and it renders quickly – which matters here, because tuning a poster is a loop of “render, look at the whole page, adjust a size, render again.”</li>
+<li><strong>No TeX toolchain.</strong> Quarto ships the Typst CLI, so nothing beyond Quarto itself needs installing; no TinyTeX bootstrap, no per-package downloads on first render, no version drift between machines.
+<ul>
+<li>For a template repo other people are meant to clone and render, this is the single biggest practical win.</li>
+</ul></li>
+<li><strong>Fast, legible iteration.</strong> Typst is designed to be as capable as LaTeX while being easier to learn, and it renders quickly, which matters here, because tuning a poster is a loop of “render, look at the whole page, adjust a size, render again.”</li>
 <li><strong>Arbitrary page geometry is a first-class option.</strong> <code>size: "48x36"</code> (or <code>"24x52"</code>) is just a format option; multi-column flow is <code>num-columns</code>. Getting the same from LaTeX means <code>tikzposter</code>/<code>beamerposter</code> plus a class-specific idiom for every layout decision.</li>
-<li><strong>Escape hatches that read like code.</strong> The few things Markdown can’t express are written as raw <code>```{=typst}</code> blocks: <code>#colbreak()</code> to force a column, and <code>#place(bottom + right, scope: "parent", float: true)</code> to pin the Ethics panel to the physical page corner from inside a column. Both are a couple of legible lines. See <a href="https://quarto.org/docs/output-formats/typst.html#raw-typst">Raw Typst</a> and the <a href="https://typst.app/docs/tutorial/">Typst tutorial</a>.</li>
+<li><strong>Escape hatches that read like code.</strong> The few things Markdown can’t express are written as raw <code>```{=typst}</code> blocks: <code>#colbreak()</code> to force a column, and <code>#place(bottom + right, scope: "parent", float: true)</code> to pin the Ethics panel to the physical page corner from inside a column.
+<ul>
+<li>Both are a couple of legible lines.</li>
+<li>See <a href="https://quarto.org/docs/output-formats/typst.html#raw-typst">Raw Typst</a> and the <a href="https://typst.app/docs/tutorial/">Typst tutorial</a>.</li>
+</ul></li>
 <li><strong>Inspectable intermediate.</strong> <code>--metadata keep-typ=true</code> preserves the generated <code>.typ</code>, which is how the dropped-acknowledgments bug in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> was actually diagnosed: the content was missing from the <code>.typ</code>, which located the fault in the Markdown, not in Typst.</li>
 </ul>
 <p><strong>What it costs, honestly:</strong></p>
 <ul>
-<li><strong>A younger ecosystem.</strong> The vendored extension needed three local patches (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) for things a mature LaTeX poster class would already handle. Quarto’s own <a href="https://quarto.org/docs/output-formats/typst.html#known-limitations">Known Limitations</a> note that default image sizing may not match other formats – which is exactly the <code>out-width</code> surprise documented in <a href="./templates.html">Templates</a>.</li>
+<li><strong>A younger ecosystem.</strong> The vendored extension needed three local patches (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) for things a mature LaTeX poster class would already handle.
+<ul>
+<li>Quarto’s own <a href="https://quarto.org/docs/output-formats/typst.html#known-limitations">Known Limitations</a> note that default image sizing may not match other formats, which is exactly the <code>out-width</code> surprise documented in <a href="./templates.html">Templates</a>.</li>
+</ul></li>
 <li><strong>Raw blocks are format-locked.</strong> A <code>```{=typst}</code> block is invisible to HTML and vice versa, so genuinely dual-format content (the Ethics panel, the headline stat) has to be written twice and kept in sync by hand.</li>
 <li><strong>Different figure and citation defaults.</strong> Typst output defaults to <code>fig-format: svg</code> (these templates override it to <code>png</code>, see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) and uses Typst’s own bibliography engine rather than Pandoc’s citeproc, which is why suppressing its automatic “Bibliography” heading needed a template partial.</li>
 <li><strong>LaTeX is still the right call if</strong> you need a specific journal/venue LaTeX class, heavy LaTeX-only math or TikZ, or a collaborator’s existing <code>.tex</code> workflow.</li>

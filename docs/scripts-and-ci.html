@@ -205,9 +205,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="build-check-scripts" class="level2">
 <h2 class="anchored" data-anchor-id="build-check-scripts">Build &amp; check scripts</h2>
-<p><code>scripts/</code> holds four R helpers, plus a shared registry they all read. All are optional – a plain <code>quarto render</code> still works.</p>
+<p><code>scripts/</code> holds four R helpers, plus a shared registry they all read. All are optional, a plain <code>quarto render</code> still works.</p>
 <ul>
-<li>Paths are resolved with the <code>here</code> package rather than requiring you to run from a specific working directory, and the template registry (<code>scripts/templates.R</code>) auto-discovers posters: either the multi-template layout shipped here (<code>templates/&lt;dir&gt;/*.qmd</code>, one per subdirectory), or – if you deleted <code>templates/</code> and kept a single poster at the project’s top level under any filename – that one file instead.</li>
+<li>Paths are resolved with the <code>here</code> package rather than requiring you to run from a specific working directory, and the template registry (<code>scripts/templates.R</code>) auto-discovers posters: either the multi-template layout shipped here (<code>templates/&lt;dir&gt;/*.qmd</code>, one per subdirectory), or, if you deleted <code>templates/</code> and kept a single poster at the project’s top level under any filename, that one file instead.</li>
 </ul>
 <table class="caption-top table">
 <thead>
@@ -219,7 +219,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>render-all.R</code></td>
-<td>Renders every discovered template to both formats, then runs every check below (including delegating to <code>check-contrast.R</code>) – one command for the whole suite. Exits non-zero on failure, so it can be wired into CI or a pre-commit hook. Pass <code>--no-render</code> to check existing output without re-rendering.</td>
+<td>Renders every discovered template to both formats, then runs every check below (including delegating to <code>check-contrast.R</code>); one command for the whole suite. Exits non-zero on failure, so it can be wired into CI or a pre-commit hook. Pass <code>--no-render</code> to check existing output without re-rendering.</td>
 </tr>
 <tr class="even">
 <td><code>check-column-balance.R</code></td>
@@ -240,15 +240,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> render       <span class="co"># clear the stale Typst package cache, then render + check everything</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> check        <span class="co"># run the checks against whatever output already exists (no render)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean-cache  <span class="co"># just clear .quarto/typst/packages (see the caching note below)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Every check in <code>render-all.R</code> exists because that failure actually happened once and was <strong>invisible in the render log</strong>:</p>
+<p>Every check in <code>render-all.R</code> exists because that failure actually happened once during development and was <strong>invisible in the render log</strong>:</p>
 <ul>
-<li><strong>pages</strong> – a content edit overflowing onto a second Typst page; a poster must be exactly one page.</li>
-<li><strong>divider</strong> – the web section divider disappearing from the HTML.</li>
-<li><strong>acknowledgments</strong> – the raw-HTML-in-a-conditional-div bug described under <a href="#notes-gotchas">Notes / gotchas</a>, which dropped the acknowledgments, grant number, and References heading from print while the web version looked perfect.</li>
-<li><strong>ethics</strong> – the Ethics &amp; Broader Impact panel missing from either format (it is written once per format, so it can go missing from one).</li>
-<li><strong>balance</strong> – a column emptying out relative to its measured baseline.</li>
-<li><strong><code>#### after show rule</code></strong> – a <code>####</code> heading placed <em>above</em> the level-3 show rule described under <a href="#notes-gotchas">Notes / gotchas</a>. Typst show rules only affect what follows them, so such a heading silently keeps the package’s “1) Heading:” run-in style.</li>
-<li><strong>contrast</strong> – a palette edit dropping a color below WCAG AA, delegated to <code>check-contrast.R</code> so the same audit stays usable on its own.</li>
+<li><strong>pages</strong>: a content edit overflowing onto a second Typst page; a poster must be exactly one page.</li>
+<li><strong>divider</strong>: the web section divider disappearing from the HTML.</li>
+<li><strong>acknowledgments</strong>: the raw-HTML-in-a-conditional-div bug described under <a href="#notes-gotchas">Notes / gotchas</a>, which dropped the acknowledgments, grant number, and References heading from print while the web version looked perfect.</li>
+<li><strong>ethics</strong>: the Ethics &amp; Broader Impact panel missing from either format (it is written once per format, so it can go missing from one).</li>
+<li><strong>balance</strong>: a column emptying out relative to its measured baseline.</li>
+<li><strong><code>#### after show rule</code></strong>: a <code>####</code> heading placed <em>above</em> the level-3 show rule described under <a href="#notes-gotchas">Notes / gotchas</a>. Typst show rules only affect what follows them, so such a heading silently keeps the package’s “1) Heading:” run-in style.</li>
+<li><strong>contrast</strong>: a palette edit dropping a color below WCAG AA, delegated to <code>check-contrast.R</code> so the same audit stays usable on its own.</li>
 </ul>
 <section id="continuous-integration" class="level3">
 <h3 class="anchored" data-anchor-id="continuous-integration">Continuous integration</h3>
@@ -270,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>contrast</code></td>
 <td><code>check-contrast.R --require-aaa</code></td>
-<td>Pure source parsing – no Quarto, no fonts, no rendering – so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one.</td>
+<td>Pure source parsing, no Quarto, no fonts, no rendering, so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one.</td>
 </tr>
 <tr class="even">
 <td><code>render</code></td>
@@ -285,7 +285,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Quarto’s release version matters.</strong> The render job pins <code>quarto-dev/quarto-actions/setup@v2</code> to a specific Quarto version rather than tracking <code>release</code>; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution. Bump the pin deliberately, and re-verify locally first, rather than letting CI silently drift to a new release.</li>
 <li><strong>Fonts change layout, and layout is measured.</strong> <code>poster.typ</code> asks for <code>STIX Two Text</code>, which macOS ships and an Ubuntu runner does not; Typst falls back silently instead of failing. A fallback face re-breaks lines, which moves the pixel-measured column-fill numbers, so a balance failure that appears only in CI most likely indicates the font rather than the content. The workflow installs <code>fonts-stix</code>, which may not include that exact face.</li>
 </ul>
-<p>This documentation site itself is a separate, nested Quarto website project: sources live in <code>docs-src/</code> (its own <code>docs-src/_quarto.yml</code>), rendering to <code>docs/</code>. GitHub Pages (Settings -&gt; Pages: branch main, <code>/docs</code>) serves that committed <code>docs/</code> folder directly – there’s no publish step in CI; <code>.github/workflows/docs.yml</code> renders <code>docs-src/</code> fresh and then diffs the result against the committed <code>docs/</code>, independent of the two jobs above. If they differ, someone edited <code>docs-src/</code> (or an image <code>copy-images.sh</code> pulls in) without re-rendering – a stale <code>/docs</code> is otherwise invisible in a PR diff, since <code>docs-src/*.qmd</code> changes review fine on their own. After editing anything under <code>docs-src/</code>, re-render and commit the result: <code>quarto render docs-src</code>.</p>
+<p>This documentation site itself is a separate, nested Quarto website project: sources live in <code>docs-src/</code> (its own <code>docs-src/_quarto.yml</code>), rendering to <code>docs/</code>. GitHub Pages (Settings -&gt; Pages: branch main, <code>/docs</code>) serves that committed <code>docs/</code> folder directly; there’s no publish step in CI;</p>
+<ul>
+<li><code>.github/workflows/docs.yml</code> renders <code>docs-src/</code> fresh and then diffs the result against the committed <code>docs/</code>, independent of the two jobs above.</li>
+<li>If they differ, someone edited <code>docs-src/</code> (or an image <code>copy-images.sh</code> pulls in) without re-rendering, a stale <code>/docs</code> is otherwise invisible in a PR diff, since <code>docs-src/*.qmd</code> changes review fine on their own.</li>
+<li>After editing anything under <code>docs-src/</code>, re-render and commit the result: <code>quarto render docs-src</code>.</li>
+</ul>
 </section>
 </section>
 <section id="notes-gotchas" class="level2">
@@ -294,10 +299,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>The vendored <code>_extensions/quarto-ext/poster</code> has three local patches. If you re-install/update the extension, re-apply all three:
 <ul>
 <li><code>poster.typ</code> accepts the institution logo as already-loaded Typst <code>content</code> (loaded once in <code>typst-show.typ</code>) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the <code>_univ_logo_img</code> handling in <code>typst-show.typ</code>).</li>
-<li><code>poster.typ</code> / <code>typst-show.typ</code> add a <code>footer-text-color</code> format option (defaults to white) so the footer text stays legible against dark <code>footer-color</code> values – set it to a dark color if you pick a light footer background (see <code>01-classic-academic</code>’s <code>footer-text-color: "25406A"</code>).</li>
+<li><code>poster.typ</code> / <code>typst-show.typ</code> add a <code>footer-text-color</code> format option (defaults to white) so the footer text stays legible against dark <code>footer-color</code> values. Set it to a dark color if you pick a light footer background (see <code>01-classic-academic</code>’s <code>footer-text-color: "25406A"</code>).</li>
 <li><code>biblio.typ</code> (a new template-partial, registered in <code>_extension.yml</code>) sets <code>title: none</code> on the generated <code>#bibliography(...)</code> call, so Typst’s own default “Bibliography” heading doesn’t duplicate each template’s own <code>#### References</code> heading.</li>
 <li><code>poster.typ</code> also scales the footer’s font sizes down (never up) on posters narrower than the extension’s documented 36in default, so the footer row (URL + text + emails, packed with <code>h(1fr)</code> spacers) doesn’t wrap outside its colored background block on narrower prints like <code>03-minimal-story</code>’s 24in width.</li>
-<li>Because Quarto caches the vendored local Typst package under each project’s <code>.quarto/typst/packages/local/typst-poster/</code>, edits to <code>poster.typ</code> only take effect after that cached copy is refreshed (delete <code>.quarto/</code> or copy the updated file over it, or just run <code>make render</code>) – a plain <code>quarto render</code> will silently keep using the stale cached version.</li>
+<li>Because Quarto caches the vendored local Typst package under each project’s <code>.quarto/typst/packages/local/typst-poster/</code>, edits to <code>poster.typ</code> only take effect after that cached copy is refreshed (delete <code>.quarto/</code> or copy the updated file over it, or just run <code>make render</code>). A plain <code>quarto render</code> will silently keep using the stale cached version.</li>
 </ul></li>
 <li>Every template’s <code>poster-typst</code> format sets <strong><code>fig-format: png</code></strong>. Without it, Typst’s default (<code>fig-format: svg</code>) asks R’s Cairo graphics device to render each plot, which can fail with a missing X11/Cairo shared-library error on machines without XQuartz (common on Apple Silicon macOS, and on Linux without <code>libcairo2-dev</code>).
 <ul>
@@ -305,7 +310,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li><strong>Never put a raw <code>&lt;hr&gt;</code> (or other raw HTML) inside a <code>::: {.content-visible when-format="html"}</code> div.</strong> Doing so silently discards <em>every element after it</em> in the Typst output – the templates lost their section divider, the entire Acknowledgments block (advisor, grant number, code/data link), and the <code>#### References</code> heading from the printed PDF, while still rendering fine on the web. Use a <code>```{=html}</code> raw block instead, which HTML picks up and Typst ignores cleanly.</li>
 <li><strong>Column balance:</strong> the shipped samples do not fill their columns evenly, and that is accepted slack rather than a bug – <code>02-modern-cards</code> reaches ~44% down column 1 vs ~82% down column 2, and <code>03-minimal-story</code> ends ~79% down its single column. The Evidence figure is one ~10in-tall indivisible block, so moving <code>02</code>’s <code>#colbreak()</code> past it only inverts the gap (measured 91%/29%, a wider spread). Real content is the remedy. Baselines live in <code>scripts/templates.R</code>; <code>render-all.R</code> fails on a <em>drop</em> of more than 10 points from them.</li>
-<li><strong>Web banner contrast:</strong> the title banner is a gradient, so banner text must clear its <em>lighter</em> stop, not just the dark one. The original <code>$au-light-blue</code> author/date color measured 6.97:1 on navy but only 3.59:1 on the <code>$au-blue</code> stop – a WCAG AA failure. All banner text is now plain white on a darkened light stop (<code>$au-blue-banner</code>, 7.21:1), and link and grey body text were darkened to clear AAA too. See <a href="./theming.html#re-coloring-the-templates">Re-coloring the templates</a>, and run <code>Rscript scripts/check-contrast.R</code> after any color change.</li>
+<li><strong>Web banner contrast:</strong> the title banner is a gradient, so banner text must clear its <em>lighter</em> stop, not just the dark one. The original <code>$au-light-blue</code> author/date color measured 6.97:1 on navy but only 3.59:1 on the <code>$au-blue</code> stop, a WCAG AA failure. All banner text is now plain white on a darkened light stop (<code>$au-blue-banner</code>, 7.21:1), and link and grey body text were darkened to clear AAA too. See <a href="./theming.html#re-coloring-the-templates">Re-coloring the templates</a>, and run <code>Rscript scripts/check-contrast.R</code> after any color change.</li>
 <li><strong><code>####</code> headings arrive as Typst level <em>3</em>, not level 4.</strong> Quarto maps markdown <code>##</code> to <code>=</code>, shifting every heading up one level, so the closing-matter headings land on the poster package’s level-3 style: a numbered, italic, colon-terminated run-in that prints as “1) Acknowledgments:” and reads like a numbered list item. Each template overrides this with a <code>#show heading.where(level: 3)</code> rule in the raw Typst block just above <code>#### Acknowledgments</code>, defined <em>after</em> the package’s own <code>show heading</code> rule so it takes precedence. A <code>####</code> heading placed earlier in the poster still gets the package’s run-in style, since Typst show rules only apply to content after them.</li>
 <li><strong>Font-size hierarchy is not automatic.</strong> The poster package defaults <code>title-font-size</code> to 48pt and <code>authors-font-size</code> to 36pt, and derives level-1 headings as <code>body-font-size + 16</code>. If you shrink <code>title-font-size</code> to fit a long title (as <code>03-minimal-story</code> needs to at 24in wide), lower <code>authors-font-size</code> too and keep the title above <code>body-font-size + 16</code>, or the author line and section headings will print <em>larger</em> than the title.</li>
 <li><code>.quarto/</code>, rendered <code>*.pdf</code>/<code>*.typ</code>/<code>poster.html</code>, and <code>*_files/</code> directories are gitignored as build output.</li>

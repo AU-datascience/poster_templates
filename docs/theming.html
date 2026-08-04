@@ -202,37 +202,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="re-coloring-the-templates" class="level2">
 <h2 class="anchored" data-anchor-id="re-coloring-the-templates">Re-coloring the templates</h2>
-<p>If you fork this repo for another organization, the palette lives in a small number of places – and <code>check-contrast.R</code> exists so you can <em>prove</em> your new colors are still accessible rather than assume it:</p>
+<p>If you fork this repo for another organization, the palette lives in a small number of places. The <code>check-contrast.R</code> exists so you can <em>prove</em> your new colors are still accessible rather than assume it:</p>
 <ol type="1">
-<li><strong><code>scss/poster-common.scss</code></strong> – the <code>$au-*</code> tokens under <code>scss:defaults</code> drive the whole web version.</li>
-<li><strong><code>_brand.yml</code></strong> – the same palette for Quarto’s brand-aware theming. Keep the two in sync; some Bootstrap variables come from here rather than from the stylesheet.</li>
-<li><strong>Print footers are per template</strong> – <code>footer-color</code> and <code>footer-text-color</code> in each <code>poster.qmd</code> YAML.</li>
+<li><strong><code>scss/poster-common.scss</code></strong>: the <code>$au-*</code> tokens under <code>scss:defaults</code> drive the whole web version.</li>
+<li><strong><code>_brand.yml</code></strong>: the same palette for Quarto’s brand-aware theming. Keep the two in sync; some Bootstrap variables come from here rather than from the stylesheet.</li>
+<li><strong>Print footers are per template</strong>: <code>footer-color</code> and <code>footer-text-color</code> in each <code>poster.qmd</code> YAML.</li>
 </ol>
 <p>Then re-run the audit:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> scripts/check-contrast.R                 <span class="co"># fails below WCAG AA</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> scripts/check-contrast.R <span class="at">--require-aaa</span>   <span class="co"># fails below AAA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>It parses your new hex values out of the stylesheet and each template’s YAML and re-measures every pair, so the check follows your colors instead of the ones committed here. <code>render-all.R</code> runs it as part of the full suite.</p>
-<p>Four things that catch people out, all covered by the script:</p>
+<p>Some technical considerations to ensure proper contrast, all covered by the script:</p>
 <ul>
-<li><strong>The banner is a gradient.</strong> Text over it has to clear the threshold against the <em>lighter</em> stop, not just the dark one. Auditing only the dark stop is exactly what hid the original author/date failure (6.97:1 on navy, 3.59:1 on the blue stop). The script reads both stops out of the <code>linear-gradient()</code> declaration and checks each separately.</li>
-<li><strong>The gradient’s light stop is capped by its text, not by taste.</strong> White normal-size text needs 7:1 for AAA, which puts a hard ceiling on how light <code>$au-blue-banner</code> can be – hence a dedicated token rather than reusing <code>$au-blue</code>. Note the label originally used a dimmed tint, and a <em>tinted</em> label is still normal-size text, so AAA would have demanded 7:1 of the tint and forced the light stop nearly to navy, flattening the gradient. The labels are plain white instead and read as secondary through case, tracking, and weight, which keeps about half the gradient’s luminance range.</li>
-<li><strong>Opacity silently undoes contrast.</strong> Quarto’s own stylesheet sets <code>opacity: .8</code> on <code>.quarto-title-meta-heading</code>. Left in place, white at 80% over the light stop composites to roughly <code>#d6dee7</code> and measures 5.31:1 – AA, not the 7.21:1 the color alone suggests. <code>poster-common.scss</code> overrides it back to <code>opacity: 1</code>; if you introduce translucency anywhere, remember the audit reads declared colors, not composited ones.</li>
-<li><strong>Accent colors and text colors are held to different bars.</strong> WCAG asks 3:1 of large text and graphics, but 4.5:1 (AA) or 7:1 (AAA) of normal-size text. <code>$au-blue</code> is perfectly fine as a banner and border color yet was not fine as link text, which is why <code>$au-blue-text</code> exists as a separate darker token – links can darken without darkening the banner. Size is the other lever, and the script reads each rule’s declared <code>font-size</code> rather than taking anyone’s word for it: a heading at 24px or more (1.5rem at the default root size) is audited as large text automatically, which is how <code>02</code>’s red headings reach AAA without touching the red. Shrink such a heading back below 24px and the audit silently re-classifies it as normal text and the stricter bar returns.</li>
+<li><strong>The banner is a gradient.</strong> Text has to clear the threshold against the <em>lighter</em> stop, not just the dark one.
+<ul>
+<li>Auditing only the dark stop can cause issues.</li>
+<li>The script reads both stops out of the <code>linear-gradient()</code> declaration and checks each separately.</li>
+</ul></li>
+<li><strong>The gradient’s light stop is capped by its text, not by taste.</strong> White normal-size text needs 7:1 for AAA, which puts a hard ceiling on how light <code>$au-blue-banner</code> can be; hence a dedicated token rather than reusing <code>$au-blue</code>.
+<ul>
+<li>Note the label originally used a dimmed tint, and a <em>tinted</em> label is still normal-size text, so AAA would have demanded 7:1 of the tint and forced the light stop nearly to navy, flattening the gradient.</li>
+<li>The labels are plain white instead and read as secondary through case, tracking, and weight, which keeps about half the gradient’s luminance range.</li>
+</ul></li>
+<li><strong>Opacity silently undoes contrast.</strong> Quarto’s own stylesheet sets <code>opacity: .8</code> on <code>.quarto-title-meta-heading</code>. Left in place, white at 80% over the light stop composites to roughly <code>#d6dee7</code> and measures 5.31:1 which is AA, not the 7.21:1 the color alone suggests.
+<ul>
+<li><code>poster-common.scss</code> overrides it back to <code>opacity: 1</code>; if you introduce translucency anywhere, remember the audit reads declared colors, not composited ones.</li>
+</ul></li>
+<li><strong>Accent colors and text colors are held to different bars.</strong> WCAG asks 3:1 of large text and graphics, but 4.5:1 (AA) or 7:1 (AAA) of normal-size text.
+<ul>
+<li><code>$au-blue</code> is perfectly fine as a banner and border color yet was not fine as link text, which is why <code>$au-blue-text</code> exists as a separate darker token so links can darken without darkening the banner.</li>
+<li>Size is the other lever, and the script reads each rule’s declared <code>font-size</code> rather than taking anyone’s word for it: a heading at 24px or more (1.5rem at the default root size) is audited as large text automatically, which is how <code>02</code>’s red headings reach AAA without touching the red.</li>
+<li>Shrink such a heading back below 24px and the audit silently re-classifies it as normal text and the stricter bar returns.</li>
+</ul></li>
 <li><strong>Inline code inherits the brand grey.</strong> Bootstrap derives <code>--bs-code-color</code> from it, so <code>$au-grey</code> sets both the acknowledgments/references block <em>and</em> every <code>`inline code`</code> span. These templates use a lot of inline code, so that pair is audited explicitly.</li>
-<li><strong>Rule colors are parsed, not restated.</strong> The script reads the <code>color:</code> and <code>background:</code> declarations straight out of the four stylesheets (resolving palette variables and gradient stops), so editing a rule such as the ethics panel’s cream background is picked up automatically. Its <code>source</code> column shows where each value came from. The exceptions are Bootstrap-derived variables (<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>$link-color</code>), which no rule states; those resolve from the palette instead.</li>
-<li><strong>Renaming a class breaks the audit loudly.</strong> A lookup that finds no matching selector or property is a hard error naming the failed selector, not a silently skipped row – so the audit cannot quietly stop covering something you renamed.</li>
-<li><strong>A rule that matches nothing gets no row.</strong> <code>.ethics-panel h2, .ethics-panel h3</code> is defensive styling with no counterpart in the rendered HTML: the panel’s leads are <code>**bold**</code> (so <code>&lt;strong&gt;</code>, not a heading), and the section’s own <code>h2</code> is a <em>sibling</em> of the panel div rather than a descendant. Auditing it would have reported a contrast figure for text that never appears. If you do put a heading inside the panel, add the row.</li>
+<li><strong>Rule colors are parsed, not restated.</strong> The script reads the <code>color:</code> and <code>background:</code> declarations straight out of the four stylesheets (resolving palette variables and gradient stops), so editing a rule such as the ethics panel’s cream background is picked up automatically.
+<ul>
+<li>Its <code>source</code> column shows where each value came from. The exceptions are Bootstrap-derived variables (<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>$link-color</code>), which no rule states; those resolve from the palette instead.</li>
+</ul></li>
+<li><strong>Renaming a class breaks the audit loudly.</strong> A lookup that finds no matching selector or property is a hard error naming the failed selector, not a silently skipped row, so the audit cannot quietly stop covering something you renamed.</li>
+<li><strong>A rule that matches nothing gets no row.</strong> <code>.ethics-panel h2, .ethics-panel h3</code> is defensive styling with no counterpart in the rendered HTML: the panel’s leads are <code>**bold**</code> (so <code>&lt;strong&gt;</code>, not a heading), and the section’s own <code>h2</code> is a <em>sibling</em> of the panel div rather than a descendant.
+<ul>
+<li>Auditing it would have reported a contrast figure for text that never appears. If you do put a heading inside the panel, add the row.</li>
+</ul></li>
 </ul>
 <p>Current status: <strong>all 22 audited pairs reach AAA.</strong> The last AA-only pair was <code>02-modern-cards</code>’s red section headings on white (6.28:1 against a 7:1 bar); raising them from 1.1rem to 1.5rem makes them large text, where the bar is 4.5:1, which was preferable to darkening the brand red. Because every pair now clears AAA, <code>--require-aaa</code> is a usable gate rather than an aspiration – CI runs it that way.</p>
 </section>
 <section id="brand.yml-and-your-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="brand.yml-and-your-workflow"><code>_brand.yml</code> and your workflow</h2>
-<p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving – this section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> for the full, current spec.</p>
+<p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving. This section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> for the full, current spec.</p>
 <ul>
-<li><strong>What it’s for here:</strong> <code>_brand.yml</code> is the single source of the AU color palette and typography that Quarto’s brand-aware HTML theming reads automatically – you don’t <code>include</code> or reference it from any <code>.qmd</code>, Quarto just picks it up from the project root.</li>
-<li><strong>What it actually reaches:</strong> in practice, only the <strong>web (<code>html</code>) output</strong> consumes it directly, via Bootstrap variables Quarto derives from the brand palette (e.g.&nbsp;<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>--bs-link-color</code> – see the “Bootstrap var” rows above). The <strong>print (<code>poster-typst</code>) output</strong> does not read <code>_brand.yml</code> at all; print colors come from each template’s own YAML (<code>footer-color</code>, <code>footer-text-color</code>) and from raw Typst blocks, so a color change needs to be made in both places – see step 5 of <a href="./index.html#fork-this-repo-and-build-your-poster">Fork this repo and build your poster</a>.</li>
-<li><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong> <code>scss/poster-common.scss</code> defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling). Nothing currently generates one file from the other, so <a href="#re-coloring-the-templates">Re-coloring the templates</a> treats both as required edits, and <code>check-contrast.R</code> reads both.</li>
-<li><strong>The <code>logo:</code> key is intentionally left unset</strong> (there’s a comment to that effect in the file) because each template places the organization logo explicitly instead – see <a href="./content-guide.html#shared-resources">Shared resources</a> – to avoid Quarto rendering a second, automatic brand logo alongside it.</li>
+<li><strong>What it’s for here:</strong> <code>_brand.yml</code> is the single source of the AU color palette and typography that Quarto’s brand-aware HTML theming reads <em>automatically</em>, you don’t <code>include</code> or reference it from any <code>.qmd</code>, Quarto just picks it up from the project root.</li>
+<li><strong>What it actually reaches:</strong> in practice, only the <strong>web (<code>html</code>) output</strong> consumes it directly, via Bootstrap variables Quarto derives from the brand palette (e.g.&nbsp;<code>--bs-body-color</code>, <code>--bs-code-color</code>, <code>--bs-link-color</code>. See the “Bootstrap var” rows above).
+<ul>
+<li>The <strong>print (<code>poster-typst</code>) output</strong> does not read <code>_brand.yml</code> at all; print colors come from each template’s own YAML (<code>footer-color</code>, <code>footer-text-color</code>) and from raw Typst blocks, so a color change needs to be made in both places. See step 5 of <a href="./index.html#fork-this-repo-and-build-your-poster">Fork this repo and build your poster</a>.</li>
+</ul></li>
+<li><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong> <code>scss/poster-common.scss</code> defines the same <code>$au-*</code> tokens under <code>scss:defaults</code> for rules Bootstrap’s brand integration doesn’t cover (the banner gradient, the ethics panel, section-card styling).
+<ul>
+<li>Nothing currently generates one file from the other, so <a href="#re-coloring-the-templates">Re-coloring the templates</a> treats both as required edits, and <code>check-contrast.R</code> reads both.</li>
+</ul></li>
+<li><strong>The <code>logo:</code> key is intentionally left unset</strong> because each template places the organization logo explicitly instead. See <a href="./content-guide.html#shared-resources">Shared resources</a> to avoid Quarto rendering a second, automatic brand logo alongside it.</li>
 <li><strong>If you fork this for another organization:</strong> update <code>_brand.yml</code>’s palette and typography alongside <code>scss/poster-common.scss</code> and each template’s footer colors, then re-run <code>Rscript scripts/check-contrast.R --require-aaa</code> to confirm the new combination is still accessible before you consider the re-color done.</li>
 </ul>
 

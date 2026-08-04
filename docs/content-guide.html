@@ -169,16 +169,20 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="ethics-broader-impact-panel">Ethics &amp; Broader Impact panel</h2>
 <p>Each template includes an <strong>“Ethics &amp; Broader Impact”</strong> section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:</p>
 <ul>
-<li><strong>Generative AI use</strong> – which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data.</li>
-<li><strong>Privacy &amp; data governance</strong> – whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.</li>
-<li><strong>Bias, fairness &amp; broader impact</strong> – whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.</li>
+<li><strong>Generative AI use</strong>: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data.</li>
+<li><strong>Privacy &amp; data governance</strong>: whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.</li>
+<li><strong>Bias, fairness &amp; broader impact</strong>: whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.</li>
 </ul>
-<p>The included text is accurate for <em>this</em> demo (public, non-human <code>palmerpenguins</code> biometric data; a simple linear regression, not a deployed model) – treat it as a worked example of the <em>kind</em> of specific, honest statement expected, not boilerplate to copy verbatim. Rewrite each statement for your own project’s actual data, models, and tool use.</p>
+<p>The included text is accurate for <em>this</em> demo (public, non-human <code>palmerpenguins</code> biometric data; a simple linear regression, not a deployed model).</p>
+<ul>
+<li>Treat it as a worked example of the <em>kind</em> of specific, honest statement expected, not boilerplate to copy verbatim.</li>
+<li>Rewrite each statement for your own project’s actual data, models, and tool use.</li>
+</ul>
 <p>The panel is implemented once per format so it renders correctly in both:</p>
 <ul>
-<li><strong>HTML:</strong> a <code>::: {.ethics-panel} :::</code> div (defined in <code>poster-common.scss</code>) – a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.</li>
+<li><strong>HTML:</strong> a <code>::: {.ethics-panel} :::</code> div (defined in <code>poster-common.scss</code>); a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.</li>
 <li><strong>Print (Typst):</strong> a raw <code>```{=typst}</code> block using <code>#block(..., breakable: false)</code> for the same shaded/bordered look at 20-24pt.</li>
-<li><code>breakable: false</code> is required – without it, Typst can split the block awkwardly across a column break.</li>
+<li><code>breakable: false</code> is required. Without it, Typst can split the block awkwardly across a column break.</li>
 </ul>
 <p>Both copies are wrapped in <code>::: {.content-visible when-format="..."}</code> so only one appears in each output; if you edit the disclosure text, update both copies.</p>
 <p><strong>Acknowledgments</strong> are now a plain, uncited sentence for funding and mentorship credit,</p>
@@ -186,7 +190,7 @@ ul.task-list li input[type="checkbox"] {
 <li>This work was performed under the guidance of Dr.&nbsp;Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No.&nbsp;BJME-2026-014.</li>
 </ul>
 <p>Each template also has a placeholder <strong>Code &amp; data</strong> line near Acknowledgments with a GitHub URL to replace with your own repository.</p>
-<p><strong>References</strong>, Data/software citations appear here automatically when they’re cited in-text with <code>[@key]</code> earlier in the poster . A ready-to-edit example is included in each template.</p>
+<p><strong>References</strong>, Data/software citations appear here automatically when they’re cited in-text with <code>[@key]</code> earlier in the poster. A ready-to-edit example is included in each template.</p>
 </section>
 <section id="shared-resources" class="level2">
 <h2 class="anchored" data-anchor-id="shared-resources">Shared resources</h2>
@@ -203,9 +207,11 @@ ul.task-list li input[type="checkbox"] {
 <li>It includes citations for every R package a template’s code actually calls with <code>library()</code>generated from each package’s own <code>citation()</code> output, plus R itself.</li>
 <li>If you add a package to a poster’s code, add its <code>citation("pkgname")</code> entry here too and cite it.</li>
 </ul></li>
-<li><strong><code>scss/poster-common.scss</code></strong>: base tokens and shared “poster shell” rules for the web/HTML version.</li>
+<li><strong><code>scss/poster-common.scss</code></strong>: base tokens and shared “poster shell” rules for the web/HTML version.
+<ul>
 <li>This includes: title banner, section card styling, the automatic <code>section.level2</code> → poster-panel behavior.</li>
 <li>Each template’s own <code>*-web.scss</code> file is loaded <em>after</em> this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.</li>
+</ul></li>
 <li><strong><code>images/au-logo-hires.png</code></strong> — organization logo. Used two ways:
 <ul>
 <li>Print (<code>poster-typst</code>): passed via <code>institution-logo:</code> in the format options; the extension places and sizes it automatically (tune with <code>univ-logo-scale</code> / <code>univ-logo-column-size</code>).</li>

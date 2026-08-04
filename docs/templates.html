@@ -231,7 +231,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="choosing-a-print-size" class="level2">
 <h2 class="anchored" data-anchor-id="choosing-a-print-size">Choosing a print size</h2>
-<p><code>size:</code> (under <code>poster-typst:</code> in each template’s YAML) takes any Typst-compatible <code>"WIDTHxHEIGHT"</code> in inches – it isn’t tied to a specific venue.</p>
+<p><code>size:</code> (under <code>poster-typst:</code> in each template’s YAML) takes any Typst-compatible <code>"WIDTHxHEIGHT"</code> in inches; it isn’t tied to a specific venue.</p>
 <ul>
 <li>A few sizes recur often enough at ML/data-science conferences that it’s worth calling out how the templates map onto them (all landscape, given as the venue’s own H x W convention next to the equivalent <code>size:</code> string):</li>
 </ul>
@@ -272,7 +272,7 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <ol type="1">
 <li>Change <code>size:</code> to the <code>size:</code> string from the table (or any other <code>"WxH"</code> you need).</li>
-<li>If the aspect ratio changes a lot (e.g.&nbsp;going from 48x36 to 72x36), reconsider <code>num-columns</code> – wider boards generally read better with one more column than a narrower version of the same layout.</li>
+<li>If the aspect ratio changes a lot (e.g.&nbsp;going from 48x36 to 72x36), reconsider `num-columns. Wider boards generally read better with one more column than a narrower version of the same layout.</li>
 <li>Re-render (<code>quarto render poster.qmd --to poster-typst</code>) and check for overflow onto a second page or, conversely, excess blank space;</li>
 </ol>
 <ul>
