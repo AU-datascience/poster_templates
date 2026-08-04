@@ -52,9 +52,8 @@ quarto render docs-src      # after any docs-src/ edit; commit the result
 Two workflows, both live and running against
 `AU-datascience/poster_templates` on GitHub (`gh run list` to check status):
 
-- `.github/workflows/posters.yml` — a `contrast` job (pure source parsing,
-  fast, unambiguous) and a `render` job (full Quarto/Typst render + every
-  output check), on push, pull request, and manual dispatch.
+- `.github/workflows/posters.yml` — three jobs: `changes`, `contrast`, and
+  `render`. See "Paths-filter gating" below for what each does and why.
 - `.github/workflows/docs.yml` — renders `docs-src/` fresh and diffs the
   result against the committed `docs/`, to catch a docs edit that wasn't
   re-rendered. Not a deploy step; GitHub Pages serves the committed `/docs`
@@ -73,6 +72,44 @@ The `render` job no longer installs any system fonts: `_brand.yml` declares
 google`), so Quarto fetches and caches both under `.quarto/typst/fonts/` at
 Typst-render time regardless of what's installed on the runner. See "Fonts"
 below for how this was verified.
+
+### Paths-filter gating (`changes` job in `posters.yml`)
+
+Added because a push touching nothing color- or render-relevant (e.g. a
+docs-only or README-only commit) still paid for the full `contrast` job's
+from-source `tidyverse` install via `setup-r-dependencies` — 30-40 minutes
+observed for a job whose actual audit logic runs in seconds, unrelated to
+whether a color had changed. A `dorny/paths-filter` job (`changes`)
+computes two independent booleans from the diff and each downstream job
+gates on its own:
+
+- `colors` (gates `contrast`): `_brand.yml`, `scss/**`, a template's
+  `poster.qmd` or `*.scss`, `scripts/templates.R`,
+  `scripts/check-contrast.R`, or `_extensions/quarto-ext/poster/**`.
+- `render` (gates `render`): everything above plus `_quarto.yml`,
+  `.quarto-version`, `scripts/**`, `_extensions/**`, and
+  `.github/workflows/posters.yml` itself.
+- `workflow_dispatch` always runs both `contrast` and `render` in full —
+  `changes` itself is skipped for that event (there's no diff to filter on
+  for a manual run), and both downstream `if:` conditions special-case it.
+
+A job skipped via `if:` reports as "skipped" in the Checks tab, which
+GitHub treats as passing for required-status-check purposes — worth
+knowing because this repo's ruleset on `main` requires changes go through
+a pull request and 3 status checks to pass (discovered while verifying
+this gating, since an admin token can bypass the rule for a direct push
+but a normal contributor's push would be rejected outright). Verified
+against real runs on `AU-datascience/poster_templates`: a
+workflow-file-only edit skipped `contrast` but ran `render`; a
+`docs-src/`-only edit skipped both; a template `poster.qmd` edit ran both
+(it legitimately matches both filters, since `poster.qmd` carries
+`footer-color`/`footer-text-color`).
+
+See [Continuous integration](https://au-datascience.github.io/poster_templates/scripts-and-ci.html#continuous-integration)
+for the user-facing version of this, and its "Forking vs. cloning" section
+for how a fork's copy of these workflows behaves differently from a plain
+clone pushed to a new repo, and how to enable/disable them from the
+command line.
 
 ## Vendored extension patches (`_extensions/quarto-ext/poster`)
 

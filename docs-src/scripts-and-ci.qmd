@@ -37,12 +37,15 @@ Every check in `render-all.R` exists because that failure actually happened once
 
 ### Continuous integration
 
-`.github/workflows/posters.yml` runs these same scripts on push and pull request, in two deliberately separate jobs:
+`.github/workflows/posters.yml` runs these same scripts on push and pull request, in three jobs:
 
-| Job | Runs | Why it is separate |
+| Job | Runs | Why |
 |---|----------|-----------------------|
-| `contrast` | `check-contrast.R --require-aaa` | Pure source parsing, no Quarto, no fonts, no rendering, so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one. |
-| `render` | `render-all.R` (both formats for all three templates, plus every output check) | Needs the Typst toolchain and system libraries for `pdftools`/`magick`, which are the fragile parts. Keeping them apart means a toolchain or font problem is never mistaken for an accessibility regression. |
+| `changes` | A `dorny/paths-filter` check against the diff — no R, no Quarto | Cheap pre-check so the two jobs below only pay for a full R/Quarto toolchain install when their own inputs actually changed. Skipped only for a manual `workflow_dispatch` run, since there's no diff to filter on. |
+| `contrast` | `check-contrast.R --require-aaa` | Pure source parsing, no Quarto, no fonts, no rendering, so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one. Runs only when `changes` reports a color-relevant path touched (`_brand.yml`, `scss/**`, a template's `poster.qmd`/`*.scss`, `scripts/templates.R`, `scripts/check-contrast.R`, or the vendored extension), or on manual dispatch. |
+| `render` | `render-all.R` (both formats for all three templates, plus every output check) | Needs the Typst toolchain and system libraries for `pdftools`/`magick`, which are the fragile parts. Keeping it apart from `contrast` means a toolchain or font problem is never mistaken for an accessibility regression. Runs only when `changes` reports a render-relevant path touched (`templates/**`, `scripts/**`, `_extensions/**`, `scss/**`, `_brand.yml`, `_quarto.yml`, `.quarto-version`, or the workflow file itself), or on manual dispatch. |
+
+Both gates exist because a push touching none of those paths — a docs-only or README-only commit, say — previously still paid for the full job's R/Quarto toolchain install regardless of relevance: 30-40 minutes observed for `contrast` alone, almost all of it a from-source `tidyverse` install with no cache, for an audit whose own logic runs in seconds. A job skipped this way reports as `skipped` rather than failing, which GitHub's required-status-check logic treats as passing, so this is safe to use even where these jobs are required checks on `main`.
 
 See [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md) for project orientation, the vendored extension's local patches, and the open fonts issue.
 
@@ -99,6 +102,50 @@ contributors, frequent changes, or a desire to keep generated files out of git e
 
 - That is the more standard, more scalable pattern, and the one worth learning if you are setting up Pages for a repo of your own from scratch.
 :::
+
+## Forking vs. cloning: what runs, and how to control it
+
+This repo ships two GitHub Actions workflows (`posters.yml`, `docs.yml`). What happens to them depends on *how* you got your own copy of the repo, and that trips people up often enough to spell out explicitly.
+
+### Forking (clicking GitHub's "Fork" button)
+
+- GitHub copies the workflow files into your fork, but **leaves Actions disabled on the fork by default** — this is a deliberate, blanket security measure for every fork of a public repo, not specific to this one.
+- The first time you open your fork's **Actions** tab, GitHub shows a banner ("Workflows aren't being run on this fork") with a button, "I understand my workflows, go ahead and enable them." Nothing runs — not a push, not a manual trigger — until you click it (or do the CLI equivalent below).
+- Once enabled, pushes to your fork's branches trigger `posters.yml`/`docs.yml` exactly as they do here, using your fork's own Actions minutes.
+- **Opening a pull request from your fork back to this repo is different again.** That `pull_request` event runs under *this* repo's Actions settings (already enabled), not your fork's — but with two restrictions that apply to any fork's PR, regardless of whether you enabled Actions on your fork:
+  - The `GITHUB_TOKEN` the workflow gets is read-only and has no access to this repo's secrets.
+  - By default, a first-time contributor's workflow run requires a maintainer to click **Approve and run** in the Actions tab before it executes at all. Every run after your first merged contribution runs automatically.
+
+### Cloning (`git clone` + push to your own new repository, not a GitHub fork)
+
+- If you `git clone` this repo and push its history to a brand-new repository you created yourself (rather than using GitHub's "Fork" button), none of the fork-specific restrictions above apply — GitHub has no record that your repository descends from this one.
+- Actions are enabled by default on a new repository, the same as any other repo you create, subject only to your own account's or organization's Actions policy (Settings → Actions → General). Your first push already triggers `posters.yml`/`docs.yml`, with no opt-in banner to click.
+- A plain local `git clone` with no push anywhere never triggers anything — workflow runs are a server-side GitHub event, not something `git clone` or a local `quarto render` can cause on its own.
+
+### Enabling/disabling from the command line
+
+All of the following use the [`gh` CLI](https://cli.github.com/) and require admin access to the repository in question (your fork, or your own clone-turned-repo).
+
+**Permanently enable or disable Actions for the whole repository** — the CLI equivalent of the fork's "enable workflows" banner, or of Settings → Actions → General → Actions permissions:
+
+```bash
+gh api -X PUT repos/OWNER/REPO/actions/permissions -f enabled=true   # or false
+```
+
+**Permanently enable or disable one specific workflow** (leaves the rest, and the repo-wide switch above, untouched):
+
+```bash
+gh workflow disable posters.yml   # stops it from running or being manually triggered
+gh workflow enable posters.yml    # re-enables it
+```
+
+**Run a workflow exactly once, without changing either persistent switch above** — both `posters.yml` and `docs.yml` declare `workflow_dispatch` as a trigger already, so a single on-demand run (Actions enabled, this workflow not disabled) is:
+
+```bash
+gh workflow run posters.yml --ref main
+```
+
+This queues one run of the current `main` (or whatever `--ref` you give it) and leaves the workflow's enabled/disabled state exactly as it was before and after — unlike `gh workflow disable`/`enable`, which persist until you change them again.
 
 ## Notes / gotchas
 
