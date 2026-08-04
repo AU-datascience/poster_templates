@@ -16,7 +16,11 @@ templates/**/poster.typ
 /.quarto/
 **/*.quarto_ipynb
 
-# Rendered output of the docs/ website sub-project (published to GitHub
-# Pages by .github/workflows/docs.yml, not committed to main).
-docs/_site/
-docs/.quarto/
+# docs/ is NOT build output here -- it's the committed, rendered site that
+# GitHub Pages serves directly (Settings -> Pages: branch main, /docs; see
+# docs-src/_quarto.yml). The actual build artifact to ignore is docs-src's
+# own scratch _site/ (left over from a plain `quarto preview`, which doesn't
+# honor output-dir); .quarto/ caches under docs-src/ are already covered by
+# the bare ".quarto/" pattern above.
+docs-src/_site/
+docs-src/images/

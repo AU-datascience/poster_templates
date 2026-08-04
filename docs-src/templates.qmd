@@ -11,7 +11,7 @@ The three templates offer different design approaches that may be tailored for a
 1. **`templates/01-classic-academic/`**: traditional 3-column layout (Intro / Methods / Data / Results / Conclusions), serif headings, the closest analog to the old posterdown betterland template.
     - Print size 42x28 in, 3 Typst columns.
 
-   ![01-classic-academic poster preview](../images/previews/preview-01-classic-academic.png)
+   ![01-classic-academic poster preview](images/previews/preview-01-classic-academic.png)
 
 2. **`templates/02-modern-cards/`**: dashboard-style card grid with a bold accent color, headlining its key finding as one sentence rather than an isolated number.
     - Print size 48x36 in, 2 Typst columns (fewer, larger panels).
@@ -20,18 +20,18 @@ The three templates offer different design approaches that may be tailored for a
     - The figure itself was always full *column* width -- if you add your own full-page figures, note that `out-width: "100%"` measured against the *page* width rather than the current column's width immediately after a `#colbreak()` in local testing, overflowing past the margin; setting an explicit absolute `out-width` (e.g. `"20in"`) sidesteps it.
     - **The Headline Finding is plain markdown, not a per-format `.stat` block.** An earlier draft set the two slope numbers on their own line at 72pt (with duplicated `` ```{=html} ``/`` ```{=typst} `` blocks, since a web-only `.stat` CSS class doesn't reach the print output) -- bare digits and an arrow glyph with no verb tying them into a sentence, and the arrow's stroke weight didn't reliably match the surrounding bold text in either format. It now reads as one sentence ("pooling every species together gives **X**, but adding species ... reverses it to **Y**") at body size, so pandoc's normal `**bold**` emphasis handles both outputs identically -- no raw blocks, no per-format duplication, no font-fallback weight mismatch to chase.
 
-   ![02-modern-cards poster preview](../images/previews/preview-02-modern-cards.png)
+   ![02-modern-cards poster preview](images/previews/preview-02-modern-cards.png)
 
 3. **`templates/03-minimal-story/`**: a single flowing narrative column, meant to be read like a short article; flat design, generous whitespace.
     - Print size 24x52 in (portrait banner), 1 Typst column.
 
-   ![03-minimal-story poster preview](../images/previews/preview-03-minimal-story.png)
+   ![03-minimal-story poster preview](images/previews/preview-03-minimal-story.png)
 
 Each preview above (`images/previews/preview-*.png`) is a 1200px-wide PNG rendered from that template's own `poster-typst` PDF. Neither these nor `comparison.png` below are produced by `quarto render`; regenerate both with `Rscript scripts/make-previews.R` after a content change (render the PDFs first).
 
 All three are currently filled in with the *same* worked example (a Simpson's-paradox analysis of bill shape across penguin species, using `palmerpenguins`) so the three visual styles are directly comparable:
 
-![Comparison of the three print posters, one per row](../comparison.png)
+![Comparison of the three print posters, one per row](images/comparison.png)
 
 - `comparison.png` stacks the three posters as separate full-width rows (labeled with the template name/size) using the R `magick` package.
   - Rows, not side-by-side columns: `03-minimal-story` is a tall 24x52in portrait banner, while the other two are landscape (42x28in, 48x36in); scaling all three to a common *height* for a side-by-side layout shrinks the banner to an unreadable sliver, so each poster instead gets its own row at a common *width*, sized for legibility.

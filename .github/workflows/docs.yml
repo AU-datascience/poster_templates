@@ -1,32 +1,34 @@
-# Publishes docs/ (a nested Quarto website project -- see docs/_quarto.yml)
-# to the gh-pages branch, for GitHub Pages.
+# Build-check only -- NOT a deploy step.
 #
-# This is independent of .github/workflows/posters.yml: that workflow renders
-# the poster templates themselves, this one renders and deploys the
-# documentation site describing them. Separated so a docs typo can't fail
-# the poster-rendering checks and vice versa.
+# GitHub Pages (Settings -> Pages) is configured as "Deploy from a branch:
+# main, /docs": the legacy Pages build serves whatever static files are
+# committed at /docs directly, with no build step of its own. So the actual
+# "deploy" is just committing a fresh `quarto render docs-src` output to
+# /docs on main -- there is nothing for CI to publish.
 #
-# One-time manual step after this first runs: in the repo's Settings ->
-# Pages, set "Build and deployment: Source" to "Deploy from a branch" and
-# pick the `gh-pages` branch (root). `quarto publish` creates that branch
-# itself on first run; it does not exist beforehand.
+# What this job does instead: renders docs-src/ on every push/PR that
+# touches it, purely to catch a broken doc page before merge. It does not
+# commit or push anything. If you change docs-src/, remember to also
+# re-render and commit /docs before merging:
+#
+#   quarto render docs-src
 
-name: docs
+name: docs-build-check
 
 on:
   push:
     branches: [main]
     paths:
-      - "docs/**"
+      - "docs-src/**"
       - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "docs-src/**"
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  publish:
-    name: Render and publish docs site
+  build:
+    name: Render docs-src (sanity check)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,10 +39,5 @@ jobs:
           # note there about unpinned `release` drift breaking renders.
           version: "1.9.38"
 
-      - name: Render and publish to gh-pages
-        uses: quarto-dev/quarto-actions/publish@v2
-        with:
-          target: gh-pages
-          path: docs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Render docs-src
+        run: quarto render docs-src

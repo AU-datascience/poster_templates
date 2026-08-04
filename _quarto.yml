@@ -1,12 +1,12 @@
 project:
   type: default
-  # Without this, a bare `quarto render` at the root sweeps up docs/*.qmd
-  # too (confirmed with `quarto inspect .`) even though docs/ has its own
-  # nested _quarto.yml (a website project, rendered/published separately --
-  # see docs/_quarto.yml and .github/workflows/docs.yml). The scripts in
+  # Without this, a bare `quarto render` at the root sweeps up
+  # docs-src/*.qmd too (confirmed with `quarto inspect .`) even though
+  # docs-src/ has its own nested _quarto.yml (a separate website project
+  # that renders into ../docs -- see docs-src/_quarto.yml). The scripts in
   # scripts/ always target specific poster.qmd paths and are unaffected
   # either way; this exclusion just keeps a plain `quarto render` here
   # scoped to the posters, matching what a first-time user would expect.
   render:
     - "templates/**/*.qmd"
-    - "!docs/"
+    - "!docs-src/"

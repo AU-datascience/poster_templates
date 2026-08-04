@@ -1,6 +1,16 @@
 project:
   type: website
-  output-dir: _site
+  # GitHub Pages is configured (Settings -> Pages) as "Deploy from a branch:
+  # main, /docs" -- the legacy Pages build, which serves whatever static
+  # files are committed at /docs on main directly, with no build step of its
+  # own. So the rendered site's output-dir has to *be* the repo's top-level
+  # docs/ folder, not a build artifact under docs-src/. Render here with
+  # `quarto render docs-src` and commit the resulting docs/ folder.
+  output-dir: ../docs
+  pre-render:
+    - "bash copy-images.sh"
+  resources:
+    - .nojekyll
 
 website:
   title: "Quarto Conference Posters"
