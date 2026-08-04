@@ -44,8 +44,20 @@ GRANT <- "BJME-2026-014"
 
 render_template <- function(tpl) {
   message("rendering ", tpl$dir, " ...")
-  status <- system2("quarto", c("render", shQuote(template_path(tpl))),
-                    stdout = FALSE, stderr = FALSE)
+  # Capture rather than discard output: a render failure with nothing printed
+  # is undiagnosable (this bit us once in CI -- the render step failed with
+  # no clue why until this was added).
+  out <- suppressWarnings(
+    system2("quarto", c("render", shQuote(template_path(tpl))),
+            stdout = TRUE, stderr = TRUE)
+  )
+  status <- attr(out, "status")
+  if (is.null(status)) status <- 0L
+  if (status != 0) {
+    message("---- quarto render output for ", tpl$dir, " ----")
+    message(paste(out, collapse = "\n"))
+    message("---- end quarto render output ----")
+  }
   tibble(check = "render", ok = status == 0,
          detail = if (status == 0) "both formats" else paste("exit", status))
 }
