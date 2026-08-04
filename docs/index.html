@@ -144,9 +144,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#repo-structure-at-a-glance" id="toc-repo-structure-at-a-glance" class="nav-link active" data-scroll-target="#repo-structure-at-a-glance"><span class="header-section-number">1</span> Repo structure at a glance</a></li>
-  <li><a href="#fork-this-repo-and-build-your-poster" id="toc-fork-this-repo-and-build-your-poster" class="nav-link" data-scroll-target="#fork-this-repo-and-build-your-poster"><span class="header-section-number">2</span> Fork this repo and build your poster</a></li>
-  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements"><span class="header-section-number">3</span> Requirements</a></li>
+  <li><a href="#the-templates" id="toc-the-templates" class="nav-link active" data-scroll-target="#the-templates"><span class="header-section-number">1</span> The Templates</a></li>
+  <li><a href="#repo-structure-at-a-glance" id="toc-repo-structure-at-a-glance" class="nav-link" data-scroll-target="#repo-structure-at-a-glance"><span class="header-section-number">2</span> Repo structure at a glance</a></li>
+  <li><a href="#fork-this-repo-and-build-your-poster" id="toc-fork-this-repo-and-build-your-poster" class="nav-link" data-scroll-target="#fork-this-repo-and-build-your-poster"><span class="header-section-number">3</span> Fork this repo and build your poster</a>
+  <ul class="collapse">
+  <li><a href="#environment-requirements" id="toc-environment-requirements" class="nav-link" data-scroll-target="#environment-requirements"><span class="header-section-number">3.1</span> Environment Requirements</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -213,7 +216,8 @@ Note
 <blockquote class="blockquote">
 <p><strong>AI Usage</strong>: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.</p>
 </blockquote>
-<p>## The Templates</p>
+<section id="the-templates" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="the-templates"><span class="header-section-number">1</span> The Templates</h2>
 <p>There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
 <table class="caption-top table">
 <thead>
@@ -247,8 +251,33 @@ Note
 </ul></li>
 <li><code>Rscript scripts/render-all.R</code> renders all three templates and then checks the output for known regressions. See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
 </ul>
-<section id="repo-structure-at-a-glance" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="repo-structure-at-a-glance"><span class="header-section-number">1</span> Repo structure at a glance</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Is authoring one poster for two formats worth it?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Worth asking honestly before you invest time customizing both: <strong>why not just post the print PDF online and call it your web version?</strong></p>
+<ul>
+<li>A conference poster PDF, viewed unzoomed in a browser or on a phone, is usually a wall of text far too small to read without pinching and scrolling panel by panel, the print layout being designed for a person standing a few feet from a physical board, not a screen at arm’s length. Posting it as-is online is easy but often not actually <em>readable</em> there.</li>
+<li>A real HTML version, by contrast, reflows to the screen it’s on, is searchable, is accessible to a screen reader, and can be linked from a CV, conference site, or social post without asking the visitor to download or zoom a PDF.</li>
+</ul>
+<p>That readability is the actual payoff of this repo’s two-format approach, and it does cost something concrete, documented throughout this site:</p>
+<ul>
+<li>Content that can’t be expressed as plain Markdown (the Ethics panel, the headline stat in <code>02-modern-cards</code>) has to be written <strong>twice</strong>, once as a raw <code>```{=html}</code> block and once as <code>```{=typst}</code>, and kept in sync by hand — see <a href="./why-typst.html">Why Typst instead of LaTeX?</a> and <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>.</li>
+<li>Layout bugs are per-format and don’t always transfer: the <code>out-width: "100%"</code> overflow in <code>02-modern-cards</code> and the <code>fig-dpi</code> sharpness issue described in <a href="./content-guide.html#sizing-your-own-images-for-print">Sizing your own images for print</a> only showed up in the print render; the web version looked correct the whole time (and vice versa for some contrast issues).</li>
+<li>Most of <code>scripts/</code> (column-balance, contrast, font, and structural checks) exists <em>because</em> dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML <code>&lt;hr&gt;</code> silently deleting content only from the Typst side (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a>) is the sharpest example.</li>
+</ul>
+<p><strong>Our take:</strong> it’s worth it if the poster needs to double as a legible, standalone webpage, something you’d actually want a stranger to read on their phone, not just a proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler and this repo’s dual-format machinery is more than you need; a single <code>poster-typst</code> render is enough.</p>
+</div>
+</div>
+</section>
+<section id="repo-structure-at-a-glance" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="repo-structure-at-a-glance"><span class="header-section-number">2</span> Repo structure at a glance</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -304,9 +333,9 @@ Note
 </tbody>
 </table>
 </section>
-<section id="fork-this-repo-and-build-your-poster" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="fork-this-repo-and-build-your-poster"><span class="header-section-number">2</span> Fork this repo and build your poster</h2>
-<p>Assuming you’ve forked or cloned this repo to build a poster of your own:</p>
+<section id="fork-this-repo-and-build-your-poster" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="fork-this-repo-and-build-your-poster"><span class="header-section-number">3</span> Fork this repo and build your poster</h2>
+<p>Check the environment requirements below. Then, assuming you’ve forked or cloned this repo to build a poster of your own:</p>
 <ol type="1">
 <li><strong>Pick a starting template.</strong> Skim the three options in <a href="./templates.html">Templates</a> and pick whichever layout fits your content. Each is a self-contained <code>templates/&lt;name&gt;/</code> folder that renders independently.</li>
 <li><strong>Copy the folder</strong>, e.g.&nbsp;<code>cp -r templates/01-classic-academic templates/my-poster</code>. Keep it under <code>templates/</code> so the shared registry in <code>scripts/templates.R</code>, and everything that reads it (<code>render-all.R</code>, <code>check-contrast.R</code>, <code>make-previews.R</code>), picks it up automatically. If your fork will only ever hold one poster, you can instead move that single <code>.qmd</code> (and its sibling <code>.scss</code>) to the project’s top level and delete <code>templates/</code> entirely; the scripts auto-detect either layout (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>).</li>
@@ -321,9 +350,8 @@ Note
 <li><strong>Run the checks</strong> (optional, but worth it before you consider it done): <code>Rscript scripts/render-all.R</code> renders every template it finds and checks the output for known regressions. See <a href="./scripts-and-ci.html">Scripts &amp; CI</a>.</li>
 <li><strong>Regenerate the previews</strong> if you want updated images for your own README: <code>Rscript scripts/make-previews.R</code> (after re-rendering the PDFs).</li>
 </ol>
-</section>
-<section id="requirements" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="requirements"><span class="header-section-number">3</span> Requirements</h2>
+<section id="environment-requirements" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="environment-requirements"><span class="header-section-number">3.1</span> Environment Requirements</h3>
 <p><strong>To render a poster itself:</strong> <a href="https://quarto.org">Quarto</a> (a version at or near the one pinned in <a href="https://github.com/AU-datascience/poster_templates/blob/main/.quarto-version"><code>.quarto-version</code></a>) and R since every template’s R code chunks are part of the <em>shipped example content</em>, not the poster mechanism itself.</p>
 <ul>
 <li>When you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply.</li>
@@ -354,6 +382,7 @@ Note
 </ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

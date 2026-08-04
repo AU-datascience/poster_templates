@@ -31,6 +31,40 @@ Each template also has a placeholder **Code & data** line near Acknowledgments w
 
 **References**, Data/software citations appear here automatically when they're cited in-text with `[@key]` earlier in the poster. A ready-to-edit example is included in each template.
 
+## Sizing your own images for print
+
+If you add your own raster image (a photo, screenshot, or diagram exported from other software) to a poster, the pixel dimensions that look fine on a laptop screen or in a slide deck are usually **not enough for a multi-foot-wide print**. 
+
+- The same file gets stretched over far more physical inches on paper than on a webpage, so its effective resolution (pixels per inch, once placed) drops accordingly.
+
+**The rule of thumb:** decide how wide the image will print (in inches), pick a target resolution, and multiply:
+
+$$\text{pixel width needed} = \text{printed width (in)} \times \text{target dpi}$$
+
+- 150 dpi is a reasonable floor for a poster read from a few feet away.
+- 300 dpi (standard for close-up print/photography) is safer if the image includes fine detail or might be viewed up close.
+
+| Template | Print size, columns | Typical full-width placement | Pixels needed at 150 dpi | Pixels needed at 300 dpi |
+|---|---|---|---|---|
+| `01-classic-academic` | 42x28in, 3 columns | ~12in (one column) | 1800px | 3600px |
+| `02-modern-cards` | 48x36in, 2 columns | 20in (explicit `out-width`, see [Templates](templates.qmd)) | 3000px | 6000px |
+| `03-minimal-story` | 24x52in, 1 column | ~20in (full column width) | 3000px | 6000px |
+
+For reference, `images/au-logo-hires.png` (the shipped institution logo) is 1327x1361px, which is why it renders sharp at every template's header size (measured at 490-740 effective dpi depending on the template). That's roughly the resolution to aim for if you're adding a comparably-sized image of your own.
+
+**This applies to R-generated figures too, not just images you place by hand.** 
+
+- Every template sets `fig-format: png` (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) for why), and knitr's default figure resolution is 96 dpi regardless of the physical print size the figure gets stretched to.
+- Left at the default, `02-modern-cards`'s Evidence figure (rendered at `fig-width: 14`, placed at `out-width: "20in"`) worked out to only ~67 effective dpi once measured directly from the PDF's embedded image data, soft enough to notice at normal reading distance. 
+- All three templates now set `fig-dpi: 300` under `poster-typst:` in their YAML, which raised the same figures to 150-210 effective dpi (the ratio to `out-width` varies by template) with no other layout change 
+  — `fig-dpi` only affects how many pixels knitr renders into, not the inches Typst places the result at, so column balance and page counts are unaffected. 
+- If you add your own R chunk with a figure, this setting already applies to it. If you override `fig-width`/`fig-height`/`out-width` for a specific figure, it's worth re-checking the effective dpi with the same math above.
+
+**The web version doesn't have this problem to the same degree.** 
+
+- Browsers display images at whatever pixel density the screen provides (and gracefully downscale an oversized image), so an image sized for print looks fine on the web version too. 
+— The risk only runs one direction: an image sized *for the web* is usually too low-resolution for print.
+
 ## Shared resources
 
 - **`_brand.yml`**: shared AU color palette and typography. Referenced implicitly by Quarto's HTML theming.

@@ -13,6 +13,8 @@
         "ICML",
         "inlines",
         "Inspectable",
+        "kable",
+        "knitr",
         "libcairo",
         "magick",
         "Neur",
@@ -22,7 +24,9 @@
         "Pandoc's",
         "pdftools",
         "pkgname",
+        "poppler",
         "posterdown",
+        "renv",
         "retarget",
         "Rscript",
         "STIX",
@@ -33,6 +37,7 @@
         "tikzposter",
         "typst",
         "uncited",
+        "unzoomed",
         "WCAG",
         "weaponization"
     ]

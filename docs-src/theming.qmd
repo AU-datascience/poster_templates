@@ -2,6 +2,10 @@
 title: "Theming & Brand"
 ---
 
+::: callout-note
+Skip this page unless you're re-theming. If you're just writing poster content on the templates as shipped, you don't need to know Bootstrap or SCSS at all — the colors and fonts are already set up. Come back here only if you're forking for a different organization's palette, or troubleshooting a contrast/color regression.
+:::
+
 ## Re-coloring the templates
 
 If you fork this repo for another organization, the palette lives in a small number of places. The `check-contrast.R` exists so you can *prove* your new colors are still accessible rather than assume it:

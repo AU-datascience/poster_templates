@@ -22,7 +22,7 @@ This is a student-oriented site, and it contains a lot of technical detail and r
 
 > **AI Usage**: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.
 
- ## The Templates
+## The Templates
 
 There are three templates; each a single `.qmd` file that renders to **two** outputs:
 
@@ -36,6 +36,23 @@ There are three templates; each a single `.qmd` file that renders to **two** out
 - The print PDF is typeset by **Typst**, not LaTeX. That choice drives several things in these templates (raw `` ```{=typst} `` blocks, arbitrary page sizes, no TeX install). 
     - See [Why Typst instead of LaTeX?](why-typst.qmd) for the reasoning and the trade-offs.
 - `Rscript scripts/render-all.R` renders all three templates and then checks the output for known regressions. See [Scripts & CI](scripts-and-ci.qmd).
+
+::: callout-note
+## Is authoring one poster for two formats worth it?
+
+Worth asking honestly before you invest time customizing both: **why not just post the print PDF online and call it your web version?**
+
+- A conference poster PDF, viewed unzoomed in a browser or on a phone, is usually a wall of text far too small to read without pinching and scrolling panel by panel, the print layout being designed for a person standing a few feet from a physical board, not a screen at arm's length. Posting it as-is online is easy but often not actually *readable* there.
+- A real HTML version, by contrast, reflows to the screen it's on, is searchable, is accessible to a screen reader, and can be linked from a CV, conference site, or social post without asking the visitor to download or zoom a PDF.
+
+That readability is the actual payoff of this repo's two-format approach, and it does cost something concrete, documented throughout this site:
+
+- Content that can't be expressed as plain Markdown (the Ethics panel, the headline stat in `02-modern-cards`) has to be written **twice**, once as a raw `` ```{=html} `` block and once as `` ```{=typst} ``, and kept in sync by hand — see [Why Typst instead of LaTeX?](why-typst.qmd) and [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas).
+- Layout bugs are per-format and don't always transfer: the `out-width: "100%"` overflow in `02-modern-cards` and the `fig-dpi` sharpness issue described in [Sizing your own images for print](content-guide.qmd#sizing-your-own-images-for-print) only showed up in the print render; the web version looked correct the whole time (and vice versa for some contrast issues).
+- Most of `scripts/` (column-balance, contrast, font, and structural checks) exists *because* dual-format authoring makes a regression in one output invisible while looking at the other, e.g., a raw HTML `<hr>` silently deleting content only from the Typst side (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas)) is the sharpest example.
+
+**Our take:** it's worth it if the poster needs to double as a legible, standalone webpage, something you'd actually want a stranger to read on their phone, not just a proof you presented it. If all you need online is an archival record of a physical poster, a shrunk print PDF (or a flattened image of it) is simpler and this repo's dual-format machinery is more than you need; a single `poster-typst` render is enough.
+:::
 
 ## Repo structure at a glance
 
@@ -55,7 +72,7 @@ There are three templates; each a single `.qmd` file that renders to **two** out
 
 ## Fork this repo and build your poster
 
-Assuming you've forked or cloned this repo to build a poster of your own:
+Check the environment requirements below. Then, assuming you've forked or cloned this repo to build a poster of your own:
 
 1. **Pick a starting template.** Skim the three options in [Templates](templates.qmd) and pick whichever layout fits your content. Each is a self-contained `templates/<name>/` folder that renders independently.
 2. **Copy the folder**, e.g. `cp -r templates/01-classic-academic templates/my-poster`. Keep it under `templates/` so the shared registry in `scripts/templates.R`, and everything that reads it (`render-all.R`, `check-contrast.R`, `make-previews.R`), picks it up automatically. If your fork will only ever hold one poster, you can instead move that single `.qmd` (and its sibling `.scss`) to the project's top level and delete `templates/` entirely; the scripts auto-detect either layout (see [Scripts & CI](scripts-and-ci.qmd)).
@@ -68,7 +85,7 @@ Assuming you've forked or cloned this repo to build a poster of your own:
 7. **Run the checks** (optional, but worth it before you consider it done): `Rscript scripts/render-all.R` renders every template it finds and checks the output for known regressions. See [Scripts & CI](scripts-and-ci.qmd).
 8. **Regenerate the previews** if you want updated images for your own README: `Rscript scripts/make-previews.R` (after re-rendering the PDFs).
 
-## Requirements
+### Environment Requirements
 
 **To render a poster itself:** [Quarto](https://quarto.org) (a version at or near the one pinned in [`.quarto-version`](https://github.com/AU-datascience/poster_templates/blob/main/.quarto-version)) and R since every template's R code chunks are part of the *shipped example content*, not the poster mechanism itself.
 

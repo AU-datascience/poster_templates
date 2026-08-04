@@ -11,6 +11,7 @@ format:
   # ---- Large-format print version (Typst -> PDF, portrait banner) ----
   poster-typst:
     fig-format: png
+    fig-dpi: 300
     size: "24x52"
     poster-authors: "A. Sample Researcher"
     departments: "Department of Mathematics and Statistics, American University"

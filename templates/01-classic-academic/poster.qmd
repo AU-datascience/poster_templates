@@ -11,6 +11,7 @@ format:
   # ---- Large-format print version (Typst -> PDF) ----
   poster-typst:
     fig-format: png
+    fig-dpi: 300
     size: "42x28"
     poster-authors: "A. Sample Researcher"
     departments: "Department of Mathematics and Statistics, American University"

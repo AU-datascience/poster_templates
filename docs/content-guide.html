@@ -75,6 +75,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -143,7 +172,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#ethics-broader-impact-panel" id="toc-ethics-broader-impact-panel" class="nav-link active" data-scroll-target="#ethics-broader-impact-panel"><span class="header-section-number">1</span> Ethics &amp; Broader Impact panel</a></li>
-  <li><a href="#shared-resources" id="toc-shared-resources" class="nav-link" data-scroll-target="#shared-resources"><span class="header-section-number">2</span> Shared resources</a></li>
+  <li><a href="#sizing-your-own-images-for-print" id="toc-sizing-your-own-images-for-print" class="nav-link" data-scroll-target="#sizing-your-own-images-for-print"><span class="header-section-number">2</span> Sizing your own images for print</a></li>
+  <li><a href="#shared-resources" id="toc-shared-resources" class="nav-link" data-scroll-target="#shared-resources"><span class="header-section-number">3</span> Shared resources</a></li>
   </ul>
 </nav>
     </div>
@@ -196,8 +226,67 @@ ul.task-list li input[type="checkbox"] {
 <p>Each template also has a placeholder <strong>Code &amp; data</strong> line near Acknowledgments with a GitHub URL to replace with your own repository.</p>
 <p><strong>References</strong>, Data/software citations appear here automatically when they’re cited in-text with <code>[@key]</code> earlier in the poster. A ready-to-edit example is included in each template.</p>
 </section>
-<section id="shared-resources" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="shared-resources"><span class="header-section-number">2</span> Shared resources</h2>
+<section id="sizing-your-own-images-for-print" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="sizing-your-own-images-for-print"><span class="header-section-number">2</span> Sizing your own images for print</h2>
+<p>If you add your own raster image (a photo, screenshot, or diagram exported from other software) to a poster, the pixel dimensions that look fine on a laptop screen or in a slide deck are usually <strong>not enough for a multi-foot-wide print</strong>.</p>
+<ul>
+<li>The same file gets stretched over far more physical inches on paper than on a webpage, so its effective resolution (pixels per inch, once placed) drops accordingly.</li>
+</ul>
+<p><strong>The rule of thumb:</strong> decide how wide the image will print (in inches), pick a target resolution, and multiply:</p>
+<p><span class="math display">\[\text{pixel width needed} = \text{printed width (in)} \times \text{target dpi}\]</span></p>
+<ul>
+<li>150 dpi is a reasonable floor for a poster read from a few feet away.</li>
+<li>300 dpi (standard for close-up print/photography) is safer if the image includes fine detail or might be viewed up close.</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Template</th>
+<th>Print size, columns</th>
+<th>Typical full-width placement</th>
+<th>Pixels needed at 150 dpi</th>
+<th>Pixels needed at 300 dpi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>01-classic-academic</code></td>
+<td>42x28in, 3 columns</td>
+<td>~12in (one column)</td>
+<td>1800px</td>
+<td>3600px</td>
+</tr>
+<tr class="even">
+<td><code>02-modern-cards</code></td>
+<td>48x36in, 2 columns</td>
+<td>20in (explicit <code>out-width</code>, see <a href="./templates.html">Templates</a>)</td>
+<td>3000px</td>
+<td>6000px</td>
+</tr>
+<tr class="odd">
+<td><code>03-minimal-story</code></td>
+<td>24x52in, 1 column</td>
+<td>~20in (full column width)</td>
+<td>3000px</td>
+<td>6000px</td>
+</tr>
+</tbody>
+</table>
+<p>For reference, <code>images/au-logo-hires.png</code> (the shipped institution logo) is 1327x1361px, which is why it renders sharp at every template’s header size (measured at 490-740 effective dpi depending on the template). That’s roughly the resolution to aim for if you’re adding a comparably-sized image of your own.</p>
+<p><strong>This applies to R-generated figures too, not just images you place by hand.</strong></p>
+<ul>
+<li>Every template sets <code>fig-format: png</code> (see <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> for why), and knitr’s default figure resolution is 96 dpi regardless of the physical print size the figure gets stretched to.</li>
+<li>Left at the default, <code>02-modern-cards</code>’s Evidence figure (rendered at <code>fig-width: 14</code>, placed at <code>out-width: "20in"</code>) worked out to only ~67 effective dpi once measured directly from the PDF’s embedded image data, soft enough to notice at normal reading distance.</li>
+<li>All three templates now set <code>fig-dpi: 300</code> under <code>poster-typst:</code> in their YAML, which raised the same figures to 150-210 effective dpi (the ratio to <code>out-width</code> varies by template) with no other layout change — <code>fig-dpi</code> only affects how many pixels knitr renders into, not the inches Typst places the result at, so column balance and page counts are unaffected.</li>
+<li>If you add your own R chunk with a figure, this setting already applies to it. If you override <code>fig-width</code>/<code>fig-height</code>/<code>out-width</code> for a specific figure, it’s worth re-checking the effective dpi with the same math above.</li>
+</ul>
+<p><strong>The web version doesn’t have this problem to the same degree.</strong></p>
+<ul>
+<li>Browsers display images at whatever pixel density the screen provides (and gracefully downscale an oversized image), so an image sized for print looks fine on the web version too. — The risk only runs one direction: an image sized <em>for the web</em> is usually too low-resolution for print.</li>
+</ul>
+</section>
+<section id="shared-resources" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="shared-resources"><span class="header-section-number">3</span> Shared resources</h2>
 <ul>
 <li><strong><code>_brand.yml</code></strong>: shared AU color palette and typography. Referenced implicitly by Quarto’s HTML theming.
 <ul>

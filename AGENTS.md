@@ -235,6 +235,52 @@ If a *real* web-font gap turns up in the future, re-run
 (`@font-face embedded`, `--bs-body-font-family set`) separately, so a
 genuine regression is distinguishable from another decoding miss.
 
+### Figure resolution (`fig-dpi`) — fixed, all three templates
+
+R-generated figures (every `#| fig-*` chunk in each template) print through
+`fig-format: png`, and knitr's own resolution default (96 dpi) is applied
+regardless of how large Typst then stretches that PNG on the physical page
+— unlike the pre-supplied `images/au-logo-hires.png`, which ships at a
+fixed, already-high pixel count. Measured directly from each rendered
+`poster.pdf`'s embedded image data (`PyMuPDF`/`fitz`,
+`page.get_images()` + `get_image_rects()`, pixel dimensions divided by the
+placed size in inches) before any fix:
+
+| Template | Figure placement | Effective dpi (96-dpi default) |
+|---|---|---|
+| `01-classic-academic` | 12.07in x 13.80in | 56 |
+| `02-modern-cards` | 20.00in x 9.29in | 67 |
+| `03-minimal-story` | 20.00in x 9.00in | 48 |
+
+All three are well under the ~150 dpi usually treated as a floor for
+print read at a few feet, let alone 300 dpi for close viewing — soft
+enough to notice at normal reading distance, unlike the logo sitting
+alongside them at 490-740 dpi in the same renders.
+
+**Fix:** each template's YAML now sets `fig-dpi: 300` under `poster-typst:`
+(2026-08-04), alongside the existing `fig-format: png`. Re-measured the
+same way after the change:
+
+| Template | Effective dpi (`fig-dpi: 300`) |
+|---|---|
+| `01-classic-academic` | 174 |
+| `02-modern-cards` | 210 |
+| `03-minimal-story` | 150 |
+
+`fig-dpi` only changes how many pixels knitr renders into — it does not
+touch `fig-width`/`fig-height`/`out-width`, which are what set the
+figure's physical placement in inches — so this is a resolution-only
+change. Confirmed via `Rscript scripts/render-all.R --no-render` that all
+28 checks (pages, column balance, contrast, fonts, structural checks)
+still pass identically to before the change; column-balance baselines in
+`scripts/templates.R` did not need re-measuring. Rendered PDF sizes grew
+modestly (roughly 290KB → 600-900KB per template), trivial for a print
+artifact. See [Sizing your own images for print](https://au-datascience.github.io/poster_templates/content-guide.html#sizing-your-own-images-for-print)
+for the same math applied to images a student adds themselves, and for why
+this asymmetry (blurry in print, fine on web) doesn't run the other way —
+browsers downscale an oversized image gracefully, so the same file works
+for both formats without a corresponding fix needed on the HTML side.
+
 ### `docs-src` render warnings (`site_libs` cleanup, "unexpected path configuration") — expected, benign
 
 Running `quarto render docs-src` reliably prints two warnings:
