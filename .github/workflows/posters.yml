@@ -102,18 +102,14 @@ jobs:
             any::broom
             any::knitr
 
-      # poster.typ sets `font: "STIX Two Text"`. macOS ships that face; an
-      # Ubuntu runner does not, and Typst falls back silently rather than
-      # failing. A fallback face changes line breaking, which moves the
-      # pixel-measured column-fill numbers and can fail the balance check for
-      # reasons unrelated to content. If the balance check fails in CI but
-      # passes locally, suspect the font before the content -- and note that
-      # the `fonts-stix` package may not include the "STIX Two Text" face
-      # specifically, in which case install it from its upstream release.
-      - name: Install the poster body font
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-stix
+      # poster.typ sets `font: "STIX Two Text"`, and the Typst show rule
+      # Quarto injects for headings uses "Source Sans 3" (both now declared
+      # as brand font resources in _brand.yml, `source: google`). Quarto
+      # fetches both from Google and caches them under
+      # .quarto/typst/fonts/ at render time, so the runner needs no system
+      # fonts for Typst at all -- CI and local renders resolve the same
+      # face by construction, rather than depending on whatever happens to
+      # be installed locally.
 
       - name: Render all templates and run output checks
         run: Rscript scripts/render-all.R

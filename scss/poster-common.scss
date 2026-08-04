@@ -36,8 +36,13 @@ $au-blue-banner: #335986;  // 7.2:1 under white text
 $body-bg:    #f5f7fa;
 $body-color: #2b2b2b;
 
-$font-family-sans-serif: "Source Sans Pro", Helvetica, Arial, sans-serif;
-$font-family-serif: "Source Serif Pro", Georgia, serif;
+// "Source Sans 3" is now declared as a brand font resource in _brand.yml
+// (fetched from Google, self-hosted via embed-resources) -- see the note
+// there. No serif family is declared as a resource, so this stack sticks to
+// system fonts rather than naming "Source Serif Pro"/"Source Serif 4" and
+// silently falling back to them anyway.
+$font-family-sans-serif: "Source Sans 3", Helvetica, Arial, sans-serif;
+$font-family-serif: Georgia, "Times New Roman", serif;
 
 $link-color: $au-blue-text;
 

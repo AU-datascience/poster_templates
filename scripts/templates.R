@@ -30,10 +30,13 @@ suppressPackageStartupMessages(library(here))
 known_template_meta <- list(
   "01-classic-academic" = list(
     size = "42x28in, 3 columns",
-    # Re-measured 2026-08-03 after enlarging the header logo (institution-logo
-    # swapped to images/au-logo-hires.png). Kept deliberately small here
-    # (univ-logo-column-size: 2) because this template runs with ~0 slack --
-    # anything larger overflowed to a second page.
+    # Re-measured 2026-08-04 after pinning "Source Sans 3"/"STIX Two Text" as
+    # brand font resources in _brand.yml (see AGENTS.md's former "Fonts --
+    # unresolved" note): 100/100/81.9, a trivial shift from the prior
+    # 100/100/82 baseline (itself measured 2026-08-03 after enlarging the
+    # header logo). This template runs with ~0 slack -- anything taller than
+    # the current header logo (univ-logo-column-size: 2) overflows to a
+    # second page.
     baseline_fill = c(100, 100, 82)
   ),
   "02-modern-cards" = list(
@@ -48,7 +51,11 @@ known_template_meta <- list(
     # plain-markdown sentence at body size -- column 1 lost the extra height
     # that oversized block used to hold, so its fill dropped 50 -> 44; column
     # 2 (the #colbreak() side) is unaffected.
-    baseline_fill = c(44, 86)
+    #
+    # Re-measured again 2026-08-04 after pinning "Source Sans 3"/"STIX Two
+    # Text" as brand font resources in _brand.yml: 42.2/86.4, essentially
+    # unchanged.
+    baseline_fill = c(42, 86)
   ),
   "03-minimal-story" = list(
     size = "24x52in, 1 column",
@@ -56,7 +63,10 @@ known_template_meta <- list(
     # swapped to images/au-logo-hires.png) and widening the ethics-panel box
     # from 34% to 83% (to match the single column's net width); this template
     # has plenty of vertical slack so the drift is small either way.
-    baseline_fill = 77
+    #
+    # Re-measured again 2026-08-04 after pinning "Source Sans 3"/"STIX Two
+    # Text" as brand font resources in _brand.yml: 78.1.
+    baseline_fill = 78
   )
 )
 

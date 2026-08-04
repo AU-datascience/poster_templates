@@ -46,8 +46,28 @@ color:
   info: au-red
 
 typography:
+  # Declaring these as font *resources* (not just family names) is what
+  # makes them reproducible: Quarto fetches the webfont from Google at
+  # render time and self-hosts it (embed-resources: true inlines it into
+  # the HTML rather than hotlinking), instead of treating the name as a
+  # system font and silently falling back when it isn't installed. This
+  # applies to both `html` and `typst` output from one declaration.
+  #
+  # "Source Sans Pro" (the legacy Adobe name) is not what Google Fonts
+  # distributes; the current family is "Source Sans 3". "STIX Two Text" is
+  # declared here too even though nothing under `base`/`headings` names it,
+  # because _extensions/quarto-ext/poster/poster.typ hardcodes
+  # `set text(font: "STIX Two Text")` for the print body -- declaring it as
+  # a brand resource is what lets Typst actually find that face rather than
+  # depending on whatever happens to be installed locally (see AGENTS.md's
+  # "Known issues" section for how this was diagnosed).
+  fonts:
+    - family: "Source Sans 3"
+      source: google
+    - family: "STIX Two Text"
+      source: google
   base:
-    family: "Source Sans Pro"
+    family: "Source Sans 3"
   headings:
-    family: "Source Sans Pro"
+    family: "Source Sans 3"
     weight: bold
