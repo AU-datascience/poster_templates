@@ -12,10 +12,10 @@ If you want to make a conference-style large-format poster using Quarto, this si
 - Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.
 
 ::: callout-note
-As a student-oriented repository, these notes contain a lot of technical detail and rationale for why things are designed the way they are, from the templates to the theming to the testing and CI scripts.
+This is a student-oriented site, and it contains a lot of technical detail and rationale for why things are designed the way they are, from the templates to the theming to the testing and CI scripts.
 
-- You do *not* need to understand all of the details to use the templates effectively. 
-- However, the details matter and may help you in troubleshooting or customising the templates for your use.
+- You do *not* need to understand all of the details to use the templates effectively -- see [Fork this repo and build your poster](#fork-this-repo-and-build-your-poster) to get going directly.
+- The details matter for troubleshooting or customizing the templates, though, so they're here when you need them (Scripts & CI, Theming & Brand, Why Typst).
 :::
 
 > **Caveat:** Quarto's its `poster-typst` extension and `_brand.yml` theming are both still under active development. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.
