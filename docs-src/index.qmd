@@ -29,7 +29,8 @@ A modern replacement for the `posterdown`/R Markdown poster workflow. There are 
 | `scripts/` | R helpers: render everything, check output, audit contrast, regenerate previews -- see [Scripts & CI](scripts-and-ci.qmd). |
 | `_extensions/quarto-ext/poster/` | Vendored Typst poster extension, with three local patches -- see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas). |
 | `.github/workflows/posters.yml` | CI: renders every template and re-runs the checks on push/PR. |
-| `docs/` | This site's source (a nested Quarto website project, published to GitHub Pages). |
+| `docs-src/` | This site's source (a nested Quarto website project; renders to `docs/`). |
+| `docs/` | The rendered, committed site GitHub Pages serves directly (Settings -> Pages: branch main, `/docs`). |
 
 ## Fork this repo and build your poster
 
