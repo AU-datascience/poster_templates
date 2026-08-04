@@ -71,18 +71,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The unpinned `release` default previously installed whatever Quarto
+      # was newest per run; a recent release picked up a pandoc/typst-writer
+      # change that inserts a stray leading backslash into the
+      # institution-logo path substituted into typst-show.typ
+      # ($institution-logo$), which Typst then rejects ("path must not
+      # contain a backslash") -- not reproducible locally, since local Quarto
+      # stayed on 1.9.38. The pinned version lives in the single file
+      # `.quarto-version` (read below) rather than being duplicated across
+      # workflows, so posters.yml and docs.yml can never drift out of sync
+      # with each other. Bump `.quarto-version` deliberately -- run
+      # `make check-quarto-version` after installing the new release locally
+      # and re-render before pushing the bump -- rather than letting CI
+      # silently drift to a new release.
+      - name: Read pinned Quarto version
+        id: quarto-version
+        run: echo "version=$(cat .quarto-version)" >> "$GITHUB_OUTPUT"
+
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          # Pinned to the version verified locally (`quarto --version`).
-          # The unpinned `release` default previously installed whatever was
-          # newest per run; a recent release picked up a pandoc/typst-writer
-          # change that inserts a stray leading backslash into the
-          # institution-logo path substituted into typst-show.typ
-          # ($institution-logo$), which Typst then rejects ("path must not
-          # contain a backslash") -- not reproducible locally, since local
-          # Quarto stayed on 1.9.38. Bump this deliberately (and re-verify
-          # locally first) rather than letting CI silently drift again.
-          version: "1.9.38"
+          version: ${{ steps.quarto-version.outputs.version }}
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -109,7 +117,8 @@ jobs:
       # .quarto/typst/fonts/ at render time, so the runner needs no system
       # fonts for Typst at all -- CI and local renders resolve the same
       # face by construction, rather than depending on whatever happens to
-      # be installed locally.
+      # be installed locally (see AGENTS.md's former "Fonts -- unresolved"
+      # note for how this was diagnosed and fixed).
 
       - name: Render all templates and run output checks
         run: Rscript scripts/render-all.R

@@ -1,4 +1,4 @@
-.PHONY: render check clean-cache
+.PHONY: render check clean-cache check-quarto-version
 
 # Quarto's typst compiler resolves `@local/typst-poster:0.1.1` from
 # .quarto/typst/packages, which Quarto copies there from
@@ -21,3 +21,22 @@ render: clean-cache
 # since nothing is being compiled).
 check:
 	Rscript scripts/render-all.R --no-render
+
+# CI pins Quarto to the version in .quarto-version (read by both
+# .github/workflows/posters.yml and docs.yml) rather than tracking `release`,
+# because an unpinned run once picked up a pandoc/Typst-writer change that
+# broke the institution-logo path substitution -- not reproducible locally,
+# since a pin only ever silently drifts in CI. Run this after installing a
+# candidate new Quarto locally and *before* bumping .quarto-version, so the
+# bump is a deliberate, re-verified choice rather than CI finding out first.
+check-quarto-version:
+	@pinned=$$(cat .quarto-version); \
+	actual=$$(quarto --version); \
+	if [ "$$pinned" != "$$actual" ]; then \
+		echo "Local Quarto ($$actual) != .quarto-version ($$pinned)." >&2; \
+		echo "Install $$pinned to test against the pin, or update" >&2; \
+		echo ".quarto-version to $$actual after re-rendering and checking" >&2; \
+		echo "output locally (make render)." >&2; \
+		exit 1; \
+	fi; \
+	echo "Local Quarto ($$actual) matches the pinned .quarto-version."

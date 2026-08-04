@@ -43,11 +43,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Reads the same `.quarto-version` file as posters.yml, so the two
+      # workflows can't drift apart -- see the note there about unpinned
+      # `release` drift breaking renders.
+      - name: Read pinned Quarto version
+        id: quarto-version
+        run: echo "version=$(cat .quarto-version)" >> "$GITHUB_OUTPUT"
+
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          # Kept in sync with the version pinned in posters.yml -- see the
-          # note there about unpinned `release` drift breaking renders.
-          version: "1.9.38"
+          version: ${{ steps.quarto-version.outputs.version }}
 
       - name: Render docs-src
         run: quarto render docs-src

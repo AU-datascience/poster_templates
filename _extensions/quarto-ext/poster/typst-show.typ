@@ -20,7 +20,19 @@
 // size, so `univ-logo-scale`/`univ-logo-column-size` silently had no visible
 // effect on the rendered logo.
 $if(institution-logo)$
-#let _univ_logo_img = image("$institution-logo$", width: 100%)
+// Some pandoc/Typst-writer releases insert a stray leading backslash into
+// this substituted path, which Typst then rejects with "path must not
+// contain a backslash" (see the pinned-Quarto-version note in
+// .github/workflows/posters.yml). Strip it defensively here so that failure
+// mode can't recur even if the pin is bumped, loosened, or someone renders
+// with an unpinned Quarto locally.
+#let _institution_logo_path = "$institution-logo$"
+#let _institution_logo_path = if _institution_logo_path.starts-with("\\") {
+  _institution_logo_path.slice(1)
+} else {
+  _institution_logo_path
+}
+#let _univ_logo_img = image(_institution_logo_path, width: 100%)
 $endif$
 
 #show: doc => poster(
