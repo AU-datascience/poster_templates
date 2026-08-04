@@ -43,8 +43,61 @@ permissions:
   contents: read
 
 jobs:
+  # Cheap pre-check: does this diff touch anything check-contrast.R actually
+  # reads, or anything render-all.R actually renders/checks? Both downstream
+  # jobs pay for a from-source tidyverse install (setup-r-dependencies, no
+  # cache) regardless of what changed -- 30-40 minutes has been observed for
+  # the contrast job alone -- and the render job additionally pays for the
+  # full Quarto/Typst toolchain. Skipping either job entirely when its inputs
+  # are untouched (e.g. a docs-src/-only or README-only commit) is a bigger
+  # win than anything inside the jobs themselves. workflow_dispatch always
+  # runs both jobs in full regardless of the filters, since there's no
+  # meaningful "diff" for a manual run.
+  #
+  # A job skipped via `if:` reports as "skipped", which GitHub treats as
+  # passing for required-status-check purposes -- so this is safe to use even
+  # if these jobs are required checks on main.
+  changes:
+    name: Detect which jobs this diff requires
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
+    outputs:
+      colors: ${{ steps.filter.outputs.colors }}
+      render: ${{ steps.filter.outputs.render }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            colors:
+              - '_brand.yml'
+              - 'scss/**'
+              - 'templates/*/poster.qmd'
+              - 'templates/*/*.scss'
+              - 'scripts/templates.R'
+              - 'scripts/check-contrast.R'
+              - '_extensions/quarto-ext/poster/**'
+            render:
+              - '_brand.yml'
+              - '_quarto.yml'
+              - '.quarto-version'
+              - 'scss/**'
+              - 'templates/**'
+              - 'scripts/**'
+              - '_extensions/**'
+              - '.github/workflows/posters.yml'
+
   contrast:
     name: WCAG AAA contrast audit
+    needs: changes
+    # `always()` so this still runs on workflow_dispatch, where `changes` is
+    # itself skipped (its own `if:` excludes that event) and its output would
+    # otherwise short-circuit this condition to false.
+    if: |
+      always() &&
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.colors == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,6 +120,13 @@ jobs:
 
   render:
     name: Render posters and check output
+    needs: changes
+    # Same `always()` reasoning as the `contrast` job above: `changes` is
+    # skipped outright on workflow_dispatch, so its output must not be what
+    # gates this condition in that case.
+    if: |
+      always() &&
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.render == 'true')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
