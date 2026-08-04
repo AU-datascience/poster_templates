@@ -8,13 +8,15 @@
 #
 # What this job does instead:
 #   1. Renders docs-src/ fresh, to catch a broken doc page before merge.
-#   2. Diffs that fresh render against the /docs already committed in this
-#      branch/PR. If they differ, someone edited docs-src/ (or one of the
-#      images copy-images.sh pulls in) without re-running
-#      `quarto render docs-src` and committing the result -- exactly the
-#      failure mode this check exists to catch, since a stale /docs is
-#      invisible in the PR diff otherwise (docs-src/*.qmd changes review
-#      fine on their own; nothing forces /docs to be re-rendered to match).
+#   2. Diffs the *content* of that fresh render (docs/search.json and
+#      docs/images/, not the full site -- see the step below for why) against
+#      what's already committed at /docs in this branch/PR. If they differ,
+#      someone edited docs-src/ (or one of the images copy-images.sh pulls
+#      in) without re-running `quarto render docs-src` and committing the
+#      result -- exactly the failure mode this check exists to catch, since
+#      a stale /docs is invisible in the PR diff otherwise (docs-src/*.qmd
+#      changes review fine on their own; nothing forces /docs to be
+#      re-rendered to match).
 # It does not commit or push anything either way.
 
 name: docs-build-check
@@ -50,15 +52,28 @@ jobs:
       - name: Render docs-src
         run: quarto render docs-src
 
-      - name: Check /docs matches a fresh render
+      - name: Check /docs content matches a fresh render
         run: |
-          # sitemap.xml's <lastmod> is derived from each source .qmd's
-          # filesystem mtime; actions/checkout resets every file to the
-          # same checkout-time mtime, so this file differs from the
-          # committed version on every run regardless of real content
-          # drift. Excluded from the diff for that reason -- it is the
-          # only file where this has been observed to happen.
-          if ! git diff --exit-code -- docs ':!docs/sitemap.xml'; then
+          # Deliberately narrow, not a full `git diff -- docs`: Quarto's
+          # bundled Bootstrap CSS gets a *different* content hash on Linux
+          # (this runner) than on macOS (where these are normally rendered
+          # and committed) from byte-identical source and the same pinned
+          # Quarto version -- e.g. bootstrap-158031...css locally vs.
+          # bootstrap-a547dd1...css here. That's Sass-compiler
+          # cross-platform nondeterminism, not real drift, and it touches
+          # every page's <head>, so diffing the full HTML output fails on
+          # every run regardless of content changes. sitemap.xml's
+          # <lastmod> is separately unstable too (derived from source file
+          # mtimes, which actions/checkout resets on every checkout).
+          #
+          # docs/search.json is a reliable proxy instead: it's the full
+          # extracted text of every page (used for site search), derived
+          # straight from each page's content independent of the CSS/JS
+          # toolchain, and it already catches a real forgotten-render (see
+          # the commit that added this check). docs/images/ is a plain
+          # byte-for-byte copy (see copy-images.sh), so comparing it is
+          # fully deterministic and catches a forgotten preview update too.
+          if ! git diff --exit-code -- docs/search.json docs/images; then
             echo "::error::docs/ is stale relative to docs-src/ (and/or the images copy-images.sh pulls in). Run \`quarto render docs-src\` locally and commit the result."
             exit 1
           fi
