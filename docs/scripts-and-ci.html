@@ -301,6 +301,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>If they differ, someone edited <code>docs-src/</code> (or an image <code>copy-images.sh</code> pulls in) without re-rendering, a stale <code>/docs</code> is otherwise invisible in a PR diff, since <code>docs-src/*.qmd</code> changes review fine on their own.</li>
 <li>After editing anything under <code>docs-src/</code>, re-render and commit the result: <code>quarto render docs-src</code>.</li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>This is a simplified Pages setup, on purpose
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The pattern here — render locally, commit the rendered <code>docs/</code> folder, point GitHub Pages (Settings → Pages: branch <code>main</code>, <code>/docs</code>) at it directly — is not the only way to publish a Quarto site to GitHub Pages, and it is not what most production projects do. It was chosen deliberately for this repo because it needs <strong>no GitHub Actions permissions, no deploy step, and no separate <code>gh-pages</code> branch to reason about</strong>: what’s on <code>main</code> in <code>docs/</code> is exactly what’s live, and any contributor can <code>quarto render docs-src</code> locally and see precisely what will publish before pushing.</p>
+<p>The trade-off is real, and worth knowing before copying this into your own repo:</p>
+<ul>
+<li>Rendered HTML/CSS/JS lives in git history like any other tracked file, so PR diffs touching <code>docs-src/</code> also carry a (usually large, machine-generated) diff of <code>docs/</code>.</li>
+<li>Nothing enforces that <code>docs/</code> actually matches <code>docs-src/</code> at any given commit except a CI job (<code>.github/workflows/docs.yml</code>) that re-renders and diffs the two after the fact — it catches a forgotten re-render, but only after the commit is already up.</li>
+<li><code>output-dir: ../docs</code> pointing outside <code>docs-src/</code>’s own project directory is why <code>quarto render docs-src</code> prints the harmless-but-odd <code>site_libs</code>/“unexpected path configuration” warnings documented in <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues">AGENTS.md</a> — an artifact of this specific layout, not a sign of anything broken.</li>
+</ul>
+<p><strong>When this simplified approach is a reasonable fit:</strong> a small site with one or a handful of maintainers, low-frequency publishing, and a preference for “no CI, no Actions permissions to configure, nothing to debug beyond a normal git commit.” That describes this repo.</p>
+<p><strong>When to reach instead for a proper build-and-deploy workflow</strong> (render to an ignored, in-project output directory like <code>_site</code>, then publish via <code>actions/deploy-pages</code> or <code>quarto publish gh-pages</code>, with GitHub Pages set to source from “GitHub Actions” rather than a branch): a site with many contributors, frequent changes, or a desire to keep generated files out of git entirely. That is the more standard, more scalable pattern, and the one worth learning if you are setting up Pages for a repo of your own from scratch.</p>
+</div>
+</div>
 </section>
 </section>
 </section>

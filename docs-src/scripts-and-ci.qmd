@@ -68,6 +68,49 @@ This documentation site itself is a separate, nested Quarto website project: sou
 - If they differ, someone edited `docs-src/` (or an image `copy-images.sh` pulls in) without re-rendering, a stale `/docs` is otherwise invisible in a PR diff, since `docs-src/*.qmd` changes review fine on their own. 
 - After editing anything under `docs-src/`, re-render and commit the result: `quarto render docs-src`.
 
+::: {.callout-note}
+## This is a simplified Pages setup, on purpose
+
+The pattern here — render locally, commit the rendered `docs/` folder,
+point GitHub Pages (Settings → Pages: branch `main`, `/docs`) at it
+directly — is not the only way to publish a Quarto site to GitHub Pages,
+and it is not what most production projects do. It was chosen deliberately
+for this repo because it needs **no GitHub Actions permissions, no deploy
+step, and no separate `gh-pages` branch to reason about**: what's on `main`
+in `docs/` is exactly what's live, and any contributor can `quarto render
+docs-src` locally and see precisely what will publish before pushing.
+
+The trade-off is real, and worth knowing before copying this into your own
+repo:
+
+- Rendered HTML/CSS/JS lives in git history like any other tracked file,
+  so PR diffs touching `docs-src/` also carry a (usually large,
+  machine-generated) diff of `docs/`.
+- Nothing enforces that `docs/` actually matches `docs-src/` at any given
+  commit except a CI job (`.github/workflows/docs.yml`) that re-renders
+  and diffs the two after the fact — it catches a forgotten re-render, but
+  only after the commit is already up.
+- `output-dir: ../docs` pointing outside `docs-src/`'s own project
+  directory is why `quarto render docs-src` prints the harmless-but-odd
+  `site_libs`/"unexpected path configuration" warnings documented in
+  [AGENTS.md](https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues) — an artifact of this specific layout, not a sign
+  of anything broken.
+
+**When this simplified approach is a reasonable fit:** a small site with
+one or a handful of maintainers, low-frequency publishing, and a
+preference for "no CI, no Actions permissions to configure, nothing to
+debug beyond a normal git commit." That describes this repo.
+
+**When to reach instead for a proper build-and-deploy workflow** (render
+to an ignored, in-project output directory like `_site`, then publish via
+`actions/deploy-pages` or `quarto publish gh-pages`, with GitHub Pages set
+to source from "GitHub Actions" rather than a branch): a site with many
+contributors, frequent changes, or a desire to keep generated files out of
+git entirely. That is the more standard, more scalable pattern, and the
+one worth learning if you are setting up Pages for a repo of your own from
+scratch.
+:::
+
 ## Notes / gotchas
 
 - The vendored `_extensions/quarto-ext/poster` has local patches. If you re-install/update the extension, re-apply all of them:

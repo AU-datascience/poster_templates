@@ -182,11 +182,14 @@ ul.task-list li input[type="checkbox"] {
 <p>If you want to make a conference-style large-format poster using Quarto, this site has working templates for different style posters.</p>
 <ul>
 <li>The workflow uses Quarto and its <code>poster-typst</code> extension as a modern replacement for older <code>posterdown</code>/R Markdown poster workflows.</li>
-<li>The workflow also uses Quarto’s <code>_brand.yml</code> file to provide for consistent themeing.</li>
+<li>The workflow also uses Quarto’s <code>_brand.yml</code> file to provide for consistent theming.</li>
 <li>Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.</li>
 </ul>
 <blockquote class="blockquote">
 <p><strong>Caveat:</strong> Quarto’s its <code>poster-typst</code> extension and <code>_brand.yml</code> theming are both still under active development. Several items in <a href="./scripts-and-ci.html#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p><strong>AI Usage</strong>: This project was developed with the assistance of Posit Assistant (Anthropic), which helped write and test code and text, most notably the theming, branding, and testing artifacts. The author has reviewed all elements and is responsible for any errors present at the time of publication; later software updates may introduce behavior the author has not reviewed.</p>
 </blockquote>
 <p>A modern replacement for the <code>posterdown</code>/R Markdown poster workflow. There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
 <table class="caption-top table">
