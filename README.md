@@ -2,9 +2,15 @@
 
 **Full documentation: <https://au-datascience.github.io/poster_templates/>**
 
-> **Heads up:** Quarto's `_brand.yml` theming and its `poster-typst` extension are both still under active development upstream. The [Notes / gotchas](https://au-datascience.github.io/poster_templates/scripts-and-ci.html#notes-gotchas) page describes current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright.
+If you want to make a conference-style large-format poster using Quarto, this site has working templates for different style posters.
 
-A modern replacement for the `posterdown`/R Markdown poster workflow. There are three templates; each a single `.qmd` file that renders to **two** outputs -- a large-format print PDF via [Typst](https://typst.app), and a responsive HTML "web poster" -- from the same content in one pass.
+- The workflow uses Quarto and its `poster-typst` extension as a modern replacement for older `posterdown`/R Markdown poster workflows. 
+- The workflow also uses Quarto's `_brand.yml` file to provide for consistent themeing.
+- Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.
+
+> **Caveat:** Quarto's its `poster-typst` extension and `_brand.yml` theming are both still under active development. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed. 
+
+There are three templates; each a single `.qmd` file that renders to **two** outputs -- a large-format print PDF via [Typst](https://typst.app), and a responsive HTML "web poster" -- from the same content in one pass.
 
 ![Comparison of the three print posters, one per row](comparison.png)
 
