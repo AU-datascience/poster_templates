@@ -25,11 +25,14 @@
 # Exits non-zero if any check fails, so it can be wired into CI or a
 # pre-commit hook.
 
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(here)
+})
 
 POSTER_HELPERS_SOURCED <- TRUE
-source("scripts/templates.R")
-source("scripts/check-column-balance.R")
+source(here::here("scripts", "templates.R"))
+source(here::here("scripts", "check-column-balance.R"))
 stop_unless_project_root()
 
 do_render <- !("--no-render" %in% commandArgs(trailingOnly = TRUE))
@@ -82,7 +85,25 @@ check_template <- function(tpl) {
   n_divider <- str_count(html, fixed('<hr class="section-divider">'))
 
   balance <- poster_balance(pdf_path, tpl$num_columns)
-  shortfall <- tpl$baseline_fill - balance$fill_pct_excl_box
+
+  # A template discovered outside the known registry (see
+  # scripts/templates.R -- e.g. a renamed single-poster fork) has no
+  # measured baseline to compare against, so report the numbers without
+  # failing on them.
+  has_baseline <- !anyNA(tpl$baseline_fill)
+  shortfall <- if (has_baseline) tpl$baseline_fill - balance$fill_pct_excl_box else NA_real_
+  balance_check <- if (has_baseline) {
+    # Tolerance of 10 points absorbs rasterization jitter and small edits;
+    # a column going properly empty drops far more than that.
+    tibble(check = "column balance", ok = all(shortfall <= 10),
+           detail = paste0(paste(balance$fill_pct_excl_box, collapse = "/"),
+                           " vs baseline ",
+                           paste(tpl$baseline_fill, collapse = "/")))
+  } else {
+    tibble(check = "column balance", ok = TRUE,
+           detail = paste0(paste(balance$fill_pct_excl_box, collapse = "/"),
+                           " (no baseline registered -- informational only)"))
+  }
 
   bind_rows(
     tibble(check = "pages", ok = n_pages == 1,
@@ -99,12 +120,7 @@ check_template <- function(tpl) {
            ok = str_detect(html, "ethics-panel") &&
                 str_detect(pdf_txt, "Ethics & Broader Impact"),
            detail = ""),
-    # Tolerance of 10 points absorbs rasterization jitter and small edits;
-    # a column going properly empty drops far more than that.
-    tibble(check = "column balance", ok = all(shortfall <= 10),
-           detail = paste0(paste(balance$fill_pct_excl_box, collapse = "/"),
-                           " vs baseline ",
-                           paste(tpl$baseline_fill, collapse = "/"))),
+    balance_check,
     check_heading_rule(tpl)
   )
 }
@@ -114,7 +130,8 @@ check_template <- function(tpl) {
 # usable standalone while a single `render-all.R` still covers every check.
 run_contrast_audit <- function() {
   out <- suppressWarnings(
-    system2("Rscript", "scripts/check-contrast.R", stdout = TRUE, stderr = TRUE)
+    system2("Rscript", here::here("scripts", "check-contrast.R"),
+            stdout = TRUE, stderr = TRUE)
   )
   status <- attr(out, "status") %||% 0
 

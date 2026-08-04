@@ -25,17 +25,44 @@
 # This is the check to run if you fork the repo and re-color it. See
 # "Re-coloring the templates" in README.md.
 
-suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(here)
+})
 
-source("scripts/templates.R")
+source(here::here("scripts", "templates.R"))
 stop_unless_project_root()
 
-COMMON_SCSS <- "scss/poster-common.scss"
+COMMON_SCSS <- here::here("scss", "poster-common.scss")
+
+# The banner/heading comparisons below are specific to *this* repo's three
+# shipped templates (each has a distinctly colored h2 style, and the banner
+# gradient stops are only meaningful once per template). Rather than
+# hardcoding their scss filenames (which don't follow a "poster.scss"
+# convention -- see e.g. classic-web.scss), look up each known template's
+# directory (from the registry in scripts/templates.R) and find its one
+# non-shared .scss file there. A fork that renamed/moved the poster (so it no
+# longer matches one of these three directory names) simply skips the
+# per-template comparisons below -- see `known_ids`.
+find_template_scss <- function(dir_name) {
+  tpl <- Find(function(t) t$dir == dir_name, poster_templates)
+  if (is.null(tpl)) return(NA_character_)
+  scss <- list.files(dirname(tpl$file), pattern = "\\.scss$", full.names = TRUE)
+  if (length(scss) != 1) return(NA_character_)
+  scss
+}
+
 TEMPLATE_SCSS <- c(
-  "01" = "templates/01-classic-academic/classic-web.scss",
-  "02" = "templates/02-modern-cards/modern-web.scss",
-  "03" = "templates/03-minimal-story/minimal-web.scss"
+  "01" = find_template_scss("01-classic-academic"),
+  "02" = find_template_scss("02-modern-cards"),
+  "03" = find_template_scss("03-minimal-story")
 )
+known_ids <- names(TEMPLATE_SCSS)[!is.na(TEMPLATE_SCSS)]
+if (!length(known_ids)) {
+  message("None of the three shipped templates (01/02/03) were found -- ",
+          "skipping the per-template banner/heading contrast checks and ",
+          "auditing only the shared palette/footer colors.")
+}
 
 # ---- WCAG math -------------------------------------------------------------
 
@@ -143,7 +170,9 @@ parse_rules <- function(path) {
   out
 }
 
-rules <- map_dfr(c(COMMON_SCSS, TEMPLATE_SCSS), parse_rules)
+# Only parse scss files that were actually found; a fork missing one or more
+# of the three shipped templates just has fewer files here (see `known_ids`).
+rules <- map_dfr(c(COMMON_SCSS, TEMPLATE_SCSS[known_ids]), parse_rules)
 
 # Pull the color(s) out of a declaration. `n = 2` is for the banner's
 # linear-gradient, whose two stops are the two backgrounds text can sit on.
@@ -200,16 +229,7 @@ meta_label <- css_colors(".quarto-title-meta-heading", "color")
 meta_value <- css_colors(".quarto-title-meta-contents", "color")
 acks_fg <- css_colors("#acknowledgments", "color")
 h2_common <- css_colors("section.level2 > h2", "color", file = COMMON_SCSS)
-h2_modern <- css_colors("section.level2 > h2", "color", file = TEMPLATE_SCSS[["02"]])
-h2_minimal <- css_colors("section.level2 > h2", "color", file = TEMPLATE_SCSS[["03"]])
 ethics_strong <- css_colors(".ethics-panel strong", "color")
-
-h2_modern_large <- css_font_size_px("section.level2 > h2",
-                                    file = TEMPLATE_SCSS[["02"]]) >= LARGE_TEXT_PX
-h2_minimal_large <- css_font_size_px("section.level2 > h2",
-                                     file = TEMPLATE_SCSS[["03"]]) >= LARGE_TEXT_PX
-h2_classic_large <- css_font_size_px("section.level2 > h2",
-                                     file = TEMPLATE_SCSS[["01"]]) >= LARGE_TEXT_PX
 
 # ---- Pairs that occur in the output ----------------------------------------
 
@@ -220,9 +240,6 @@ pairs <- tribble(
   ~context,                                  ~fg,             ~bg,             ~large, ~source,
   "body text on page background",            palette[["$body-color"]], page_bg,  FALSE, "Bootstrap var",
   "body text on white card",                 palette[["$body-color"]], card_bg,  FALSE, "Bootstrap var / rule",
-  "h2 on white card (01)",                   h2_common,       card_bg,   h2_classic_large,  "rule",
-  "h2 on page background (03, flat)",        h2_minimal,      page_bg,   h2_minimal_large,  "rule",
-  "h2 accent on white card (02)",            h2_modern,       card_bg,   h2_modern_large,   "rule",
   "link on white card",                      palette[["$link-color"]], card_bg, FALSE, "Bootstrap var / rule",
   "link on page background",                 palette[["$link-color"]], page_bg, FALSE, "Bootstrap var / rule",
   "acks/refs text on page background",       acks_fg,         page_bg,          FALSE, "rule",
@@ -246,6 +263,31 @@ pairs <- tribble(
   "ethics panel strong text on cream",       ethics_strong,   ethics_bg,        FALSE, "rule",
   "ethics panel body text on cream",         palette[["$body-color"]], ethics_bg, FALSE, "Bootstrap var / rule"
 )
+
+# 01 doesn't override `section.level2 > h2` (it inherits h2_common from the
+# shared stylesheet); 02 and 03 each override it with their own accent color.
+# Audit whichever of these are actually present (see `known_ids`), rather
+# than assuming all three templates exist.
+h2_overrides <- tribble(
+  ~id,   ~context,                             ~against,      ~own_rule,
+  "01",  "h2 on white card (01)",              "card",        FALSE,
+  "03",  "h2 on page background (03, flat)",   "page",        TRUE,
+  "02",  "h2 accent on white card (02)",       "card",        TRUE
+) |>
+  filter(id %in% known_ids) |>
+  mutate(
+    fg = map2_chr(id, own_rule, ~ if (.y) {
+      css_colors("section.level2 > h2", "color", file = TEMPLATE_SCSS[[.x]])
+    } else h2_common),
+    bg = if_else(against == "card", card_bg, page_bg),
+    # Every template sets its own h2 font-size (even 01, which otherwise
+    # inherits the color from the common stylesheet).
+    large = map_lgl(id, ~ css_font_size_px("section.level2 > h2", file = TEMPLATE_SCSS[[.x]]) >= LARGE_TEXT_PX),
+    source = "rule"
+  ) |>
+  select(context, fg, bg, large, source)
+
+pairs <- bind_rows(pairs, h2_overrides)
 
 # ---- Print footers, read from each template's YAML -------------------------
 

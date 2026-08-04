@@ -14,9 +14,10 @@
 suppressPackageStartupMessages({
   library(tidyverse)
   library(magick)
+  library(here)
 })
 
-source("scripts/templates.R")
+source(here::here("scripts", "templates.R"))
 stop_unless_project_root()
 
 # Rasterize at 2x the target width and let magick downsample, which is much
@@ -30,7 +31,8 @@ render_at_width <- function(pdf_path, target_px, supersample = 2) {
   ))
 }
 
-dir.create("images/previews", recursive = TRUE, showWarnings = FALSE)
+previews_dir <- here::here("images", "previews")
+dir.create(previews_dir, recursive = TRUE, showWarnings = FALSE)
 
 rows <- map(poster_templates, function(tpl) {
   pdf_path <- template_path(tpl, "pdf")
@@ -38,11 +40,12 @@ rows <- map(poster_templates, function(tpl) {
     stop("Missing ", pdf_path, " -- render the poster first.", call. = FALSE)
   }
 
+  out_path <- file.path(previews_dir, paste0("preview-", tpl$dir, ".png"))
   render_at_width(pdf_path, 1200) |>
     image_resize("1200x") |>
-    image_write(file.path("images/previews", paste0("preview-", tpl$dir, ".png")))
+    image_write(out_path)
 
-  message("wrote images/previews/preview-", tpl$dir, ".png")
+  message("wrote ", out_path)
 
   # Rows rather than side-by-side columns: 03-minimal-story is a tall
   # portrait banner, so matching heights would shrink it to a sliver.
@@ -54,8 +57,9 @@ rows <- map(poster_templates, function(tpl) {
                    weight = 700)
 })
 
+comparison_path <- here::here("comparison.png")
 do.call(c, rows) |>
   image_append(stack = TRUE) |>
-  image_write("comparison.png")
+  image_write(comparison_path)
 
-message("wrote comparison.png")
+message("wrote ", comparison_path)

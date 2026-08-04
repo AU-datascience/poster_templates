@@ -12,6 +12,18 @@
 #     run:
 #       working-directory: quarto_posters
 #
+# scripts/templates.R (and everything that sources it) resolves the project
+# root with here::here() rather than requiring the runner's cwd to already be
+# that root -- but here::here() still has to find *something* to anchor on
+# (a `.here` file, `_quarto.yml`, or `.git`) by searching upward from cwd. The
+# checked-out repo root ships a `.here` file for exactly this reason. If you
+# move this workflow per the note above without also setting
+# `working-directory: quarto_posters`, here::here() will walk up from the
+# actual repo root, find the *parent's* .git first, and resolve the wrong
+# directory -- scripts/templates.R then fails fast with a clear "no .qmd
+# file / no templates/ directory" error rather than silently using the wrong
+# path, but the fix is still to set `working-directory: quarto_posters`.
+#
 # The two jobs are deliberately separate. The contrast audit is pure source
 # parsing -- no Quarto, no fonts, no rendering -- so it is fast and gives an
 # unambiguous answer. The render job depends on the Typst toolchain and on font
@@ -45,6 +57,7 @@ jobs:
         with:
           packages: |
             any::tidyverse
+            any::here
 
       # Every audited pair currently reaches AAA, so the strict gate is the
       # meaningful one: any color edit that drops a pair to AA fails the build.
@@ -70,6 +83,7 @@ jobs:
           # pdftools (poppler) and magick (ImageMagick).
           packages: |
             any::tidyverse
+            any::here
             any::pdftools
             any::magick
             any::palmerpenguins
