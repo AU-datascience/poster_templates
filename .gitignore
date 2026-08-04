@@ -15,3 +15,8 @@ templates/**/poster.typ
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Rendered output of the docs/ website sub-project (published to GitHub
+# Pages by .github/workflows/docs.yml, not committed to main).
+docs/_site/
+docs/.quarto/

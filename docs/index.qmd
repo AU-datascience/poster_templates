@@ -1,0 +1,45 @@
+---
+title: "Quarto Conference Posters"
+---
+
+> **Heads up:** Quarto's `_brand.yml` theming and its `poster-typst` extension are both still under active development upstream. Several items in [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright -- if something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.
+
+A modern replacement for the `posterdown`/R Markdown poster workflow. There are three templates; each a single `.qmd` file that renders to **two** outputs:
+
+| Format          | Purpose                | Engine |
+|------------------------|--------------|--------|
+| `poster-typst`  | Large-format print PDF (e.g. 36x24 in)     | [Typst](https://typst.app), via the `quarto-ext/typst-templates/poster` extension |
+| `html`          | Responsive, scrollable "web poster" for posting online | Quarto HTML + custom SCSS |
+
+- Because both formats are declared in one `format:` block, `quarto render poster.qmd` builds *both* versions from the same content in one pass.
+- Run `quarto render poster.qmd --to poster-typst` or `--to html` to build just one.
+- The print PDF is typeset by **Typst**, not LaTeX. That choice drives several things in these templates (raw `` ```{=typst} `` blocks, arbitrary page sizes, no TeX install) -- see [Why Typst instead of LaTeX?](why-typst.qmd) for the reasoning and the trade-offs.
+- `Rscript scripts/render-all.R` renders all three templates and then checks the output for known regressions -- see [Scripts & CI](scripts-and-ci.qmd).
+
+## Repo structure at a glance
+
+| Path | What it is |
+|---|---|
+| `templates/<name>/poster.qmd` | One self-contained poster. Start here. |
+| `templates/<name>/*.scss` | That poster's web-only layout tweaks (loaded after the shared stylesheet below). |
+| `scss/poster-common.scss` | Shared web "poster shell" styling used by all templates. |
+| `_brand.yml` | Shared color palette + typography, consumed by Quarto's brand-aware HTML theming -- see [Theming & Brand](theming.qmd#brand.yml-and-your-workflow). |
+| `references.bib` | Shared bibliography (BibTeX), cited with `[@key]` from any template. |
+| `images/` | Organization logo, plus generated preview images. |
+| `scripts/` | R helpers: render everything, check output, audit contrast, regenerate previews -- see [Scripts & CI](scripts-and-ci.qmd). |
+| `_extensions/quarto-ext/poster/` | Vendored Typst poster extension, with three local patches -- see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas). |
+| `.github/workflows/posters.yml` | CI: renders every template and re-runs the checks on push/PR. |
+| `docs/` | This site's source (a nested Quarto website project, published to GitHub Pages). |
+
+## Fork this repo and build your poster
+
+Assuming you've forked or cloned this repo to build a poster of your own:
+
+1. **Pick a starting template.** Skim the three options in [Templates](templates.qmd) and pick whichever layout fits your content -- each is a self-contained `templates/<name>/` folder that renders independently.
+2. **Copy the folder**, e.g. `cp -r templates/01-classic-academic templates/my-poster`. Keep it under `templates/` so the shared registry in `scripts/templates.R` -- and everything that reads it (`render-all.R`, `check-contrast.R`, `make-previews.R`) -- picks it up automatically. If your fork will only ever hold one poster, you can instead move that single `.qmd` (and its sibling `.scss`) to the project's top level and delete `templates/` entirely; the scripts auto-detect either layout (see [Scripts & CI](scripts-and-ci.qmd)).
+3. **Edit the YAML front matter**: title, authors/affiliations, `poster-authors`, `departments`, footer contact info, and a print `size` (any Typst `"WIDTHxHEIGHT"` in inches -- see [Choosing a print size](templates.qmd#choosing-a-print-size) for sizes that match common conference boards).
+4. **Replace the `##` sections** with your own content. Each level-2 heading becomes a poster panel automatically, in both outputs. Cite sources with `[@bibkey]` and add the matching entry to `references.bib`.
+5. **Re-color it if you're forking for a different organization.** The palette lives in a small, documented set of places -- see [Re-coloring the templates](theming.qmd#re-coloring-the-templates) -- and `_brand.yml` drives the web theme specifically (see [Theming & Brand](theming.qmd#brand.yml-and-your-workflow)).
+6. **Render it**: `quarto render templates/my-poster/poster.qmd` -- check `poster.pdf` for the printable version and `poster.html` for the web version.
+7. **Run the checks** (optional, but worth it before you consider it done): `Rscript scripts/render-all.R` renders every template it finds and checks the output for known regressions -- see [Scripts & CI](scripts-and-ci.qmd).
+8. **Regenerate the previews** if you want updated images for your own README: `Rscript scripts/make-previews.R` (after re-rendering the PDFs).

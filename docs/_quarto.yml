@@ -1,0 +1,35 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Quarto Conference Posters"
+  description: "Print + web conference poster templates built with Quarto and Typst."
+  site-url: https://au-datascience.github.io/poster_templates/
+  repo-url: https://github.com/AU-datascience/poster_templates
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: templates.qmd
+        text: Templates
+      - href: content-guide.qmd
+        text: Content Guide
+      - href: theming.qmd
+        text: Theming & Brand
+      - href: scripts-and-ci.qmd
+        text: Scripts & CI
+      - href: why-typst.qmd
+        text: Why Typst
+    right:
+      - icon: github
+        href: https://github.com/AU-datascience/poster_templates
+        text: GitHub
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: false
+    link-external-icon: true
+    link-external-newwindow: true

@@ -1,0 +1,46 @@
+---
+title: "Content Guide"
+---
+
+## Ethics & Broader Impact panel
+
+Each template includes an **"Ethics & Broader Impact"** section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:
+
+- **Generative AI use** -- which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data.
+- **Privacy & data governance** -- whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.
+- **Bias, fairness & broader impact** -- whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.
+
+The included text is accurate for *this* demo (public, non-human `palmerpenguins` biometric data; a simple linear regression, not a deployed model) -- treat it as a worked example of the *kind* of specific, honest statement expected, not boilerplate to copy verbatim. Rewrite each statement for your own project's actual data, models, and tool use.
+
+The panel is implemented once per format so it renders correctly in both:
+
+- **HTML:** a `::: {.ethics-panel} :::` div (defined in `poster-common.scss`) -- a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.
+- **Print (Typst):** a raw ```` ```{=typst} ```` block using `#block(..., breakable: false)` for the same shaded/bordered look at 20-24pt.
+- `breakable: false` is required -- without it, Typst can split the block awkwardly across a column break.
+
+Both copies are wrapped in `::: {.content-visible when-format="..."} ` so only one appears in each output; if you edit the disclosure text, update both copies.
+
+**Acknowledgments** are now a plain, uncited sentence for funding and mentorship credit,
+
+- This work was performed under the guidance of Dr. Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No. BJME-2026-014.
+
+Each template also has a placeholder **Code & data** line near Acknowledgments with a GitHub URL to replace with your own repository.
+
+**References**, Data/software citations appear here automatically when they're cited in-text with `[@key]` earlier in the poster . A ready-to-edit example is included in each template.
+
+## Shared resources
+
+- **`_brand.yml`**: shared AU color palette and typography. Referenced implicitly by Quarto's HTML theming.
+  - Edit this once to re-color all three templates.
+  - The `logo:` key is intentionally omitted (see the comment in the file) because each template places the org logo explicitly instead, to avoid a duplicated automatic brand logo.
+  - See [Theming & Brand](theming.qmd#brand.yml-and-your-workflow) for how this file fits into the rest of the theming (SCSS, footer colors) and where it doesn't reach.
+- **`references.bib`**: shared bibliography. Each poster's YAML sets `bibliography: ../../references.bib`.
+  - Entries only appear in the rendered References section if actually cited in the text with `[@key]` (no blanket `nocite: | @*` is used in the filled-in templates, so unused entries stay out of the list).
+  - It includes citations for every R package a template's code actually calls with `library()`generated from each package's own `citation()` output, plus R itself.
+  - If you add a package to a poster's code, add its `citation("pkgname")` entry here too and cite it.
+- **`scss/poster-common.scss`**: base tokens and shared "poster shell" rules for the web/HTML version.
+- This includes: title banner, section card styling, the automatic `section.level2` → poster-panel behavior.
+- Each template's own `*-web.scss` file is loaded *after* this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.
+- **`images/au-logo-hires.png`** — organization logo. Used two ways:
+  - Print (`poster-typst`): passed via `institution-logo:` in the format options; the extension places and sizes it automatically (tune with `univ-logo-scale` / `univ-logo-column-size`).
+  - Web (`html`): included directly in the `.qmd` inside a `::: {.content-visible when-format="html"}` block, styled by the `.poster-logo` class in `poster-common.scss`.

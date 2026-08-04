@@ -1,0 +1,72 @@
+---
+title: "Scripts & CI"
+---
+
+## Build & check scripts
+
+`scripts/` holds four R helpers, plus a shared registry they all read. All are optional -- a plain `quarto render` still works.
+
+- Paths are resolved with the `here` package rather than requiring you to run from a specific working directory, and the template registry (`scripts/templates.R`) auto-discovers posters: either the multi-template layout shipped here (`templates/<dir>/*.qmd`, one per subdirectory), or -- if you deleted `templates/` and kept a single poster at the project's top level under any filename -- that one file instead.
+
+| Script | What it does |
+|---|---|
+| `render-all.R` | Renders every discovered template to both formats, then runs every check below (including delegating to `check-contrast.R`) -- one command for the whole suite. Exits non-zero on failure, so it can be wired into CI or a pre-commit hook. Pass `--no-render` to check existing output without re-rendering. |
+| `check-column-balance.R` | Measures how far down each Typst column the content actually reaches. Usable standalone: `Rscript scripts/check-column-balance.R templates/<name>/poster.pdf <num-columns>`. |
+| `make-previews.R` | Regenerates `images/previews/preview-*.png` and `comparison.png` from the rendered PDFs. |
+| `check-contrast.R` | Audits every foreground/background pair in the output against WCAG AA and AAA. Parses the palette, the stylesheets' own `color:`/`background:` rules (including both `linear-gradient()` stops), and each template's print footer YAML, so a re-color is re-audited rather than checked against a stale copy. Fails below AA, or below AAA with `--require-aaa`. See [Re-coloring the templates](theming.qmd#re-coloring-the-templates). |
+
+`scripts/templates.R` is the shared registry of templates (column counts, print sizes, expected column-fill baselines) that the other three read, so adding a template to the multi-template layout is a one-line edit there; a template discovered outside that registry (e.g. a renamed single-poster fork) just runs without a column-balance baseline to compare against.
+
+A `Makefile` wraps the common commands:
+
+```bash
+make render       # clear the stale Typst package cache, then render + check everything
+make check        # run the checks against whatever output already exists (no render)
+make clean-cache  # just clear .quarto/typst/packages (see the caching note below)
+```
+
+Every check in `render-all.R` exists because that failure actually happened once and was **invisible in the render log**:
+
+- **pages** -- a content edit overflowing onto a second Typst page; a poster must be exactly one page.
+- **divider** -- the web section divider disappearing from the HTML.
+- **acknowledgments** -- the raw-HTML-in-a-conditional-div bug described under [Notes / gotchas](#notes-gotchas), which dropped the acknowledgments, grant number, and References heading from print while the web version looked perfect.
+- **ethics** -- the Ethics & Broader Impact panel missing from either format (it is written once per format, so it can go missing from one).
+- **balance** -- a column emptying out relative to its measured baseline.
+- **`#### after show rule`** -- a `####` heading placed *above* the level-3 show rule described under [Notes / gotchas](#notes-gotchas). Typst show rules only affect what follows them, so such a heading silently keeps the package's "1) Heading:" run-in style.
+- **contrast** -- a palette edit dropping a color below WCAG AA, delegated to `check-contrast.R` so the same audit stays usable on its own.
+
+### Continuous integration
+
+`.github/workflows/posters.yml` runs these same scripts on push and pull request, in two deliberately separate jobs:
+
+| Job | Runs | Why it is separate |
+|---|---|---|
+| `contrast` | `check-contrast.R --require-aaa` | Pure source parsing -- no Quarto, no fonts, no rendering -- so it is quick and its verdict is unambiguous. Every pair currently reaches AAA, so the strict gate is the meaningful one. |
+| `render` | `render-all.R` (both formats for all three templates, plus every output check) | Needs the Typst toolchain and system libraries for `pdftools`/`magick`, which are the fragile parts. Keeping them apart means a toolchain or font problem is never mistaken for an accessibility regression. |
+
+See [HANDOFF-fonts-and-ci.md](https://github.com/AU-datascience/poster_templates/blob/main/HANDOFF-fonts-and-ci.md) for the open questions on fonts and this workflow.
+
+Two caveats worth knowing before you rely on it:
+
+- **Quarto's release version matters.** The render job pins `quarto-dev/quarto-actions/setup@v2` to a specific Quarto version rather than tracking `release`; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution. Bump the pin deliberately, and re-verify locally first, rather than letting CI silently drift to a new release.
+- **Fonts change layout, and layout is measured.** `poster.typ` asks for `STIX Two Text`, which macOS ships and an Ubuntu runner does not; Typst falls back silently instead of failing. A fallback face re-breaks lines, which moves the pixel-measured column-fill numbers, so a balance failure that appears only in CI most likely indicates the font rather than the content. The workflow installs `fonts-stix`, which may not include that exact face.
+
+This documentation site itself (`docs/`) is a separate, nested Quarto website project (its own `docs/_quarto.yml`) and is published to GitHub Pages by its own workflow, independent of the two jobs above.
+
+## Notes / gotchas
+
+- The vendored `_extensions/quarto-ext/poster` has three local patches. If you re-install/update the extension, re-apply all three:
+  - `poster.typ` accepts the institution logo as already-loaded Typst `content` (loaded once in `typst-show.typ`) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the `_univ_logo_img` handling in `typst-show.typ`).
+  - `poster.typ` / `typst-show.typ` add a `footer-text-color` format option (defaults to white) so the footer text stays legible against
+    dark `footer-color` values -- set it to a dark color if you pick a light footer background (see `01-classic-academic`'s `footer-text-color: "25406A"`).
+  - `biblio.typ` (a new template-partial, registered in `_extension.yml`) sets `title: none` on the generated `#bibliography(...)` call, so Typst's own default "Bibliography" heading doesn't duplicate each template's own `#### References` heading.
+  - `poster.typ` also scales the footer's font sizes down (never up) on posters narrower than the extension's documented 36in default, so the footer row (URL + text + emails, packed with `h(1fr)` spacers) doesn't wrap outside its colored background block on narrower prints like `03-minimal-story`'s 24in width.
+  - Because Quarto caches the vendored local Typst package under each project's `.quarto/typst/packages/local/typst-poster/`, edits to `poster.typ` only take effect after that cached copy is refreshed (delete `.quarto/` or copy the updated file over it, or just run `make render`) -- a plain `quarto render` will silently keep using the stale cached version.
+- Every template's `poster-typst` format sets **`fig-format: png`**. Without it, Typst's default (`fig-format: svg`) asks R's Cairo graphics device to render each plot, which can fail with a missing X11/Cairo shared-library error on machines without XQuartz (common on Apple Silicon macOS, and on Linux without `libcairo2-dev`).
+    - Installing XQuartz/`libcairo` dev packages fixes it at the source; `fig-format: png` sidesteps it by using R's built-in PNG device instead, at a small cost in image sharpness for print.
+- **Never put a raw `<hr>` (or other raw HTML) inside a `::: {.content-visible when-format="html"}` div.** Doing so silently discards *every element after it* in the Typst output -- the templates lost their section divider, the entire Acknowledgments block (advisor, grant number, code/data link), and the `#### References` heading from the printed PDF, while still rendering fine on the web. Use a ```` ```{=html} ```` raw block instead, which HTML picks up and Typst ignores cleanly.
+- **Column balance:** the shipped samples do not fill their columns evenly, and that is accepted slack rather than a bug -- `02-modern-cards` reaches ~44% down column 1 vs ~82% down column 2, and `03-minimal-story` ends ~79% down its single column. The Evidence figure is one ~10in-tall indivisible block, so moving `02`'s `#colbreak()` past it only inverts the gap (measured 91%/29%, a wider spread). Real content is the remedy. Baselines live in `scripts/templates.R`; `render-all.R` fails on a *drop* of more than 10 points from them.
+- **Web banner contrast:** the title banner is a gradient, so banner text must clear its *lighter* stop, not just the dark one. The original `$au-light-blue` author/date color measured 6.97:1 on navy but only 3.59:1 on the `$au-blue` stop -- a WCAG AA failure. All banner text is now plain white on a darkened light stop (`$au-blue-banner`, 7.21:1), and link and grey body text were darkened to clear AAA too. See [Re-coloring the templates](theming.qmd#re-coloring-the-templates), and run `Rscript scripts/check-contrast.R` after any color change.
+- **`####` headings arrive as Typst level *3*, not level 4.** Quarto maps markdown `##` to `=`, shifting every heading up one level, so the closing-matter headings land on the poster package's level-3 style: a numbered, italic, colon-terminated run-in that prints as "1) Acknowledgments:" and reads like a numbered list item. Each template overrides this with a `#show heading.where(level: 3)` rule in the raw Typst block just above `#### Acknowledgments`, defined *after* the package's own `show heading` rule so it takes precedence. A `####` heading placed earlier in the poster still gets the package's run-in style, since Typst show rules only apply to content after them.
+- **Font-size hierarchy is not automatic.** The poster package defaults `title-font-size` to 48pt and `authors-font-size` to 36pt, and derives level-1 headings as `body-font-size + 16`. If you shrink `title-font-size` to fit a long title (as `03-minimal-story` needs to at 24in wide), lower `authors-font-size` too and keep the title above `body-font-size + 16`, or the author line and section headings will print *larger* than the title.
+- `.quarto/`, rendered `*.pdf`/`*.typ`/`poster.html`, and `*_files/` directories are gitignored as build output.
