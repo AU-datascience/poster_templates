@@ -6,7 +6,8 @@ title: "Content Guide"
 
 Each template includes an **"Ethics & Broader Impact"** section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:
 
-- **Generative AI use**: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data — in the spirit of authorship-accountability policies like [@ACMPolicyAuthorship], which hold named authors responsible for a work's content regardless of what tools assisted in producing it.
+- **Generative AI use**: which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data
+  - This is in the spirit of authorship-accountability policies like [@ACMPolicyAuthorship], which hold named authors responsible for a work's content regardless of what tools assisted in producing it.
 - **Privacy & data governance**: whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.
 - **Bias, fairness & broader impact**: whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.
 
@@ -17,17 +18,17 @@ The included text is accurate for *this* demo (public, non-human `palmerpenguins
 
 The panel is implemented once per format so it renders correctly in both:
 
-- **HTML:** a `::: {.ethics-panel} :::` div (defined in `poster-common.scss`); a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.
+- **HTML:** a `::: {.ethics-panel} :::` div (defined in `poster-common.scss`); a shaded box with a colored border and ~1.35 rem text, larger than surrounding body text for readability.
 - **Print (Typst):** a raw ```` ```{=typst} ```` block using `#block(..., breakable: false)` for the same shaded/bordered look at 20-24pt.
 - `breakable: false` is required. Without it, Typst can split the block awkwardly across a column break.
 
 Both copies are wrapped in `::: {.content-visible when-format="..."} ` so only one appears in each output; if you edit the disclosure text, update both copies.
 
-**Acknowledgments** are now a plain, uncited sentence for funding and mentorship credit,
+**Acknowledgments** are now a plain, uncited sentence for funding and mentorship credit, e.g.,
 
-- This work was performed under the guidance of Dr. Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No. BJME-2026-014.
+> This work was performed under the guidance of Dr. Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No. BJME-2026-014.
 
-Each template also has a placeholder **Code & data** line near Acknowledgments with a GitHub URL to replace with your own repository.
+Each template also has a placeholder **Code & data** line near Acknowledgments with a GitHub URL you can replace with your own repository.
 
 **References**, Data/software citations appear here automatically when they're cited in-text with `[@key]` earlier in the poster. A ready-to-edit example is included in each template.
 
@@ -54,16 +55,17 @@ For reference, `images/au-logo-hires.png` (the shipped institution logo) is 1327
 
 **This applies to R-generated figures too, not just images you place by hand.** 
 
-- Every template sets `fig-format: png` (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) for why), and knitr's default figure resolution is 96 dpi regardless of the physical print size the figure gets stretched to.
+- Every template sets `fig-format: png` (see [Notes / gotchas](scripts-and-ci.qmd#notes-gotchas) for why), and *knitr's default figure resolution is 96 dpi regardless of the physical print size* the figure gets stretched to.
 - Left at the default, `02-modern-cards`'s Evidence figure (rendered at `fig-width: 14`, placed at `out-width: "20in"`) worked out to only ~67 effective dpi once measured directly from the PDF's embedded image data, soft enough to notice at normal reading distance. 
-- All three templates now set `fig-dpi: 300` under `poster-typst:` in their YAML, which raised the same figures to 150-210 effective dpi (the ratio to `out-width` varies by template) with no other layout change 
-  — `fig-dpi` only affects how many pixels knitr renders into, not the inches Typst places the result at, so column balance and page counts are unaffected. 
-- If you add your own R chunk with a figure, this setting already applies to it. If you override `fig-width`/`fig-height`/`out-width` for a specific figure, it's worth re-checking the effective dpi with the same math above.
+- All three templates now set `fig-dpi: 300` under `poster-typst:` in their YAML, which raises the same figures to 150-210 effective dpi (the ratio to `out-width` varies by template) with no other layout change.
+  - `fig-dpi` only affects how many pixels knitr renders into, not the inches Typst places the result at, so column balance and page counts are unaffected. 
+- If you add your own R chunk with a figure, this setting already applies to it. 
+  - If you override `fig-width`/`fig-height`/`out-width` for a specific figure, it's worth re-checking the effective dpi with the same math above.
 
 **The web version doesn't have this problem to the same degree.** 
 
 - Browsers display images at whatever pixel density the screen provides (and gracefully downscale an oversized image), so an image sized for print looks fine on the web version too. 
-— The risk only runs one direction: an image sized *for the web* is usually too low-resolution for print.
+- The risk only runs one direction: an image sized *for the web* is usually too low-resolution for print.
 
 ## Shared resources
 
@@ -78,6 +80,6 @@ For reference, `images/au-logo-hires.png` (the shipped institution logo) is 1327
 - **`scss/poster-common.scss`**: base tokens and shared "poster shell" rules for the web/HTML version.
   - This includes: title banner, section card styling, the automatic `section.level2` → poster-panel behavior.
   - Each template's own `*-web.scss` file is loaded *after* this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.
-- **`images/au-logo-hires.png`** — organization logo. Used two ways:
+- **`images/au-logo-hires.png`**: organization logo. Used two ways:
   - Print (`poster-typst`): passed via `institution-logo:` in the format options; the extension places and sizes it automatically (tune with `univ-logo-scale` / `univ-logo-column-size`).
   - Web (`html`): included directly in the `.qmd` inside a `::: {.content-visible when-format="html"}` block, styled by the `.poster-logo` class in `poster-common.scss`.

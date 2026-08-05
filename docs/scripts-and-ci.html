@@ -201,17 +201,18 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#build-check-scripts" id="toc-build-check-scripts" class="nav-link active" data-scroll-target="#build-check-scripts"><span class="header-section-number">1</span> Build &amp; check scripts</a>
+  <li><a href="#build-check-scripts" id="toc-build-check-scripts" class="nav-link active" data-scroll-target="#build-check-scripts"><span class="header-section-number">1</span> Build &amp; check scripts</a></li>
+  <li><a href="#continuous-integration" id="toc-continuous-integration" class="nav-link" data-scroll-target="#continuous-integration"><span class="header-section-number">2</span> Continuous integration</a>
   <ul class="collapse">
-  <li><a href="#continuous-integration" id="toc-continuous-integration" class="nav-link" data-scroll-target="#continuous-integration"><span class="header-section-number">1.1</span> Continuous integration</a></li>
+  <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats"><span class="header-section-number">2.1</span> Caveats</a></li>
   </ul></li>
-  <li><a href="#forking-vs.-cloning-what-runs-and-how-to-control-it" id="toc-forking-vs.-cloning-what-runs-and-how-to-control-it" class="nav-link" data-scroll-target="#forking-vs.-cloning-what-runs-and-how-to-control-it"><span class="header-section-number">2</span> Forking vs.&nbsp;cloning: what runs, and how to control it</a>
+  <li><a href="#forking-vs.-cloning-what-runs-and-how-to-control-it" id="toc-forking-vs.-cloning-what-runs-and-how-to-control-it" class="nav-link" data-scroll-target="#forking-vs.-cloning-what-runs-and-how-to-control-it"><span class="header-section-number">3</span> Forking vs.&nbsp;cloning: what runs, and how to control it</a>
   <ul class="collapse">
-  <li><a href="#forking-clicking-githubs-fork-button" id="toc-forking-clicking-githubs-fork-button" class="nav-link" data-scroll-target="#forking-clicking-githubs-fork-button"><span class="header-section-number">2.1</span> Forking (clicking GitHub’s “Fork” button)</a></li>
-  <li><a href="#cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" id="toc-cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" class="nav-link" data-scroll-target="#cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork"><span class="header-section-number">2.2</span> Cloning (<code>git clone</code> + push to your own new repository, not a GitHub fork)</a></li>
-  <li><a href="#enablingdisabling-from-the-command-line" id="toc-enablingdisabling-from-the-command-line" class="nav-link" data-scroll-target="#enablingdisabling-from-the-command-line"><span class="header-section-number">2.3</span> Enabling/disabling from the command line</a></li>
+  <li><a href="#forking-clicking-githubs-fork-button" id="toc-forking-clicking-githubs-fork-button" class="nav-link" data-scroll-target="#forking-clicking-githubs-fork-button"><span class="header-section-number">3.1</span> Forking (clicking GitHub’s “Fork” button)</a></li>
+  <li><a href="#cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" id="toc-cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" class="nav-link" data-scroll-target="#cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork"><span class="header-section-number">3.2</span> Cloning (git clone + push to your own new repository, not a GitHub fork)</a></li>
+  <li><a href="#enablingdisabling-from-the-command-line" id="toc-enablingdisabling-from-the-command-line" class="nav-link" data-scroll-target="#enablingdisabling-from-the-command-line"><span class="header-section-number">3.3</span> Enabling/disabling from the command line</a></li>
   </ul></li>
-  <li><a href="#notes-gotchas" id="toc-notes-gotchas" class="nav-link" data-scroll-target="#notes-gotchas"><span class="header-section-number">3</span> Notes / gotchas</a></li>
+  <li><a href="#notes-gotchas" id="toc-notes-gotchas" class="nav-link" data-scroll-target="#notes-gotchas"><span class="header-section-number">4</span> Notes / gotchas</a></li>
   </ul>
 </nav>
     </div>
@@ -284,9 +285,13 @@ div.csl-indent {
 <li><strong><code>#### after show rule</code></strong>: a <code>####</code> heading placed <em>above</em> the level-3 show rule described under <a href="#notes-gotchas">Notes / gotchas</a>. Typst show rules only affect what follows them, so such a heading silently keeps the package’s “1) Heading:” run-in style.</li>
 <li><strong>contrast</strong>: a palette edit dropping a color below WCAG AA, delegated to <code>check-contrast.R</code> so the same audit stays usable on its own.</li>
 </ul>
-<section id="continuous-integration" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="continuous-integration"><span class="header-section-number">1.1</span> Continuous integration</h3>
-<p><code>.github/workflows/posters.yml</code> runs these same scripts on push and pull request via GitHub Actions <span class="citation" data-cites="githubUnderstandingGitHubActions2024">(<a href="#ref-githubUnderstandingGitHubActions2024" role="doc-biblioref">GitHub 2024</a>)</span>, in three jobs (a workflow-authoring reference like <span class="citation" data-cites="usethis-GitHubActionsSetup">(<a href="#ref-usethis-GitHubActionsSetup" role="doc-biblioref"><em><span>GitHub Actions</span> Setup — Github_actions</em> 2026</a>)</span>, written for R packages specifically, is a useful pattern library even though this repo hand-writes its own YAML rather than generating it):</p>
+</section>
+<section id="continuous-integration" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="continuous-integration"><span class="header-section-number">2</span> Continuous integration</h2>
+<p><code>.github/workflows/posters.yml</code> runs these same scripts on push and pull request via GitHub Actions <span class="citation" data-cites="githubUnderstandingGitHubActions2024">(<a href="#ref-githubUnderstandingGitHubActions2024" role="doc-biblioref">GitHub 2024</a>)</span>, in three jobs.</p>
+<ul>
+<li>A workflow-authoring reference like <span class="citation" data-cites="usethis-GitHubActionsSetup">(<a href="#ref-usethis-GitHubActionsSetup" role="doc-biblioref"><em><span>GitHub Actions</span> Setup — Github_actions</em> 2026</a>)</span>, written for R packages specifically, is a useful pattern library even though this repo hand-writes its own YAML rather than generating it.</li>
+</ul>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -318,8 +323,13 @@ div.csl-indent {
 </tr>
 </tbody>
 </table>
-<p>Both gates exist because a push touching none of those paths — a docs-only or README-only commit, say — previously still paid for the full job’s R/Quarto toolchain install regardless of relevance: 30-40 minutes observed for <code>contrast</code> alone, almost all of it a from-source <code>tidyverse</code> install with no cache, for an audit whose own logic runs in seconds. A job skipped this way reports as <code>skipped</code> rather than failing, which GitHub’s required-status-check logic treats as passing, so this is safe to use even where these jobs are required checks on <code>main</code>.</p>
-<p>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a> — an orientation file following the open <code>AGENTS.md</code> convention <span class="citation" data-cites="AgentsmdAgentsmd2026">(<a href="#ref-AgentsmdAgentsmd2026" role="doc-biblioref"><em>Agentsmd/Agents.md</em> 2026</a>)</span> for AI coding agents (and humans) working in a repo — for project orientation, the vendored extension’s local patches, and the open fonts issue.</p>
+<p>Both gates exist because originally a push touching none of those paths, e.g., a docs-only or README-only commit, still paid for the full job’s R/Quarto toolchain install regardless of relevance.</p>
+<ul>
+<li>A job skipped due to a filter reports as <code>skipped</code> rather than failing, which GitHub’s required-status-check logic treats as passing, so this is safe to use even where these jobs are required checks on <code>main</code>.</li>
+</ul>
+<p>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a> (an orientation file following the open <code>AGENTS.md</code> convention <span class="citation" data-cites="AgentsmdAgentsmd2026">(<a href="#ref-AgentsmdAgentsmd2026" role="doc-biblioref"><em>Agentsmd/Agents.md</em> 2026</a>)</span>) for project orientation, the vendored extension’s local patches, and the open fonts issue.</p>
+<section id="caveats" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="caveats"><span class="header-section-number">2.1</span> Caveats</h3>
 <p>Two caveats worth knowing before you rely on it:</p>
 <ul>
 <li><strong>Quarto’s release version matters.</strong> Both workflows pin <code>quarto-dev/quarto-actions/setup@v2</code> to a specific Quarto version rather than tracking <code>release</code>; an unpinned run once picked up a pandoc/Typst-writer change that broke the institution-logo path substitution.
@@ -335,8 +345,8 @@ div.csl-indent {
 <li>This is purely about print/CI reproducibility; see <a href="./theming.html#brand.yml-and-your-workflow">Theming &amp; Brand</a> for what the same <code>_brand.yml</code> declaration does – and doesn’t – deliver for the <code>html</code> output.</li>
 </ul></li>
 </ul>
-<section id="updating-the-pinned-quarto-version" class="level4" data-number="1.1.1">
-<h4 data-number="1.1.1" class="anchored" data-anchor-id="updating-the-pinned-quarto-version"><span class="header-section-number">1.1.1</span> Updating the pinned Quarto version</h4>
+<section id="updating-the-pinned-quarto-version" class="level4" data-number="2.1.1">
+<h4 data-number="2.1.1" class="anchored" data-anchor-id="updating-the-pinned-quarto-version"><span class="header-section-number">2.1.1</span> Updating the pinned Quarto version</h4>
 <p>Bump <code>.quarto-version</code> deliberately rather than letting either workflow drift to a new release silently:</p>
 <ol type="1">
 <li>Install the candidate Quarto release locally.</li>
@@ -374,7 +384,7 @@ div.csl-indent {
 <ul>
 <li>Rendered HTML/CSS/JS lives in git history like any other tracked file, so PR diffs touching <code>docs-src/</code> also carry a (usually large, machine-generated) diff of <code>docs/</code>.</li>
 <li>Nothing enforces that <code>docs/</code> actually matches <code>docs-src/</code> at any given commit except a CI job (<code>.github/workflows/docs.yml</code>) that re-renders and diffs the two after the fact — it catches a forgotten re-render, but only after the commit is already up.</li>
-<li><code>output-dir: ../docs</code> pointing outside <code>docs-src/</code>’s own project directory is why <code>quarto render docs-src</code> prints the harmless-but-odd <code>site_libs</code>/“unexpected path configuration” warnings documented in <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues">AGENTS.md</a> — an artifact of this specific layout, not a sign of anything broken.</li>
+<li><code>output-dir: ../docs</code> pointing outside <code>docs-src/</code>’s own project directory is why <code>quarto render docs-src</code> prints the harmless-but-odd <code>site_libs</code>/“unexpected path configuration” warnings documented in <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md#known-issues">AGENTS.md</a>, an artifact of this specific layout, not a sign of anything broken.</li>
 </ul>
 <p><strong>When this simplified approach is a reasonable fit:</strong> a small site with one or a handful of maintainers, low-frequency publishing, and a preference for “no CI, no Actions permissions to configure, nothing to debug beyond a normal git commit.” That describes this repo.</p>
 <p><strong>When to reach instead for a proper build-and-deploy workflow</strong> (render to an ignored, in-project output directory like <code>_site</code>, then publish via <code>actions/deploy-pages</code> or <code>quarto publish gh-pages</code>, with GitHub Pages set to source from “GitHub Actions” rather than a branch): a site with many contributors, frequent changes, or a desire to keep generated files out of git entirely.</p>
@@ -386,11 +396,11 @@ div.csl-indent {
 </section>
 </section>
 </section>
-<section id="forking-vs.-cloning-what-runs-and-how-to-control-it" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="forking-vs.-cloning-what-runs-and-how-to-control-it"><span class="header-section-number">2</span> Forking vs.&nbsp;cloning: what runs, and how to control it</h2>
+<section id="forking-vs.-cloning-what-runs-and-how-to-control-it" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="forking-vs.-cloning-what-runs-and-how-to-control-it"><span class="header-section-number">3</span> Forking vs.&nbsp;cloning: what runs, and how to control it</h2>
 <p>This repo ships two GitHub Actions workflows (<code>posters.yml</code>, <code>docs.yml</code>). What happens to them depends on <em>how</em> you got your own copy of the repo, and that trips people up often enough to spell out explicitly.</p>
-<section id="forking-clicking-githubs-fork-button" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="forking-clicking-githubs-fork-button"><span class="header-section-number">2.1</span> Forking (clicking GitHub’s “Fork” button)</h3>
+<section id="forking-clicking-githubs-fork-button" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="forking-clicking-githubs-fork-button"><span class="header-section-number">3.1</span> Forking (clicking GitHub’s “Fork” button)</h3>
 <p>GitHub copies the workflow files into your fork, but <strong>leaves Actions disabled on the fork by default</strong>. This is a deliberate, blanket security measure for every fork of a public repo, not specific to this one.</p>
 <ul>
 <li>The first time you open your fork’s <strong>Actions</strong> tab, GitHub shows a banner (“Workflows aren’t being run on this fork”) with a button, “I understand my workflows, go ahead and enable them.”
@@ -407,17 +417,20 @@ div.csl-indent {
 </ul></li>
 </ul>
 </section>
-<section id="cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork"><span class="header-section-number">2.2</span> Cloning (<code>git clone</code> + push to your own new repository, not a GitHub fork)</h3>
+<section id="cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="cloning-git-clone-push-to-your-own-new-repository-not-a-github-fork"><span class="header-section-number">3.2</span> Cloning (git clone + push to your own new repository, not a GitHub fork)</h3>
 <ul>
-<li>If you <code>git clone</code> this repo and push its history to a brand-new repository you created yourself (rather than using GitHub’s “Fork” button), none of the fork-specific restrictions above apply. — GitHub has no record that your repository descends from this one.</li>
+<li>If you <code>git clone</code> this repo and push its history to a brand-new repository you created yourself (rather than using GitHub’s “Fork” button), none of the fork-specific restrictions above apply.
+<ul>
+<li>GitHub has no record that your repository descends from this one.</li>
+</ul></li>
 <li>Actions are enabled by default on a new repository, the same as any other repo you create, subject only to your own account’s or organization’s Actions policy (Settings → Actions → General).</li>
 <li>Your first push already triggers <code>posters.yml</code>/<code>docs.yml</code>, with no opt-in banner to click.</li>
-<li>A plain local <code>git clone</code> with no push anywhere never triggers anything — workflow runs are a server-side GitHub event, not something <code>git clone</code> or a local <code>quarto render</code> can cause on its own.</li>
+<li>A plain local <code>git clone</code> with no push anywhere never triggers anything since workflow runs are a server-side GitHub event, not something <code>git clone</code> or a local <code>quarto render</code> can cause on its own.</li>
 </ul>
 </section>
-<section id="enablingdisabling-from-the-command-line" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="enablingdisabling-from-the-command-line"><span class="header-section-number">2.3</span> Enabling/disabling from the command line</h3>
+<section id="enablingdisabling-from-the-command-line" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="enablingdisabling-from-the-command-line"><span class="header-section-number">3.3</span> Enabling/disabling from the command line</h3>
 <p>All of the following use the <a href="https://cli.github.com/"><code>gh</code> CLI</a> and require admin access to the repository in question (your fork, or your own clone-turned-repo).</p>
 <p><strong>Permanently enable or disable Actions for the whole repository</strong> is the CLI equivalent of the fork’s “enable workflows” banner, or of Settings → Actions → General → Actions permissions:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> api <span class="at">-X</span> PUT repos/OWNER/REPO/actions/permissions <span class="at">-f</span> enabled=true   <span class="co"># or false</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -429,8 +442,8 @@ div.csl-indent {
 <p>This queues one run of the current <code>main</code> (or whatever <code>--ref</code> you give it) and leaves the workflow’s enabled/disabled state exactly as it was before and after, unlike <code>gh workflow disable</code>/<code>enable</code>, which persist until you change them again.</p>
 </section>
 </section>
-<section id="notes-gotchas" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="notes-gotchas"><span class="header-section-number">3</span> Notes / gotchas</h2>
+<section id="notes-gotchas" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="notes-gotchas"><span class="header-section-number">4</span> Notes / gotchas</h2>
 <p>The vendored <code>_extensions/quarto-ext/poster</code> has local patches. If you re-install/update the extension, re-apply all of them:</p>
 <ul>
 <li><code>poster.typ</code> accepts the institution logo as already-loaded Typst <code>content</code> (loaded once in <code>typst-show.typ</code>) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the <code>_univ_logo_img</code> handling in <code>typst-show.typ</code>).</li>

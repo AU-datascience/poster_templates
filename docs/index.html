@@ -378,26 +378,29 @@ Note
 <h3 data-number="3.1" class="anchored" data-anchor-id="environment-requirements"><span class="header-section-number">3.1</span> Environment Requirements</h3>
 <p><strong>To render a poster itself:</strong> <a href="https://quarto.org">Quarto</a> (a version at or near the one pinned in <a href="https://github.com/AU-datascience/poster_templates/blob/main/.quarto-version"><code>.quarto-version</code></a>) and R since every template’s R code chunks are part of the <em>shipped example content</em>, not the poster mechanism itself.</p>
 <ul>
-<li>When you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply.</li>
-</ul>
-<p>As shipped, the three example posters use:</p>
+<li>When you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply.
+<ul>
+<li>As shipped, the three example posters use:
 <ul>
 <li><code>tidyverse</code>, <code>palmerpenguins</code>, <code>patchwork</code> (all three templates)</li>
 <li><code>broom</code> (<code>01-classic-academic</code> only, for <code>broom::tidy()</code> model summaries)</li>
 <li><code>knitr</code> (all three, for <code>knitr::kable()</code> tables – normally auto-loaded by Quarto’s R engine, listed here for completeness)</li>
-</ul>
-<p>No Python packages are required unless you add your own Python chunks.</p>
-<p>No system libraries beyond a working R + Quarto install are needed for the print or web render themselves.</p>
-<ul>
-<li>fonts (<code>Source Sans 3</code>, <code>STIX Two Text</code>) are fetched from Google and cached by Quarto at render time (see <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section), not installed as system fonts.</li>
+</ul></li>
+</ul></li>
+<li>No Python packages are required unless you add your own Python chunks.</li>
+<li>No system libraries beyond a working R + Quarto install are needed for the print or web render themselves.</li>
+<li>Fonts (<code>Source Sans 3</code>, <code>STIX Two Text</code>) are fetched from Google and cached by Quarto at render time (see <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section), not installed as system fonts.</li>
 </ul>
 <p><strong>To run the helper scripts in <code>scripts/</code>:</strong> all four use <code>tidyverse</code> and <code>here</code>.</p>
 <ul>
 <li><code>make-previews.R</code> additionally needs <code>magick</code> <span class="citation" data-cites="magick-package">(<a href="#ref-magick-package" role="doc-biblioref"><em>Installing Magick</em>, n.d.</a>)</span> (which needs the ImageMagick system library), and</li>
 <li><code>check-column-balance.R</code> needs <code>pdftools</code> <span class="citation" data-cites="Pdftools-package">(<a href="#ref-Pdftools-package" role="doc-biblioref">Jereon Ooms, n.d.</a>)</span> (which needs the poppler system library).</li>
-<li><code>check-contrast.R</code> needs only <code>tidyverse</code>/<code>here</code> – it’s pure source/CSS parsing, no rendering.</li>
+<li><code>check-contrast.R</code> needs only <code>tidyverse</code>/<code>here</code>. It’s pure source/CSS parsing, no rendering.</li>
 </ul>
-<p>None of the scripts are required to render a poster; <code>quarto render templates/&lt;name&gt;/poster.qmd</code> alone is enough. - They exist to catch regressions (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>), and CI (<code>.github/workflows/posters.yml</code>) installs all of the above automatically via <code>r-lib/actions/setup-r-dependencies</code>, so you never need to install anything by hand just to see CI pass on a fork.</p>
+<p>None of the scripts are required to render a poster; <code>quarto render templates/&lt;name&gt;/poster.qmd</code> alone is enough.</p>
+<ul>
+<li>They exist to catch regressions (see <a href="./scripts-and-ci.html">Scripts &amp; CI</a>), and CI (<code>.github/workflows/posters.yml</code>) installs all of the above automatically via <code>r-lib/actions/setup-r-dependencies</code>, so you never need to install anything by hand just to see CI pass on a fork.</li>
+</ul>
 <p><strong>Is this an <code>renv</code> <span class="citation" data-cites="renv-package">(<a href="#ref-renv-package" role="doc-biblioref">Wickham and Ushey 2024</a>)</span> repo?</strong> No, deliberately not.</p>
 <ul>
 <li><code>renv</code> buys strict, pinned reproducibility of exact package versions, at the cost of a lockfile contributors must keep in sync and an <code>renv::restore()</code> step before anything runs.</li>

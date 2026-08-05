@@ -38,9 +38,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="README_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="README_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="README_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="README_files/libs/bootstrap/bootstrap-8583db3cfa710e15bb1cacb6a198046a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="README_files/libs/bootstrap/bootstrap-dark-8583db3cfa710e15bb1cacb6a198046a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="README_files/libs/bootstrap/bootstrap-8583db3cfa710e15bb1cacb6a198046a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="README_files/libs/bootstrap/bootstrap-d987e8d9760ba6dffcbd402052be48c7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="README_files/libs/bootstrap/bootstrap-dark-d987e8d9760ba6dffcbd402052be48c7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="README_files/libs/bootstrap/bootstrap-d987e8d9760ba6dffcbd402052be48c7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -56,216 +56,95 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="quarto-conference-posters" class="level1">
 <h1>Quarto Conference Posters</h1>
-<p>A modern replacement for the <code>posterdown</code>/R Markdown poster workflow. There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Format</th>
-<th>Purpose</th>
-<th>Engine</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>poster-typst</code></td>
-<td>Large-format print PDF (e.g.&nbsp;36x24 in)</td>
-<td><a href="https://typst.app">Typst</a>, via the <code>quarto-ext/typst-templates/poster</code> extension</td>
-</tr>
-<tr class="even">
-<td><code>html</code></td>
-<td>Responsive, scrollable “web poster” for posting online</td>
-<td>Quarto HTML + custom SCSS</td>
-</tr>
-</tbody>
-</table>
+<p><strong>Full documentation: <a href="https://au-datascience.github.io/poster_templates/" class="uri">https://au-datascience.github.io/poster_templates/</a></strong></p>
+<p>If you want to make a conference-style large-format poster using Quarto, this site has working templates for different style posters.</p>
 <ul>
-<li>Because both formats are declared in one <code>format:</code> block, <code>quarto render poster.qmd</code> builds <em>both</em> versions from the same content in one pass.</li>
-<li>Run <code>quarto render poster.qmd --to poster-typst</code> or <code>--to html</code> to build just one.</li>
+<li>The workflow uses Quarto and its <code>poster-typst</code> extension as a modern replacement for older <code>posterdown</code>/R Markdown poster workflows.</li>
+<li>The workflow also uses Quarto’s <code>_brand.yml</code> file to provide for consistent theming.</li>
+<li>Forking the repo allows you to access the templates and the supporting tools/scripts to check compliance.</li>
 </ul>
-<section id="templates" class="level2">
-<h2 class="anchored" data-anchor-id="templates">Templates</h2>
-<p>The three templates offer different design approaches that may be tailored for a particular purpose.</p>
-<ul>
-<li>All three share the same content structure (level-2 <code>##</code> headings become poster sections/panels automatically) so switching between them is mostly a matter of swapping the YAML/SCSS, not rewriting your text.</li>
-</ul>
-<ol type="1">
-<li><strong><code>templates/01-classic-academic/</code></strong>: traditional 3-column layout (Intro / Methods / Data / Results / Conclusions), serif headings, the closest analog to the old posterdown betterland template.
-<ul>
-<li>Print size 42x28 in, 3 Typst columns.</li>
-</ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/previews/preview-01-classic-academic.png" class="img-fluid figure-img"></p>
-<figcaption>01-classic-academic poster preview</figcaption>
-</figure>
-</div></li>
-<li><strong><code>templates/02-modern-cards/</code></strong>: dashboard-style card grid with a bold accent color and a <code>.stat</code> class for headlining one big number.
-<ul>
-<li>Print size 48x36 in, 2 Typst columns (fewer, larger panels).</li>
-<li>This size doubles as a standard conference board size – see “Choosing a print size” below.</li>
-<li>This template’s content was originally short enough that Typst never started the second column at all (everything landed in column 1, leaving column 2 blank except the floated Ethics panel). Fixed by adding a manual <code>#colbreak()</code> (raw Typst, right before <code>## Evidence</code>) so the figure/table/“What’s Next” content explicitly starts column 2, plus enough added text/a correlation table to make the two columns’ content roughly comparable to <code>01-classic-academic</code>’s.</li>
-<li>The figure itself was always full <em>column</em> width – if you add your own full-page figures, note that <code>out-width: "100%"</code> measured against the <em>page</em> width rather than the current column’s width immediately after a <code>#colbreak()</code> in local testing, overflowing past the margin; setting an explicit absolute <code>out-width</code> (e.g.&nbsp;<code>"20in"</code>) sidesteps it.</li>
-</ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/previews/preview-02-modern-cards.png" class="img-fluid figure-img"></p>
-<figcaption>02-modern-cards poster preview</figcaption>
-</figure>
-</div></li>
-<li><strong><code>templates/03-minimal-story/</code></strong>: a single flowing narrative column, meant to be read like a short article; flat design, generous whitespace.
-<ul>
-<li>Print size 24x52 in (portrait banner), 1 Typst column.</li>
-</ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/previews/preview-03-minimal-story.png" class="img-fluid figure-img"></p>
-<figcaption>03-minimal-story poster preview</figcaption>
-</figure>
-</div></li>
-</ol>
-<p>Each preview above (<code>images/previews/preview-*.png</code>) is a 1200px-wide PNG rendered from that template’s own <code>poster-typst</code> PDF at 300 dpi with <code>magick</code>; like <code>comparison.png</code> below, these aren’t produced by <code>quarto render</code> and need regenerating by hand after content changes.</p>
-<p>All three are currently filled in with the <em>same</em> worked example (a Simpson’s-paradox analysis of bill shape across penguin species, using <code>palmerpenguins</code>) so the three visual styles are directly comparable:</p>
+<blockquote class="blockquote">
+<p><strong>Caveat:</strong> Quarto’s <code>poster-typst</code> extension and <code>_brand.yml</code> theming are both still under active development. Several items in <a href="scripts-and-ci.qmd#notes-gotchas">Notes / gotchas</a> describe current rough edges (local patches, path handling, caching) that a future Quarto/Typst release may resolve outright. If something documented here seems to have changed, check the current Quarto release notes before assuming the workaround is still needed.</p>
+</blockquote>
+<p>There are three templates; each a single <code>.qmd</code> file that renders to <strong>two</strong> outputs from the same content in one pass: a large-format print PDF via <a href="https://typst.app">Typst</a>, and a responsive HTML “web poster.”</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="comparison.png" class="img-fluid figure-img"></p>
 <figcaption>Comparison of the three print posters, one per row</figcaption>
 </figure>
 </div>
+<section id="quickstart" class="level2">
+<h2 class="anchored" data-anchor-id="quickstart">Quickstart</h2>
+<ol type="1">
+<li>Fork or clone this repo.</li>
+<li>Copy one of the <code>templates/*/</code> folders (e.g.&nbsp;<code>cp -r templates/01-classic-academic templates/my-poster</code>) and edit its <code>poster.qmd</code>.</li>
+<li><code>quarto render templates/my-poster/poster.qmd</code> – check <code>poster.pdf</code> and <code>poster.html</code>.</li>
+<li><code>Rscript scripts/render-all.R</code> to render + check every template for known regressions before you call it done.</li>
+</ol>
+<p>The full walkthrough (including re-theming for a different organization, choosing a print size for a specific conference, and what each script/CI check does) is on the <a href="https://au-datascience.github.io/poster_templates/">documentation site</a>.</p>
 <ul>
-<li><code>comparison.png</code> is generated by rendering each template’s <code>poster-typst</code> PDF and stacking the three as separate full-width rows (labeled with the template name/size) with the R <code>magick</code> package.
-<ul>
-<li>Rows, not side-by-side columns: <code>03-minimal-story</code> is a tall 24x52in portrait banner, while the other two are landscape (42x28in, 48x36in); scaling all three to a common <em>height</em> for a side-by-side layout shrinks the banner to an unreadable sliver, so each poster instead gets its own row at a common <em>width</em>, sized for legibility.</li>
-<li>It isn’t produced automatically by <code>quarto render</code>; regenerate it after editing any template’s content, and re-render each <code>poster-typst</code> PDF first (<code>quarto render poster.qmd --to poster-typst</code> in each template folder).</li>
-<li>Source PDFs are rendered at 300 dpi (print resolution) before compositing, then the full composite is scaled down to a 2000px-wide PNG – crisp when embedded at typical slide/README display sizes while keeping the file size reasonable.</li>
-<li><code>03-minimal-story</code>’s header grid (logo/title column widths) defaults to values sized for wider posters, so its long title overflowed the page margin at the default <code>title-font-size</code>. Fixed by setting <code>univ-logo-column-size: 3</code>, <code>title-column-size: 16</code>, and <code>title-font-size: 32</code> in that template’s YAML (its 24in width leaves only 20in inside the page’s 2in margins, vs.&nbsp;the extension’s 10in + 20in defaults).</li>
-</ul></li>
-</ul>
-<p>A lesson from filling in the templates: <strong>the single-column minimal-story layout has noticeably less capacity per page than the 2- or 3-column layouts.</strong> With this same content, it initially overflowed onto a second Typst page at <code>24x36in</code>;</p>
-<ul>
-<li>The version here (with a per-species correlation table and a “What’s Next” section added, to use the extra room well rather than leave it blank) needs <code>24x52in</code> to stay on one page.</li>
-<li>If you adapt this template with less content than that, you can size it down; budget less text per page than you would for the classic or modern-cards versions either way.</li>
+<li>Start on the <a href="https://au-datascience.github.io/poster_templates/">Home</a> page.</li>
 </ul>
 </section>
-<section id="choosing-a-print-size" class="level2">
-<h2 class="anchored" data-anchor-id="choosing-a-print-size">Choosing a print size</h2>
-<p><code>size:</code> (under <code>poster-typst:</code> in each template’s YAML) takes any Typst-compatible <code>"WIDTHxHEIGHT"</code> in inches – it isn’t tied to a specific venue. - A few sizes recur often enough at ML/data-science conferences that it’s worth calling out how the templates map onto them (all landscape, given as the venue’s own H x W convention next to the equivalent <code>size:</code> string):</p>
+<section id="requirements" class="level2">
+<h2 class="anchored" data-anchor-id="requirements">Requirements</h2>
+<p><strong>To render a poster itself:</strong> <a href="https://quarto.org">Quarto</a> (a version at or near the one pinned in <a href=".quarto-version"><code>.quarto-version</code></a>) and R.</p>
+<ul>
+<li>Every template’s R code chunks are part of the <em>shipped example content</em>, not the poster mechanism itself, so if you replace the demo analysis with your own R or Python code, only your own code’s package requirements apply. As shipped, the three example posters use:
+<ul>
+<li><code>tidyverse</code>, <code>palmerpenguins</code>, <code>patchwork</code> (all three templates)</li>
+<li><code>broom</code> (<code>01-classic-academic</code> only, for <code>broom::tidy()</code> model summaries)</li>
+<li><code>knitr</code> (all three, for <code>knitr::kable()</code> tables – normally auto-loaded by Quarto’s R engine, listed here for completeness)</li>
+</ul></li>
+<li>No Python packages are required unless you add your own Python chunks.</li>
+<li>No system libraries beyond a working R + Quarto install are needed for the print or web render themselves.</li>
+<li>Fonts (<code>Source Sans 3</code>, <code>STIX Two Text</code>) are fetched from Google and cached by Quarto at render time (see <a href="AGENTS.md"><code>AGENTS.md</code></a>’s “Fonts” section), not installed as system fonts.</li>
+</ul>
+<p><strong>To run the helper scripts in <code>scripts/</code>:</strong> all four use <code>tidyverse</code> and <code>here</code>; - <code>make-previews.R</code> additionally needs <code>magick</code> (which needs the ImageMagick system library).<br>
+- <code>check-column-balance.R</code> needs <code>pdftools</code> (which needs the poppler system library). - <code>check-contrast.R</code> needs only <code>tidyverse</code>/<code>here</code>. It’s pure source/CSS parsing, no rendering. - None of the scripts are required to render a poster; <code>quarto render templates/&lt;name&gt;/poster.qmd</code> alone is enough. - They exist to catch regressions (see <a href="https://au-datascience.github.io/poster_templates/scripts-and-ci.html">Scripts &amp; CI</a>). - CI (<code>.github/workflows/posters.yml</code>) installs all of the above automatically via <code>r-lib/actions/setup-r-dependencies</code>, so you never need to install anything by hand just to see CI pass on a fork.</p>
+<p><strong>Is this an <code>renv</code> repo?</strong> No.&nbsp;For a small, stable package list on a repo meant to be forked and heavily edited by people building their own poster content (adding whatever packages <em>their</em> analysis needs), that friction outweighs the benefit. If you want tighter reproducibility for your own fork, e.g., pinning exact versions for a team where everyone must get identical output, <code>renv::init()</code> after cloning is a reasonable thing; it just isn’t part of this template.</p>
+</section>
+<section id="site-map" class="level2">
+<h2 class="anchored" data-anchor-id="site-map">Site map</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Venue / convention</th>
-<th>H x W</th>
-<th><code>size:</code> string</th>
+<th>Page</th>
+<th>Covers</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>3ft x 4ft (a common poster-board default)</td>
-<td>36in x 48in</td>
-<td><code>"48x36"</code></td>
+<td><a href="https://au-datascience.github.io/poster_templates/">Home</a></td>
+<td>Repo structure, forking and building your own poster</td>
 </tr>
 <tr class="even">
-<td>ICML</td>
-<td>36in x 48in (91cm x 121cm)</td>
-<td><code>"48x36"</code></td>
+<td><a href="https://au-datascience.github.io/poster_templates/templates.html">Templates</a></td>
+<td>The three template designs, and choosing a print size</td>
 </tr>
 <tr class="odd">
-<td>NeurIPS (narrower boards)</td>
-<td>36in x 60in</td>
-<td><code>"60x36"</code></td>
+<td><a href="https://au-datascience.github.io/poster_templates/content-guide.html">Content Guide</a></td>
+<td>The Ethics &amp; Broader Impact panel, shared resources (<code>_brand.yml</code>, <code>references.bib</code>, logo)</td>
 </tr>
 <tr class="even">
-<td>NeurIPS (wider boards)</td>
-<td>36in x 72in</td>
-<td><code>"72x36"</code></td>
+<td><a href="https://au-datascience.github.io/poster_templates/theming.html">Theming &amp; Brand</a></td>
+<td>Re-coloring the templates and WCAG contrast auditing; how <code>_brand.yml</code> fits in</td>
+</tr>
+<tr class="odd">
+<td><a href="https://au-datascience.github.io/poster_templates/scripts-and-ci.html">Scripts &amp; CI</a></td>
+<td>The R build/check scripts, the <code>Makefile</code>, continuous integration, and Notes / gotchas</td>
+</tr>
+<tr class="even">
+<td><a href="https://au-datascience.github.io/poster_templates/why-typst.html">Why Typst?</a></td>
+<td>Why print renders through Typst instead of LaTeX, and the trade-offs</td>
+</tr>
+<tr class="odd">
+<td><a href="https://au-datascience.github.io/poster_templates/references.html">References</a></td>
+<td>Citations for sources referenced on the web site</td>
 </tr>
 </tbody>
 </table>
-<p><code>02-modern-cards</code> already ships at <code>"48x36"</code>, so it’s ready for either the generic 3ft x 4ft board size or ICML as-is.</p>
-<ul>
-<li>To target a different size (e.g.&nbsp;NeurIPS), on any template:</li>
-</ul>
-<ol type="1">
-<li>Change <code>size:</code> to the <code>size:</code> string from the table (or any other <code>"WxH"</code> you need).</li>
-<li>If the aspect ratio changes a lot (e.g.&nbsp;going from 48x36 to 72x36), reconsider <code>num-columns</code> – wider boards generally read better with one more column than a narrower version of the same layout.</li>
-<li>Re-render (<code>quarto render poster.qmd --to poster-typst</code>) and check for overflow onto a second page or, conversely, excess blank space;</li>
-</ol>
-<ul>
-<li>Adjust <code>body-font-size</code>, trim/add content, or nudge <code>size:</code> again as needed.</li>
-<li><code>01-classic-academic</code> and <code>03-minimal-story</code> aren’t currently tuned to any of the sizes above, so budget an iteration or two if you retarget them.</li>
-</ul>
-</section>
-<section id="ethics-broader-impact-panel" class="level2">
-<h2 class="anchored" data-anchor-id="ethics-broader-impact-panel">Ethics &amp; Broader Impact panel</h2>
-<p>Each template includes an <strong>“Ethics &amp; Broader Impact”</strong> section, placed directly after the methodology section (Approach / How We Studied It / What We Did), covering the three disclosures increasingly expected at AI/data-science venues:</p>
-<ul>
-<li><strong>Generative AI use</strong> – which tool was used, for what (code scaffolding, prose editing, citation formatting), and a statement that the human author(s) remain fully accountable and that GenAI was not used to fabricate or alter the underlying data.</li>
-<li><strong>Privacy &amp; data governance</strong> – whether the data contain PII, whether IRB/GDPR/EU AI Act provisions apply, and under what approvals the source data were collected.</li>
-<li><strong>Bias, fairness &amp; broader impact</strong> – whether a fairness audit or dual-use/weaponization risk assessment applies, and the computational/environmental cost of the analysis.</li>
-</ul>
-<p>The included text is accurate for <em>this</em> demo (public, non-human <code>palmerpenguins</code> biometric data; a simple linear regression, not a deployed model) – treat it as a worked example of the <em>kind</em> of specific, honest statement expected, not boilerplate to copy verbatim. Rewrite each statement for your own project’s actual data, models, and tool use.</p>
-<p>The panel is implemented once per format so it renders correctly in both:</p>
-<ul>
-<li><strong>HTML:</strong> a <code>::: {.ethics-panel} :::</code> div (defined in <code>poster-common.scss</code>) – a shaded box with a colored border and ~1.35rem text, larger than surrounding body text for readability.</li>
-<li><strong>Print (Typst):</strong> a raw <code>```{=typst}</code> block using <code>#block(..., breakable: false)</code> for the same shaded/bordered look at 20-24pt.</li>
-<li><code>breakable: false</code> is required – without it, Typst can split the block awkwardly across a column break.</li>
-</ul>
-<p>Both copies are wrapped in <code>::: {.content-visible when-format="..."}</code> so only one appears in each output; if you edit the disclosure text, update both copies.</p>
-<p><strong>Acknowledgments</strong> are now a plain, uncited sentence for funding and mentorship credit,</p>
-<ul>
-<li>This work was performed under the guidance of Dr.&nbsp;Jane A. Smith, Department of Mathematics and Statistics, American University, and was supported by the American University Blair Jones Mathematical Endowment, Grant No.&nbsp;BJME-2026-014.</li>
-</ul>
-<p>Each template also has a placeholder <strong>Code &amp; data</strong> line near Acknowledgments with a GitHub URL to replace with your own repository.</p>
-<p><strong>References</strong>, Data/software citations appear here automatically when they’re cited in-text with <code>[@key]</code> earlier in the poster . A ready-to-edit example is included in each template.</p>
-</section>
-<section id="shared-resources" class="level2">
-<h2 class="anchored" data-anchor-id="shared-resources">Shared resources</h2>
-<ul>
-<li><strong><code>_brand.yml</code></strong>: shared AU color palette and typography. Referenced implicitly by Quarto’s HTML theming.
-<ul>
-<li>Edit this once to re-color all three templates.</li>
-<li>The <code>logo:</code> key is intentionally omitted (see the comment in the file) because each template places the org logo explicitly instead, to avoid a duplicated automatic brand logo.</li>
-</ul></li>
-<li><strong><code>references.bib</code></strong>: shared bibliography. Each poster’s YAML sets <code>bibliography: ../../references.bib</code>.
-<ul>
-<li>Entries only appear in the rendered References section if actually cited in the text with <code>[@key]</code> (no blanket <code>nocite: | @*</code> is used in the filled-in templates, so unused entries stay out of the list).</li>
-<li>It includes citations for every R package a template’s code actually calls with <code>library()</code>generated from each package’s own <code>citation()</code> output, plus R itself.</li>
-<li>If you add a package to a poster’s code, add its <code>citation("pkgname")</code> entry here too and cite it.</li>
-</ul></li>
-<li><strong><code>scss/poster-common.scss</code></strong>: base tokens and shared “poster shell” rules for the web/HTML version.</li>
-<li>This includes: title banner, section card styling, the automatic <code>section.level2</code> → poster-panel behavior.</li>
-<li>Each template’s own <code>*-web.scss</code> file is loaded <em>after</em> this one and only overrides the grid layout and a few accent details so all three can share this file, or you can point a new template at a different base if you want a fully distinct look.</li>
-<li><strong><code>images/au-logo.png</code></strong> — organization logo. Used two ways:
-<ul>
-<li>Print (<code>poster-typst</code>): passed via <code>institution-logo:</code> in the format options; the extension places and sizes it automatically (tune with <code>univ-logo-scale</code> / <code>univ-logo-column-size</code>).</li>
-<li>Web (<code>html</code>): included directly in the <code>.qmd</code> inside a <code>::: {.content-visible when-format="html"}</code> block, styled by the <code>.poster-logo</code> class in <code>poster-common.scss</code>.</li>
-</ul></li>
-</ul>
-</section>
-<section id="adding-your-own-poster" class="level2">
-<h2 class="anchored" data-anchor-id="adding-your-own-poster">Adding your own poster</h2>
-<ol type="1">
-<li>Copy one of the three <code>templates/*/</code> folders (or start a new one).</li>
-<li>Edit the YAML: title, authors/affiliations, <code>poster-authors</code>, <code>departments</code>, footer contact info, and pick a print <code>size</code> (Typst accepts any <code>"WIDTHxHEIGHT"</code> in inches).</li>
-<li>Replace the <code>##</code> sections with your own content. Cite sources with <code>[@bibkey]</code> and add entries to <code>references.bib</code>.</li>
-<li><code>quarto render poster.qmd</code> — check <code>poster.pdf</code> for the printable version and <code>poster.html</code> for the web version.</li>
-</ol>
-</section>
-<section id="notes-gotchas" class="level2">
-<h2 class="anchored" data-anchor-id="notes-gotchas">Notes / gotchas</h2>
-<ul>
-<li>The vendored <code>_extensions/quarto-ext/poster</code> has three local patches. If you re-install/update the extension, re-apply all three:
-<ul>
-<li><code>poster.typ</code> accepts the institution logo as already-loaded Typst <code>content</code> (loaded once in <code>typst-show.typ</code>) rather than a bare path string, because Typst packages cannot read files outside their own package directory (see the <code>_univ_logo_img</code> handling in <code>typst-show.typ</code>).</li>
-<li><code>poster.typ</code> / <code>typst-show.typ</code> add a <code>footer-text-color</code> format option (defaults to white) so the footer text stays legible against dark <code>footer-color</code> values – set it to a dark color if you pick a light footer background (see <code>01-classic-academic</code>’s <code>footer-text-color: "25406A"</code>).</li>
-<li><code>biblio.typ</code> (a new template-partial, registered in <code>_extension.yml</code>) sets <code>title: none</code> on the generated <code>#bibliography(...)</code> call, so Typst’s own default “Bibliography” heading doesn’t duplicate each template’s own <code>#### References</code> heading.</li>
-<li>Because Quarto caches the vendored local Typst package under each project’s <code>.quarto/typst/packages/local/typst-poster/</code>, edits to <code>poster.typ</code> only take effect after that cached copy is refreshed (delete <code>.quarto/</code> or copy the updated file over it) – a plain <code>quarto render</code> will silently keep using the stale cached version.</li>
-</ul></li>
-<li>Every template’s <code>poster-typst</code> format sets <strong><code>fig-format: png</code></strong>. Without it, Typst’s default (<code>fig-format: svg</code>) asks R’s Cairo graphics device to render each plot, which can fail with a missing X11/Cairo shared-library error on machines without XQuartz (common on Apple Silicon macOS, and on Linux without <code>libcairo2-dev</code>).
-<ul>
-<li>Installing XQuartz/<code>libcairo</code> dev packages fixes it at the source; <code>fig-format: png</code> sidesteps it by using R’s built-in PNG device instead, at a small cost in image sharpness for print.</li>
-</ul></li>
-<li><code>.quarto/</code>, rendered <code>*.pdf</code>/<code>*.typ</code>/<code>poster.html</code>, and <code>*_files/</code> directories are gitignored as build output.</li>
-</ul>
+<p>This site’s source is <a href="docs-src/"><code>docs-src/</code></a> (a nested Quarto website project); it renders to <code>docs/</code>, which GitHub Pages serves directly.</p>
 </section>
 </section>
 

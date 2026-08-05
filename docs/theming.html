@@ -202,7 +202,7 @@ div.csl-indent {
    
   <ul>
   <li><a href="#re-coloring-the-templates" id="toc-re-coloring-the-templates" class="nav-link active" data-scroll-target="#re-coloring-the-templates"><span class="header-section-number">1</span> Re-coloring the templates</a></li>
-  <li><a href="#brand.yml-and-your-workflow" id="toc-brand.yml-and-your-workflow" class="nav-link" data-scroll-target="#brand.yml-and-your-workflow"><span class="header-section-number">2</span> <code>_brand.yml</code> and your workflow</a></li>
+  <li><a href="#brand.yml-and-your-workflow" id="toc-brand.yml-and-your-workflow" class="nav-link" data-scroll-target="#brand.yml-and-your-workflow"><span class="header-section-number">2</span> _brand.yml and your workflow</a></li>
   </ul>
 </nav>
     </div>
@@ -238,7 +238,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Skip this page unless you’re re-theming. If you’re just writing poster content on the templates as shipped, you don’t need to know Bootstrap <span class="citation" data-cites="bootstrapDocs">(<a href="#ref-bootstrapDocs" role="doc-biblioref">Bootstrap contributors, n.d.</a>)</span> or SCSS <span class="citation" data-cites="SassDocumentation">(<a href="#ref-SassDocumentation" role="doc-biblioref"><em>Sass</em>, n.d.</a>)</span> at all — the colors and fonts are already set up. Come back here only if you’re forking for a different organization’s palette, or troubleshooting a contrast/color regression.</p>
+<p>Skip this page unless you’re re-theming. If you’re just writing poster content on the templates as shipped, you don’t need to know Bootstrap <span class="citation" data-cites="bootstrapDocs">(<a href="#ref-bootstrapDocs" role="doc-biblioref">Bootstrap contributors, n.d.</a>)</span> or SCSS <span class="citation" data-cites="SassDocumentation">(<a href="#ref-SassDocumentation" role="doc-biblioref"><em>Sass</em>, n.d.</a>)</span> at all, the colors and fonts are already set up. Come back here only if you’re forking for a different organization’s palette, or troubleshooting a contrast/color regression.</p>
 </div>
 </div>
 <section id="re-coloring-the-templates" class="level2" data-number="1">
@@ -298,7 +298,7 @@ Note
 </ul>
 </section>
 <section id="brand.yml-and-your-workflow" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="brand.yml-and-your-workflow"><span class="header-section-number">2</span> <code>_brand.yml</code> and your workflow</h2>
+<h2 data-number="2" class="anchored" data-anchor-id="brand.yml-and-your-workflow"><span class="header-section-number">2</span> _brand.yml and your workflow</h2>
 <p>As flagged on the <a href="./index.html">Home</a> page, Quarto’s brand theming is still evolving. This section describes how <code>_brand.yml</code> fits into these templates <em>today</em>; see Quarto’s own <a href="https://quarto.org/docs/authoring/brand.html">Brand guide</a> <span class="citation" data-cites="quartoBrandGuide">(<a href="#ref-quartoBrandGuide" role="doc-biblioref">Posit Software, PBC, n.d.</a>)</span> for the full, current spec.</p>
 <p><strong>What it’s for here:</strong></p>
 <ul>
@@ -320,7 +320,10 @@ Note
 <p><strong>Typography is the mirror image of color, and worth calling out on its own.</strong></p>
 <ul>
 <li><code>_brand.yml</code> declares <code>Source Sans 3</code> and <code>STIX Two Text</code> as <code>typography.fonts</code> resources (<code>source: google</code>).</li>
-<li>For <strong>print</strong>, this is confirmed working: <code>poster.typ</code> hardcodes <code>STIX Two Text</code> for the body, Quarto injects a <code>Source Sans 3</code> show rule for headings, and Quarto fetches both from Google into <code>.quarto/typst/fonts/</code> at render time, verified by the absence of Typst’s <code>unknown font family</code> warning, which is a hard compiler signal, not a guess.</li>
+<li>For <strong>print</strong>, this is confirmed working: <code>poster.typ</code> hardcodes <code>STIX Two Text</code> for the body, Quarto injects a <code>Source Sans 3</code> show rule for headings.
+<ul>
+<li>Quarto fetches both from Google into <code>.quarto/typst/fonts/</code> at render time, verified by the absence of Typst’s <code>unknown font family</code> warning, which is a hard compiler signal, not a guess.</li>
+</ul></li>
 <li>For <strong>web</strong>, this is <em>also</em> confirmed working.
 <ul>
 <li>An earlier approach grepped the raw rendered HTML for literal strings like <code>@font-face</code>, but every <code>poster.qmd</code> sets <code>embed-resources: true</code>, which makes Quarto inline its CSS as percent-encoded <code>data:text/css,...</code> URIs rather than plain <code>&lt;style&gt;</code> text, so <code>@font-face</code> appears in the file as <code>%40font%2Dface</code> and a literal-string search never finds it.
@@ -330,7 +333,6 @@ Note
 <li><code>STIX Two Text</code> is fetched and embedded too, but is never applied to anything on the web side, and correctly so, since <code>_brand.yml</code>’s own comment notes it’s declared only so Typst can find it for print; nothing under <code>base</code>/<code>headings</code> names it for <code>html</code>.</li>
 <li><code>scripts/render-all.R</code> now has a <code>check_fonts()</code> step that decodes each rendered <code>poster.html</code> this way and asserts the <code>@font-face</code> block and <code>--bs-body-font-family</code> variable are both present, so a future regression, or another naive grep, fails loudly instead of silently reading as “not delivered.”</li>
 </ul></li>
-<li>See <a href="https://github.com/AU-datascience/poster_templates/blob/main/AGENTS.md">AGENTS.md</a>’s “Fonts” section for the full before/after and for how the standalone minimal-reproduction project (no custom theme or scss) was re-run with the same decode-first approach and shows the identical, working pattern.</li>
 </ul>
 <p><strong>Why it’s kept in sync with the stylesheet by hand, not generated from it:</strong></p>
 <ul>
